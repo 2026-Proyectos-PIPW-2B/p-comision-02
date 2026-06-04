@@ -1,0 +1,17 @@
+.cell-name {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.cell-color {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+}
+
+textarea {
+    resize: none;
+}
