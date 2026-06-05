@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Products Manager</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+        <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/css/mdb.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="../../styles/styles.css" />
+    </head>
+    <body>
+
+        <!-- navbar -->
+        <nav class="navbar navbar-dark navbar-expand-lg bg-dark fixed-top">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <a class="navbar-brand fs-4" href="#"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Panel Administrador</a>
+                <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+                    aria-labelledby="offcanvasDarkNavbarLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Panel Administrador</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="products-manager.html">Productos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="categories-manager.html">Categorías</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link " href="users-manager.html">Usuarios</a>
+                            </li>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Formulario y tabla de productos -->
+        <div class="d-flex align-items-center mx-0" style="height: 100vh">
+            <div class="row align-items-start m-2 w-100">
+                <div class="card col-lg-3 me-5 shadow">
+                    <div class="card-body">
+                        <form>
+                            <caption class="text-center mb-4">
+                                Crear Producto
+                            </caption>
+                            <div data-mdb-input-init class="form-outline mb-3">
+                                <input type="text" id="inputName" class="form-control" />
+                                <label class="form-label" for="inputName">Nombre</label>
+                            </div>
+                            <div data-mdb-input-init class="form-outline mb-3">
+                                <input type="number" id="inputPrice" class="form-control" />
+                                <label class="form-label" for="inputPrice">Precio</label>
+                            </div>
+                            <div data-mdb-input-init class="form-outline mb-3">
+                                <input type="number" id="inputStock" class="form-control" />
+                                <label class="form-label" for="inputStock">Stock</label>
+                            </div>
+                            <div class="mb-3">
+                                <select name="categories" id="selectCategories">
+                                    <option value="" disabled selected>Seleccione una categoría</option>
+                                    <option value="1">Categoria 1</option>
+                                    <option value="2">Categoria 2</option>
+                                    <option value="3">Categoria 3</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <select name="imagen" id="selectImagen">
+                                    <option value="" disabled selected>Seleccione una imagen</option>
+                                    <option value="1">Imagen 1</option>
+                                    <option value="2">Imagen 2</option>
+                                    <option value="3">Imagen 3</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success">Crear</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="col-lg-8 p-3 rounded shadow">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Precio</th>
+                                <th scope="col">Stock</th>
+                                <th scope="col">Categoría</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Cemento Bolsa x 25 Kg Compuesto Loma Negra</th>
+                                <td>$8.245,23</td>
+                                <td>10</td>
+                                <td>Obra gruesa</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cable De Acero Galvanizado Ferr 6x7x1.6 por metro lineal</th>
+                                <td>$203,06</td>
+                                <td>5</td>
+                                <td>Metalúrgica</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cetol Limpiador X 1lt</th>
+                                <td>$14.186,77</td>
+                                <td>100</td>
+                                <td>Aditivos</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cemento Bolsa x 25 Kg Compuesto Loma Negra</th>
+                                <td>$8.245,23</td>
+                                <td>10</td>
+                                <td>Obra gruesa</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cable De Acero Galvanizado Ferr 6x7x1.6 por metro lineal</th>
+                                <td>$203,06</td>
+                                <td>5</td>
+                                <td>Metalúrgica</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cetol Limpiador X 1lt</th>
+                                <td>$14.186,77</td>
+                                <td>100</td>
+                                <td>Aditivos</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cemento Bolsa x 25 Kg Compuesto Loma Negra</th>
+                                <td>$8.245,23</td>
+                                <td>10</td>
+                                <td>Obra gruesa</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cable De Acero Galvanizado Ferr 6x7x1.6 por metro lineal</th>
+                                <td>$203,06</td>
+                                <td>5</td>
+                                <td>Metalúrgica</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Cetol Limpiador X 1lt</th>
+                                <td>$14.186,77</td>
+                                <td>100</td>
+                                <td>Aditivos</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/js/mdb.umd.min.js"></script>
+    </body>
+</html>
