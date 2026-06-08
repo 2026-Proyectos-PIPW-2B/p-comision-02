@@ -16,7 +16,7 @@ window.onload = function() {
     inputName = document.getElementById('inputName')
     inputPrice = document.getElementById('inputPrice')
     inputStock = document.getElementById('inputStock')
-    selectCategory = document.getElementById('selectCategory')
+    selectCategory = document.getElementById('selectCategories')
     selectImage = document.getElementById('selectImage')
     saveBtn = document.getElementById("saveProductButton")
     tbodyProducts = document.getElementById("tbodyProducts")
@@ -47,15 +47,17 @@ function saveProduct() {
     localStorage.setItem("productsId", productsId)
     products.push(product)
     localStorage.setItem("products", JSON.stringify(products))
+    console.log('ajsdhbajsb');
+    
 }
 
 function listProducts() {
     products.forEach(element => {
-        const row = document.createElement(tr)
-        const colName = document.createElement(th)
-        const colPrice = document.createElement(td)
-        const colStock = document.createElement(td)
-        const colCategory = document.createElement(td)
+        const row = document.createElement("tr")
+        const colName = document.createElement("th")
+        const colPrice = document.createElement("td")
+        const colStock = document.createElement("td")
+        const colCategory = document.createElement("td")
 
         colName.scope = "row"
 
