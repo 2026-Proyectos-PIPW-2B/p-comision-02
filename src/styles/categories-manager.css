@@ -1,3 +1,5 @@
+@import "styles.css";
+
 .cell-name {
     display: flex;
     align-items: center;
@@ -15,3 +17,4 @@
 textarea {
     resize: none;
 }
+
