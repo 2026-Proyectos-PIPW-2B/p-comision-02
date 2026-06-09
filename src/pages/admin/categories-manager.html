@@ -7,7 +7,6 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
         <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/css/mdb.min.css" rel="stylesheet" />
-        <link rel="stylesheet" href="../../styles/styles.css" />
         <link rel="stylesheet" href="../../styles/categories-manager.css" />
     </head>
     <body>
@@ -47,7 +46,7 @@
         <!-- Formulario y tabla de categorías -->
         <div class="d-flex align-items-center justify-content-center my-5">
             <div class="row align-items-start justify-content-center w-100 gap-5">
-                <div class="card col-lg-3 shadow">
+                <div class="card col-lg-3 shadow sticky-top" style="top: 50px;">
                     <div class="card-body">
                         <form>
                             <caption class="text-center mb-4">
@@ -61,12 +60,13 @@
                                 <textarea id="inputDescription" class="form-control" rows="3"></textarea>
                                 <label class="form-label" for="inputDescription">Descripción</label>
                             </div>
-                            <button type="submit" class="btn btn-success">Crear</button>
+                            <button class="btn btn-success" id="saveCategoryButton">Crear</button>
                         </form>
                     </div>
                 </div>
                 <div class="col-lg-8 p-3 rounded shadow bg-light">
-                    <table class="table table-hover">
+                    <table class="table table-responsive table-hover">
+
                         <thead>
                             <tr>
                                 <th scope="col">Nombre</th>
@@ -75,34 +75,8 @@
                                 <th scope="col">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <th scope="row" class="cell-name"><span class="cell-color" style="background: #007bff;"></span>Obra gruesa</th>
-                                <td>Descripción de la categoría Obra gruesa</td>
-                                <td>1</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="cell-name"><span class="cell-color" style="background: #dc3545;"></span>Metalúrgica</th>
-                                <td>Descripción de la categoría Metalúrgica</td>
-                                <td>1</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th scope="row" class="cell-name"><span class="cell-color" style="background: #28a745;"></span>Aditivos</th>
-                                <td>Descripción de la categoría Aditivos</td>
-                                <td>1</td>
-                                <td>
-                                    <button class="btn btn-sm btn-outline-primary">Editar</button>
-                                    <button class="btn btn-sm btn-outline-danger">Eliminar</button>
-                                </td>
-                            </tr>
+                        <tbody id="tbodyCategories">
+                            
                         </tbody>
                     </table>
                 </div>
@@ -110,5 +84,6 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/js/mdb.umd.min.js"></script>
+        <script src="../../js/categories-manager.js"></script>
     </body>
 </html>
