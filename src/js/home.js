@@ -238,3 +238,56 @@ const quantityHandler = (product, price) => {
 
     return quantityContainer;
 };
+
+const select = document.getElementById("floatingSelect");
+const menu = document.getElementById("multiSelectMenu");
+const button = document.getElementById("multiSelectButton");
+
+const updateButtonText = () => {
+    const selected = [...select.selectedOptions].map(
+        option => option.textContent
+    );
+
+    if (selected.length === 0) {
+        button.textContent = "Filtrar Categorias";
+    } else if (selected.length <= 2) {
+        button.textContent = selected.join(", ");
+    } else {
+        button.textContent = `${selected.length} seleccionadas`;
+    }
+};
+
+const selectedValues = [...select.selectedOptions].map(
+    option => option.value
+);
+
+console.log(selectedValues);
+
+[...select.options].forEach(option => {
+    const li = document.createElement("li");
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "form-check px-3";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "form-check-input";
+    checkbox.id = `option-${option.value}`;
+
+    const label = document.createElement("label");
+    label.className = "form-check-label";
+    label.htmlFor = checkbox.id;
+    label.textContent = option.textContent;
+
+    checkbox.addEventListener("change", () => {
+        option.selected = checkbox.checked;
+        updateButtonText();
+    });
+
+    wrapper.appendChild(checkbox);
+    wrapper.appendChild(label);
+    li.appendChild(wrapper);
+    menu.appendChild(li);
+});
+
+updateButtonText();
