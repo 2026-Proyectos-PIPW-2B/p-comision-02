@@ -8,10 +8,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="../styles/styles.css">
     <link rel="stylesheet" href="../styles/home.css">
 </head>
 
-<body style="background-color: #ededed;">
+<body>
 
     <!-- navbar -->
     <nav class="navbar navbar-dark navbar-expand-lg bg-dark fixed-top">
@@ -44,12 +46,62 @@
             </div>
         </div>
     </nav>
-    <br><br>
+    <br><br><br><br><br>
+
+    <div class="d-flex justify-content-center">
+
+        <div class="input-group rounded w-25">
+            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
+                aria-describedby="search-addon" />
+            <span class="input-group-text border-0" id="search-addon" style="background-color: transparent;">
+                <i class="fas fa-search icon-link-hover"></i>
+            </span>
+        </div>
+
+        <div class="form-floating w-25 ms-5 shadow-sm rounded bg-light">
+            <select class="form-select" id="floatingSelect" multiple hidden>
+                <option value="1">Cementos</option>
+                <option value="2">Cables</option>
+                <option value="3">Ferreteria</option>
+                <option value="4">Pintura</option>
+            </select>
+
+            <div class="dropdown bg-light rounded">
+                <button id="multiSelectButton"
+                    class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between border-0"
+                    type="button" data-bs-toggle="dropdown">
+                </button>
+
+                <ul id="multiSelectMenu" class="dropdown-menu w-100 px-3"></ul>
+            </div>
+
+        </div>
+
+    </div>
 
     <!-- Lista de productos -->
-    <div class="row row-cols-2 row-cols-lg-4 row-cols-xl-6 g-4 m-5" id="productsContainer">
-        
+    <div class="row row-cols-2 row-cols-lg-4 row-cols-xl-5 g-4 m-5" id="productsContainer">
+
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Agregar al carrito</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="cartModal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-success">Confirmar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
         crossorigin="anonymous"></script>
