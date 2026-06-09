@@ -51,6 +51,7 @@ function saveProduct() {
 }
 
 function listProducts() {
+    tbodyProducts.innerHTML = ""
     products.forEach(element => {
         const row = document.createElement("tr")
         const colName = document.createElement("th")
