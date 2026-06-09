@@ -47,8 +47,7 @@ function saveProduct() {
     localStorage.setItem("productsId", productsId)
     products.push(product)
     localStorage.setItem("products", JSON.stringify(products))
-    console.log('ajsdhbajsb');
-    
+    listProducts()    
 }
 
 function listProducts() {

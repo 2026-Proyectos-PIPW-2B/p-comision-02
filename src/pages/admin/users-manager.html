@@ -57,18 +57,26 @@
                                 <label class="form-label" for="inputName">Nombre</label>
                             </div>
                             <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="text" id="inputLastName" class="form-control" />
-                                <label class="form-label" for="inputLastName">Apellido</label>
+                                <input type="text" id="inputLastname" class="form-control" />
+                                <label class="form-label" for="inputLastname">Apellido</label>
                             </div>
                             <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="text" id="inputUserName" class="form-control" />
-                                <label class="form-label" for="inputUserName">Nombre de usuario</label>
+                                <input type="text" id="inputUsername" class="form-control" />
+                                <label class="form-label" for="inputUsername">Nombre de usuario</label>
                             </div>
                             <div data-mdb-input-init class="form-outline mb-3">
                                 <input type="password" id="inputPassword" class="form-control">
                                 <label class="form-label" for="inputPassword">Contraseña</label>
                             </div>
-                            <button type="submit" class="btn btn-success">Crear</button>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="adminPermission">
+                                <label class="form-check-label" for="adminPermission">Usuario administrador</label>
+                            </div>
+                            <!-- <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
+                                <label class="form-check-label" for="switchCheckChecked">Usuario habilitado</label>
+                            </div> -->
+                            <button type="submit" class="btn btn-success" id="saveUserButton">Crear</button>
                         </form>
                     </div>
                 </div>
@@ -80,10 +88,11 @@
                                 <th scope="col">Contraseña</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Apellido</th>
+                                <th scope="col">Administrador</th>
                                 <th scope="col">Acciones</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tbodyUsers">
                             <tr>
                                 <th scope="row">User1</th>
                                 <td>********</td>
@@ -201,5 +210,6 @@
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/js/mdb.umd.min.js"></script>
+        <script src="./../../js/users-manager.js"></script>
     </body>
 </html>
