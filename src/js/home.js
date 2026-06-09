@@ -145,14 +145,14 @@ const addToCart = (product) => {
     img.src = product.image;
     img.alt = product.name;
     img.className = "card-img-top";
-    img.style.maxHeight = "300px";
+    img.style.maxHeight = "250px";
     img.style.objectFit = "contain";
 
     const cardBody = document.createElement("div");
     cardBody.className = "card-body";
 
     const title = document.createElement("h5");
-    title.className = "card-title fs-3";
+    title.className = "card-title fs-5";
     title.textContent = product.name;
 
     const category = document.createElement("p");
