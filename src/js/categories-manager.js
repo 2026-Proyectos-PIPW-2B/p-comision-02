@@ -3,8 +3,11 @@ let products
 let categories
 let inputName
 let inputDescription
-let saveBtn
+let submitBtn
+let updateBtn
+let cancelBtn
 let tbodyCategories
+let categoryToUpdate
 
 window.onload = function() {
     categoriesId = localStorage.getItem('categoriesId') ? parseInt(localStorage.getItem('categoriesId')) : 0
@@ -12,21 +15,57 @@ window.onload = function() {
     products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
     inputName = document.getElementById('inputName')
     inputDescription = document.getElementById('inputDescription')
-    saveBtn = document.getElementById("saveCategoryButton")
+    submitBtn = document.getElementById("submitCategoryButton")
+    updateBtn = document.getElementById("updateCategoryButton")
+    cancelBtn = document.getElementById("cancelCategoryButton")
     tbodyCategories = document.getElementById("tbodyCategories")
 
-    saveBtn.onclick = (e) => {
+
+    showSubmitButton()
+    submitBtn.onclick = (e) => {
         e.preventDefault()
-        saveCategory()
+        submitCategory()
+    }
+    updateBtn.onclick = (e) => {
+        e.preventDefault()
+        updateCategory()
+    }
+    cancelBtn.onclick = (e) => {
+        e.preventDefault()
+        clearForm()
+        showSubmitButton()
+        categoryToUpdate = null
+        inputFocus()
     }
     listCategories()
 }
 
-function saveCategory() {
+function showSubmitButton() {
+    updateBtn.style.display = "none"
+    cancelBtn.style.display = "none"
+    submitBtn.style.display = "block"
+}
+
+function showUpdatesButton() {
+    updateBtn.style.display = "block"
+    cancelBtn.style.display = "block"
+    submitBtn.style.display = "none"
+}
+
+function inputFocus() {
+    inputName.focus()
+    inputDescription.focus()
+}
+
+function inputBlur() {
+    inputName.blur()
+    inputDescription.blur()
+}
+
+function submitCategory() {
     const categoryName = inputName.value
     const categoryDescription = inputDescription.value
     const categoryColor = getRandomColor()
-    console.log("Entro al save")
 
     const category = {
         id: categoriesId,
@@ -39,6 +78,24 @@ function saveCategory() {
     categories.push(category)
     localStorage.setItem("categories", JSON.stringify(categories))
     listCategories()
+    clearForm()
+}
+
+function updateCategory() {
+    const categoryName = inputName.value
+    const categoryDescription = inputDescription.value
+
+    const categoryIndex = categories.findIndex(c => c.id === categoryToUpdate.id)
+    if (categoryIndex !== -1) {
+        categories[categoryIndex].name = categoryName
+        categories[categoryIndex].description = categoryDescription
+        localStorage.setItem("categories", JSON.stringify(categories))
+    }
+    categoryToUpdate = null
+    listCategories()
+    clearForm()
+    showSubmitButton()
+    inputBlur()
 }
 
 function getRandomColor() {
@@ -56,6 +113,11 @@ function randomColor() {
         color += letters[Math.floor(Math.random() * 16)]
     }
     return color
+}
+
+function clearForm() {
+    inputName.value = ""
+    inputDescription.value = ""
 }
 
 function listCategories() {
@@ -86,10 +148,19 @@ function listCategories() {
         
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
-        colDescription.textContent = element.description
+        colDescription.textContent = element.description || "-"
         colCantProducts.textContent = products.find(p => p.categoryId === element.id)?.size || 0
         editBtn.textContent = "Editar"
         deleteBtn.textContent = "Eliminar"
+
+        editBtn.onclick = () => {
+            categoryToUpdate = element
+            inputName.value = element.name
+            inputDescription.value = element.description
+
+            inputFocus()
+            showUpdatesButton()
+        }
 
         colName.appendChild(colNameWrapper)
         colActions.appendChild(editBtn)
