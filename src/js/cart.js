@@ -1,83 +1,17 @@
-let cartMock = []
-
-cartMock = [
-    {
-        id: 1,
-        name: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
-        category: "Ferretería",
-        quantity: 2,
-        price: 18500,
-        image: "../img/products/cable_galvanizado.jpg",
-    },
-    {
-        id: 2,
-        name: "Cemento Portland CP40 x 50 kg",
-        category: "Construcción",
-        quantity: 5,
-        price: 9200,
-        image: "../img/products/cemento.jpg",
-    },
-    {
-        id: 3,
-        name: "Cetol Classic Satinado Protector para Madera 4 L",
-        category: "Pinturería",
-        quantity: 1,
-        price: 48900,
-        image: "../img/products/cetol.jpg",
-    },
-    {
-        id: 4,
-        name: "Ladrillo Cerámico Portante 18x19x33 cm",
-        category: "Construcción",
-        quantity: 100,
-        price: 1350,
-        image: "../img/products/ladrilo.jpg",
-    },
-    {
-        id: 1,
-        name: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
-        category: "Ferretería",
-        quantity: 2,
-        price: 18500,
-        image: "../img/products/cable_galvanizado.jpg",
-    },
-    {
-        id: 2,
-        name: "Cemento Portland CP40 x 50 kg",
-        category: "Construcción",
-        quantity: 5,
-        price: 9200,
-        image: "../img/products/cemento.jpg",
-    },
-    {
-        id: 3,
-        name: "Cetol Classic Satinado Protector para Madera 4 L",
-        category: "Pinturería",
-        quantity: 1,
-        price: 48900,
-        image: "../img/products/cetol.jpg",
-    },
-    {
-        id: 4,
-        name: "Ladrillo Cerámico Portante 18x19x33 cm",
-        category: "Construcción",
-        quantity: 100,
-        price: 1350,
-        image: "../img/products/ladrilo.jpg",
-    }
-];
+let cart = JSON.parse(localStorage.getItem('cart')) || []
 
 window.onload = () => {
     const cartContainer = document.getElementById("cartContainer");
 
-    if (!cartMock.length) {
+    if (!cart.length) {
         mapEmptyCart(cartContainer);
     } else {
-        mapProductsCart(cartMock, cartContainer);
+        mapProductsCart(cart, cartContainer);
     }
 };
 
 const mapEmptyCart = (cartContainer) => {
+    cartContainer.innerHTML = ""
     const row = document.createElement("div");
     row.className = "row g-4";
 
@@ -170,8 +104,9 @@ const mapEmptyCart = (cartContainer) => {
     cartContainer.appendChild(row);
 };
 
-const mapProductsCart = (cartMock, cartContainer) => {
-    const total = cartMock.reduce(
+const mapProductsCart = (cart, cartContainer) => {
+    cartContainer.innerHTML = ""
+    const total = cart.reduce(
         (acc, product) =>
             acc + Number(product.price) * Number(product.quantity),
         0
@@ -183,7 +118,7 @@ const mapProductsCart = (cartMock, cartContainer) => {
     const leftCol = document.createElement("div");
     leftCol.className = "col-lg-8";
 
-    cartMock.forEach((product) => {
+    cart.forEach((product) => {
         const subtotal =
             Number(product.price) * Number(product.quantity);
 
@@ -225,7 +160,6 @@ const mapProductsCart = (cartMock, cartContainer) => {
 
         infoCol.appendChild(name);
         infoCol.appendChild(category);
-        infoCol.appendChild(quantity);
 
         const priceCol = document.createElement("div");
         priceCol.className = "col-auto text-end";
@@ -238,8 +172,18 @@ const mapProductsCart = (cartMock, cartContainer) => {
         price.className = "mb-0";
         price.textContent = `$ ${subtotal.toLocaleString()}`;
 
+        const trashButton = document.createElement("button")
+        trashButton.className = "btn mt-2 d-block mx-auto";
+        const trashIcon = document.createElement("i")
+        trashIcon.className = "bi bi-trash"
+        trashButton.onclick = () => {trashProductModal(product)}
+        trashButton.appendChild(trashIcon)
+        
+        infoCol.appendChild(quantityHandler(product, price));
+
         priceCol.appendChild(unitPrice);
         priceCol.appendChild(price);
+        priceCol.appendChild(trashButton)
 
         productRow.appendChild(imageCol);
         productRow.appendChild(infoCol);
@@ -273,7 +217,7 @@ const mapProductsCart = (cartMock, cartContainer) => {
     const totalLabel = document.createElement("p");
     totalLabel.className =
         "d-flex justify-content-between fw-semibold mb-0";
-
+    totalLabel.id = 'totalCart'
     totalLabel.innerHTML = `
         <span>Total</span>
         <span>$ ${total.toLocaleString()}</span>
@@ -301,6 +245,142 @@ const mapProductsCart = (cartMock, cartContainer) => {
 
     cartContainer.appendChild(row);
 };
+
+const quantityHandler = (product, price) => {
+    const quantityContainer = document.createElement("div");
+    quantityContainer.className = "d-flex align-items-center gap-2";
+
+    const decreaseButton = document.createElement("button");
+    decreaseButton.className = "btn btn-outline-danger btn-sm";
+    decreaseButton.textContent = "-";
+
+    const quantityInput = document.createElement("input");
+    quantityInput.type = "number";
+    quantityInput.className = "form-control text-center";
+    quantityInput.style.width = "80px";
+    quantityInput.max = product.stock;
+    quantityInput.value = product.quantity;
+    quantityInput.id = "quantityInput"
+
+    const increaseButton = document.createElement("button");
+    increaseButton.className = "btn btn-outline-success btn-sm";
+    increaseButton.textContent = "+";
+
+    const updatePrice = () => {
+        let quantity = Number(quantityInput.value);
+
+        if (quantity > product.stock) {
+            quantity = product.stock;
+        }
+
+        quantityInput.value = quantity;
+        price.textContent = `$ ${product.price * (quantity || 1)}`;
+    };
+
+    decreaseButton.onclick = () => {
+        if (Number(quantityInput.value) > 1) {
+            quantityInput.value = Number(quantityInput.value) - 1;
+            updatePrice();
+
+            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
+                if (p.id === product.id) {
+                    return {
+                        ...p,
+                        quantity: p.quantity -=1
+                    };
+                }
+
+                return p;
+            });
+            
+            localStorage.setItem("cart", JSON.stringify(newCart));
+            const totalLabel = document.getElementById('totalCart')
+            const total = newCart.reduce(
+                (acc, product) =>
+                    acc + Number(product.price) * Number(product.quantity),
+                0
+            );
+            totalLabel.innerHTML = `
+                <span>Total</span>
+                <span>$ ${total.toLocaleString()}</span>
+            `;
+        } else trashProductModal(product)
+    };
+
+    increaseButton.onclick = () => {
+        if (Number(quantityInput.value) < product.stock) {
+            quantityInput.value = Number(quantityInput.value) + 1;
+            updatePrice();
+
+            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
+                if (p.id === product.id) {
+                    return {
+                        ...p,
+                        quantity: p.quantity + 1
+                    };
+                }
+
+                return p;
+            });
+            
+            localStorage.setItem("cart", JSON.stringify(newCart));
+            const totalLabel = document.getElementById('totalCart')
+            const total = newCart.reduce(
+                (acc, product) =>
+                    acc + Number(product.price) * Number(product.quantity),
+                0
+            );
+            totalLabel.innerHTML = `
+                <span>Total</span>
+                <span>$ ${total.toLocaleString()}</span>
+            `;
+        }
+    };
+
+    quantityInput.addEventListener("input", updatePrice);
+
+    quantityContainer.appendChild(decreaseButton);
+    quantityContainer.appendChild(quantityInput);
+    quantityContainer.appendChild(increaseButton);
+
+    return quantityContainer;
+};
+
+const trashProductModal = (product) => {
+    
+    const modalElement = document.getElementById("trashProductModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    
+    const modalButton = document.querySelector("#trashProductModal .btn-danger")
+    const img = document.querySelector("#trashProductModal img");
+    const name = document.querySelector("#trashProductModal h3");
+    
+    modalButton.onclick = () => {trashProductHandler(product)}
+    img.src = product.image
+    name.textContent = product.name
+
+    modal.show();
+}
+
+const trashProductHandler = (product) => {
+
+    const cartContainer = document.getElementById("cartContainer");
+    const modalElement = document.getElementById("trashProductModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    const cart = JSON.parse(localStorage.getItem("cart"))
+    const newCart = cart.filter(p => p.id !== product.id);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+
+
+    if (!newCart.length) {
+        mapEmptyCart(cartContainer);
+    } else {
+        mapProductsCart(newCart, cartContainer);
+    }
+    modal.hide()
+}
+
 
 function confirmPurchase() {
     
