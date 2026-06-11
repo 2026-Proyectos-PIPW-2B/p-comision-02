@@ -7,6 +7,7 @@ let updateBtn
 let cancelBtn
 let tbodyCategories
 let categoryToUpdate
+let updateCancelButtons
 
 window.onload = function() {
     categories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
@@ -17,7 +18,7 @@ window.onload = function() {
     updateBtn = document.getElementById("updateCategoryButton")
     cancelBtn = document.getElementById("cancelCategoryButton")
     tbodyCategories = document.getElementById("tbodyCategories")
-
+    updateCancelButtons = document.getElementById("updateCancelButtons")
 
     showSubmitButton()
     submitBtn.onclick = (e) => {
@@ -39,15 +40,18 @@ window.onload = function() {
 }
 
 function showSubmitButton() {
-    updateBtn.style.display = "none"
-    cancelBtn.style.display = "none"
-    submitBtn.style.display = "block"
+    updateCancelButtons.classList.remove("d-block")
+    submitBtn.classList.remove("d-none")
+    updateCancelButtons.classList.add("d-none")
+    submitBtn.classList.add("d-block")
 }
 
 function showUpdatesButton() {
-    updateBtn.style.display = "block"
-    cancelBtn.style.display = "block"
-    submitBtn.style.display = "none"
+    updateCancelButtons.classList.remove("d-none")
+    submitBtn.classList.remove("d-block")
+    updateCancelButtons.classList.add("d-block")
+    submitBtn.classList.add("d-none")
+
 }
 
 function inputFocus() {
@@ -94,7 +98,7 @@ function updateCategory() {
 }
 
 function deleteCategory(category) {
-    const cantProducts = products.filter(p => p.categoryId === category.id).length
+    const cantProducts = products.filter(p => p.category === category.name).length
     if (cantProducts > 0) {
         alert("No se puede eliminar la categoría porque tiene productos asociados.")
         return
