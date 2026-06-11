@@ -1,6 +1,5 @@
-let categoriesId
-let products
 let categories
+let products
 let inputName
 let inputDescription
 let submitBtn
@@ -10,7 +9,6 @@ let tbodyCategories
 let categoryToUpdate
 
 window.onload = function() {
-    categoriesId = localStorage.getItem('categoriesId') ? parseInt(localStorage.getItem('categoriesId')) : 0
     categories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
     products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
     inputName = document.getElementById('inputName')
@@ -32,10 +30,10 @@ window.onload = function() {
     }
     cancelBtn.onclick = (e) => {
         e.preventDefault()
-        clearForm()
-        showSubmitButton()
         categoryToUpdate = null
-        inputFocus()
+        clearForm()
+        inputBlur()
+        showSubmitButton()
     }
     listCategories()
 }
@@ -68,13 +66,10 @@ function submitCategory() {
     const categoryColor = getRandomColor()
 
     const category = {
-        id: categoriesId,
         name: categoryName,
         description: categoryDescription,
         color: categoryColor
     }
-    categoriesId++
-    localStorage.setItem("categoriesId", categoriesId)
     categories.push(category)
     localStorage.setItem("categories", JSON.stringify(categories))
     listCategories()
@@ -85,7 +80,7 @@ function updateCategory() {
     const categoryName = inputName.value
     const categoryDescription = inputDescription.value
 
-    const categoryIndex = categories.findIndex(c => c.id === categoryToUpdate.id)
+    const categoryIndex = categories.findIndex(c => c.name === categoryToUpdate.name)
     if (categoryIndex !== -1) {
         categories[categoryIndex].name = categoryName
         categories[categoryIndex].description = categoryDescription
@@ -96,6 +91,17 @@ function updateCategory() {
     clearForm()
     showSubmitButton()
     inputBlur()
+}
+
+function deleteCategory(category) {
+    const cantProducts = products.filter(p => p.categoryId === category.id).length
+    if (cantProducts > 0) {
+        alert("No se puede eliminar la categoría porque tiene productos asociados.")
+        return
+    }
+    categories = categories.filter(c => c.name !== category.name)
+    localStorage.setItem("categories", JSON.stringify(categories))
+    listCategories()
 }
 
 function getRandomColor() {
@@ -160,6 +166,10 @@ function listCategories() {
 
             inputFocus()
             showUpdatesButton()
+        }
+
+        deleteBtn.onclick = () => {
+            deleteCategory(element)
         }
 
         colName.appendChild(colNameWrapper)
