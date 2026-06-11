@@ -20,7 +20,6 @@ window.onload = function() {
     tbodyCategories = document.getElementById("tbodyCategories")
     updateCancelButtons = document.getElementById("updateCancelButtons")
 
-    showSubmitButton()
     submitBtn.onclick = (e) => {
         e.preventDefault()
         submitCategory()
@@ -36,6 +35,7 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+    showSubmitButton()
     listCategories()
 }
 
@@ -159,7 +159,7 @@ function listCategories() {
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
         colDescription.textContent = element.description || "-"
-        colCantProducts.textContent = products.find(p => p.categoryId === element.id)?.size || 0
+        colCantProducts.textContent = products.filter(p => p.category === element.name).length
         editBtn.textContent = "Editar"
         deleteBtn.textContent = "Eliminar"
 
