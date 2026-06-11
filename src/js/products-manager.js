@@ -11,6 +11,7 @@ let updateBtn
 let cancelBtn
 let productToUpdate
 let tbodyProducts
+let updateCancelButtons
 
 window.onload = function() {
     productsId = localStorage.getItem('productsId') ? parseInt(localStorage.getItem('productsId')) : 0
@@ -25,6 +26,7 @@ window.onload = function() {
     updateBtn = document.getElementById("updateProductButton")
     cancelBtn = document.getElementById("cancelProductButton")
     tbodyProducts = document.getElementById("tbodyProducts")
+    updateCancelButtons = document.getElementById("updateCancelButtons")
 
     showSubmitButton()
     submitBtn.onclick = (e) => {
@@ -64,15 +66,18 @@ function clearForm() {
 }
 
 function showSubmitButton() {
-    updateBtn.style.display = "none"
-    cancelBtn.style.display = "none"
-    submitBtn.style.display = "block"
+    updateCancelButtons.classList.remove("d-block")
+    submitBtn.classList.remove("d-none")
+    updateCancelButtons.classList.add("d-none")
+    submitBtn.classList.add("d-block")
 }
 
 function showUpdatesButton() {
-    updateBtn.style.display = "block"
-    cancelBtn.style.display = "block"
-    submitBtn.style.display = "none"
+    updateCancelButtons.classList.remove("d-none")
+    submitBtn.classList.remove("d-block")
+    updateCancelButtons.classList.add("d-block")
+    submitBtn.classList.add("d-none")
+
 }
 
 function inputFocus() {
