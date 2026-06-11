@@ -138,6 +138,12 @@ function updateProduct() {
     listProducts()   
 }
 
+function deleteProduct(product) {
+    products = products.filter(p => p.id !== product.id)
+    localStorage.setItem("products", JSON.stringify(products))
+    listProducts()
+}
+
 function listProducts() {
     tbodyProducts.innerHTML = ""
     products.forEach(element => {
@@ -177,6 +183,10 @@ function listProducts() {
 
             inputFocus()
             showUpdatesButton()
+        }
+
+        deleteBtn.onclick = () => {
+            deleteProduct(element)
         }
 
         colActions.appendChild(editBtn)
