@@ -68,9 +68,6 @@
                             <div class="mb-3">
                                 <select name="categories" id="selectCategories">
                                     <option value="" disabled selected>Seleccione una categoría</option>
-                                    <option value="1">Categoria 1</option>
-                                    <option value="2">Categoria 2</option>
-                                    <option value="3">Categoria 3</option>
                                 </select>
                             </div>
                             <div class="mb-3">
@@ -81,7 +78,11 @@
                                     <option value="3">Imagen 3</option>
                                 </select>
                             </div>
-                            <button class="btn btn-success" id="saveProductButton">Crear</button>
+                            <button class="btn btn-success" id="submitProductButton">Crear</button>
+                            <div class="d-flex justify-content-end gap-2 mt-3">
+                                <button class="btn btn-success" id="updateProductButton">Actualizar</button>
+                                <button class="btn btn-danger" id="cancelProductButton">Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -93,6 +94,7 @@
                                 <th scope="col">Precio</th>
                                 <th scope="col">Stock</th>
                                 <th scope="col">Categoría</th>
+                                <th scope="col">Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbodyProducts">
