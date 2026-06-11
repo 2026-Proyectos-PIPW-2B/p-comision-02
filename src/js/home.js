@@ -65,11 +65,6 @@ const productsMock = [
     },
 ];
 
-// products seed
-if(!localStorage.getItem("products")) {
-    localStorage.setItem("products", JSON.stringify(productsMock))
-}
-
 const modalElement = document.getElementById("cartModal");
 const cartModal = new bootstrap.Modal(modalElement);
 const cartModalBody = document.getElementById("cartModal-body");
@@ -79,6 +74,11 @@ const button = document.getElementById("multiSelectButton");
 const toast = document.getElementById("toastSuccess")
 
 window.onload = () => {
+
+    // products seed
+    if(!localStorage.getItem("products")) {
+        localStorage.setItem("products", JSON.stringify(productsMock))
+    }
     const productsContainer = document.getElementById("productsContainer");
     mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
     updateFilterCategories();

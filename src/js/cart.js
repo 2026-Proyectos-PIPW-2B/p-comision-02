@@ -1,16 +1,17 @@
-let cartMock = JSON.parse(localStorage.getItem('cart')) || []
+let cart = JSON.parse(localStorage.getItem('cart')) || []
 
 window.onload = () => {
     const cartContainer = document.getElementById("cartContainer");
 
-    if (!cartMock.length) {
+    if (!cart.length) {
         mapEmptyCart(cartContainer);
     } else {
-        mapProductsCart(cartMock, cartContainer);
+        mapProductsCart(cart, cartContainer);
     }
 };
 
 const mapEmptyCart = (cartContainer) => {
+    cartContainer.innerHTML = ""
     const row = document.createElement("div");
     row.className = "row g-4";
 
@@ -103,8 +104,9 @@ const mapEmptyCart = (cartContainer) => {
     cartContainer.appendChild(row);
 };
 
-const mapProductsCart = (cartMock, cartContainer) => {
-    const total = cartMock.reduce(
+const mapProductsCart = (cart, cartContainer) => {
+    cartContainer.innerHTML = ""
+    const total = cart.reduce(
         (acc, product) =>
             acc + Number(product.price) * Number(product.quantity),
         0
@@ -116,7 +118,7 @@ const mapProductsCart = (cartMock, cartContainer) => {
     const leftCol = document.createElement("div");
     leftCol.className = "col-lg-8";
 
-    cartMock.forEach((product) => {
+    cart.forEach((product) => {
         const subtotal =
             Number(product.price) * Number(product.quantity);
 
@@ -169,11 +171,19 @@ const mapProductsCart = (cartMock, cartContainer) => {
         const price = document.createElement("h5");
         price.className = "mb-0";
         price.textContent = `$ ${subtotal.toLocaleString()}`;
+
+        const trashButton = document.createElement("button")
+        trashButton.className = "btn mt-2 d-block mx-auto";
+        const trashIcon = document.createElement("i")
+        trashIcon.className = "bi bi-trash"
+        trashButton.onclick = () => {trashProductModal(product)}
+        trashButton.appendChild(trashIcon)
         
         infoCol.appendChild(quantityHandler(product, price));
 
         priceCol.appendChild(unitPrice);
         priceCol.appendChild(price);
+        priceCol.appendChild(trashButton)
 
         productRow.appendChild(imageCol);
         productRow.appendChild(infoCol);
@@ -335,6 +345,41 @@ const quantityHandler = (product, price) => {
 
     return quantityContainer;
 };
+
+const trashProductModal = (product) => {
+    
+    const modalElement = document.getElementById("trashProductModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    
+    const modalButton = document.querySelector("#trashProductModal .btn-danger")
+    const img = document.querySelector("#trashProductModal img");
+    const name = document.querySelector("#trashProductModal h3");
+    
+    modalButton.onclick = () => {trashProductHandler(product)}
+    img.src = product.image
+    name.textContent = product.name
+
+    modal.show();
+}
+
+const trashProductHandler = (product) => {
+
+    const cartContainer = document.getElementById("cartContainer");
+    const modalElement = document.getElementById("trashProductModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+
+    const cart = JSON.parse(localStorage.getItem("cart"))
+    const newCart = cart.filter(p => p.id !== product.id);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+
+
+    if (!newCart.length) {
+        mapEmptyCart(cartContainer);
+    } else {
+        mapProductsCart(newCart, cartContainer);
+    }
+    modal.hide()
+}
 
 
 function confirmPurchase() {
