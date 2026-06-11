@@ -82,7 +82,6 @@ window.onload = () => {
     const productsContainer = document.getElementById("productsContainer");
     mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
     updateFilterCategories();
-    toast.style.display = "none"
 };
 
 const updateFilterCategories = () => {
@@ -322,12 +321,10 @@ const confirmAddToCart = (product) => {
     product.quantity = Number(quantity)
 
     const cart = JSON.parse(localStorage.getItem("cart")) || []
-    console.log(cart);
 
     const index = cart.findIndex((p) => 
         p.id === product.id
     )
-    console.log(index);
     
     if(index !== -1) {
         cart[index].quantity += product.quantity

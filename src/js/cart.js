@@ -1,4 +1,4 @@
-let cartMock = JSON.parse(localStorage.getItem('cart'))
+let cartMock = JSON.parse(localStorage.getItem('cart')) || []
 
 window.onload = () => {
     const cartContainer = document.getElementById("cartContainer");
@@ -158,7 +158,6 @@ const mapProductsCart = (cartMock, cartContainer) => {
 
         infoCol.appendChild(name);
         infoCol.appendChild(category);
-        infoCol.appendChild(quantity);
 
         const priceCol = document.createElement("div");
         priceCol.className = "col-auto text-end";
@@ -170,6 +169,8 @@ const mapProductsCart = (cartMock, cartContainer) => {
         const price = document.createElement("h5");
         price.className = "mb-0";
         price.textContent = `$ ${subtotal.toLocaleString()}`;
+        
+        infoCol.appendChild(quantityHandler(product, price));
 
         priceCol.appendChild(unitPrice);
         priceCol.appendChild(price);
@@ -206,7 +207,7 @@ const mapProductsCart = (cartMock, cartContainer) => {
     const totalLabel = document.createElement("p");
     totalLabel.className =
         "d-flex justify-content-between fw-semibold mb-0";
-
+    totalLabel.id = 'totalCart'
     totalLabel.innerHTML = `
         <span>Total</span>
         <span>$ ${total.toLocaleString()}</span>
@@ -234,6 +235,107 @@ const mapProductsCart = (cartMock, cartContainer) => {
 
     cartContainer.appendChild(row);
 };
+
+const quantityHandler = (product, price) => {
+    const quantityContainer = document.createElement("div");
+    quantityContainer.className = "d-flex align-items-center gap-2";
+
+    const decreaseButton = document.createElement("button");
+    decreaseButton.className = "btn btn-outline-danger btn-sm";
+    decreaseButton.textContent = "-";
+
+    const quantityInput = document.createElement("input");
+    quantityInput.type = "number";
+    quantityInput.className = "form-control text-center";
+    quantityInput.style.width = "80px";
+    quantityInput.max = product.stock;
+    quantityInput.value = product.quantity;
+    quantityInput.id = "quantityInput"
+
+    const increaseButton = document.createElement("button");
+    increaseButton.className = "btn btn-outline-success btn-sm";
+    increaseButton.textContent = "+";
+
+    const updatePrice = () => {
+        let quantity = Number(quantityInput.value);
+
+        if (quantity > product.stock) {
+            quantity = product.stock;
+        }
+
+        quantityInput.value = quantity;
+        price.textContent = `$ ${product.price * (quantity || 1)}`;
+    };
+
+    decreaseButton.onclick = () => {
+        if (Number(quantityInput.value) > 1) {
+            quantityInput.value = Number(quantityInput.value) - 1;
+            updatePrice();
+
+            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
+                if (p.id === product.id) {
+                    return {
+                        ...p,
+                        quantity: p.quantity -=1
+                    };
+                }
+
+                return p;
+            });
+            
+            localStorage.setItem("cart", JSON.stringify(newCart));
+            const totalLabel = document.getElementById('totalCart')
+            const total = newCart.reduce(
+                (acc, product) =>
+                    acc + Number(product.price) * Number(product.quantity),
+                0
+            );
+            totalLabel.innerHTML = `
+                <span>Total</span>
+                <span>$ ${total.toLocaleString()}</span>
+            `;
+        }
+    };
+
+    increaseButton.onclick = () => {
+        if (Number(quantityInput.value) < product.stock) {
+            quantityInput.value = Number(quantityInput.value) + 1;
+            updatePrice();
+
+            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
+                if (p.id === product.id) {
+                    return {
+                        ...p,
+                        quantity: p.quantity + 1
+                    };
+                }
+
+                return p;
+            });
+            
+            localStorage.setItem("cart", JSON.stringify(newCart));
+            const totalLabel = document.getElementById('totalCart')
+            const total = newCart.reduce(
+                (acc, product) =>
+                    acc + Number(product.price) * Number(product.quantity),
+                0
+            );
+            totalLabel.innerHTML = `
+                <span>Total</span>
+                <span>$ ${total.toLocaleString()}</span>
+            `;
+        }
+    };
+
+    quantityInput.addEventListener("input", updatePrice);
+
+    quantityContainer.appendChild(decreaseButton);
+    quantityContainer.appendChild(quantityInput);
+    quantityContainer.appendChild(increaseButton);
+
+    return quantityContainer;
+};
+
 
 function confirmPurchase() {
     
