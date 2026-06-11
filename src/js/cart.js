@@ -304,7 +304,7 @@ const quantityHandler = (product, price) => {
                 <span>Total</span>
                 <span>$ ${total.toLocaleString()}</span>
             `;
-        }
+        } else trashProductModal(product)
     };
 
     increaseButton.onclick = () => {
