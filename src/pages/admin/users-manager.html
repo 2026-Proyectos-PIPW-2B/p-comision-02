@@ -72,11 +72,15 @@
                                 <input class="form-check-input" type="checkbox" role="switch" id="adminPermission">
                                 <label class="form-check-label" for="adminPermission">Usuario administrador</label>
                             </div>
-                            <!-- <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
-                                <label class="form-check-label" for="switchCheckChecked">Usuario habilitado</label>
-                            </div> -->
-                            <button type="submit" class="btn btn-success" id="saveUserButton">Crear</button>
+                            <div class="form-check form-switch d-none" id="enabledSwitchWrapper">
+                                <input class="form-check-input" type="checkbox" role="switch" id="allowedPermission">
+                                <label class="form-check-label" for="allowedPermission">Usuario habilitado</label>
+                            </div>
+                            <button class="btn btn-success" id="submitUserButton">Crear</button>
+                            <div class="d-flex justify-content-end gap-2 mt-3 d-none" id="updateCancelButtons">
+                                <button class="btn btn-success" id="updateUserButton">Actualizar</button>
+                                <button class="btn btn-danger" id="cancelUserButton">Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -89,6 +93,7 @@
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Apellido</th>
                                 <th scope="col">Administrador</th>
+                                <th scope="col">Habilitado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
                         </thead>
