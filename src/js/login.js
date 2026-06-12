@@ -17,6 +17,15 @@ const usersMock = [
 		orders: [],
 		isAllowed: true,
 	},
+	{
+		name: "Pedro",
+		lastname: "Martin",
+		username: "pedro.martin",
+		password: "User1234*",
+		isAdmin: false,
+		orders: [],
+		isAllowed: false,
+	},
 ];
 window.onload = () => {
 	// Admin seed y user seed
@@ -38,12 +47,12 @@ const login = () => {
 	const userMatch = userArray.find(
 		(u) => u.username === userInput.value && u.password === passwordInput.value,
 	);
-
-	userMatch ? loginSuccess(userMatch) : loginFailed("Credenciales incorrectas");
+	console.log(userMatch);
+	
+	userMatch ? userMatch.isAllowed ? loginSuccess(userMatch) : loginFailed("Usuario Inhabilitado") : loginFailed("Credenciales Incorrectas")
 };
 
 const loginSuccess = (userMatch) => {
-	if(!userMatch.isAllowed) loginFailed("Usuario inhabilitado")
 	localStorage.setItem(
 		"userSession",
 		JSON.stringify({
@@ -60,7 +69,7 @@ const loginSuccess = (userMatch) => {
 	else window.location.href = "./home.html";
 };
 
+const divErrorMessage = document.getElementById("divErrorMessage")
 const loginFailed = (errorMessage) => {
-	const divErrorMessage = document.getElementById("divErrorMessage")
 	divErrorMessage.textContent = errorMessage
 }
