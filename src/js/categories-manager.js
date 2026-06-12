@@ -20,6 +20,12 @@ window.onload = function() {
     tbodyCategories = document.getElementById("tbodyCategories")
     updateCancelButtons = document.getElementById("updateCancelButtons")
 
+    inputName.oninput = validateForm
+    inputDescription.oninput = validateForm
+
+    submitBtn.disabled = true
+    updateBtn.disabled = true
+
     submitBtn.onclick = (e) => {
         e.preventDefault()
         submitCategory()
@@ -128,13 +134,14 @@ function randomColor() {
 function clearForm() {
     inputName.value = ""
     inputDescription.value = ""
+    resetStates()
 }
 
 function listCategories() {
     tbodyCategories.innerHTML = ""
     categories.forEach(element => {
         const row = document.createElement("tr")
-        const colName = document.createElement("th")
+        const colName = document.createElement("td")
         const colNameWrapper = document.createElement("div")
         const colNameSpan = document.createElement("span")
         const colDescription = document.createElement("td")
@@ -186,4 +193,51 @@ function listCategories() {
 
         tbodyCategories.appendChild(row)
     })
+}
+
+function validateForm() {
+    const name = inputName.value
+    const description = inputDescription.value
+    
+    const isNameValid = validateName(name)
+    const isDescriptionValid = validator.isLength(description, { min: 0, max: 200 })
+
+    if (!isNameValid) {
+        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+    } else {
+        mostrarExito(inputName, "nameError")
+    }
+
+    if (!isDescriptionValid) {
+        mostrarError(inputDescription, "descriptionError", "La descripción no puede tener más de 200 caracteres.")
+    } else {
+        mostrarExito(inputDescription, "descriptionError")
+    }
+
+    submitBtn.disabled = !(isNameValid && isDescriptionValid)
+    updateBtn.disabled = !(isNameValid && isDescriptionValid)
+}
+
+function validateName(name) {
+    return !validator.isEmpty(name) && !categories.some(c => c.name === name && c !== categoryToUpdate)
+}
+
+function mostrarExito(input, idDivError) {
+    input.classList.remove("is-invalid")
+    input.classList.add("is-valid")
+    document.getElementById(idDivError).textContent = ""
+}
+
+function mostrarError(input, idDivError, mensaje) {
+    input.classList.remove("is-valid")
+    input.classList.add("is-invalid")
+    document.getElementById(idDivError).textContent = mensaje
+}
+
+function resetStates() {
+    const inputs = document.querySelectorAll(".form-control, .form-select")
+    for (const input of inputs) {
+        input.classList.remove("is-invalid")
+        input.classList.remove("is-valid")
+    }
 }

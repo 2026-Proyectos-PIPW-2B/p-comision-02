@@ -28,7 +28,15 @@ window.onload = function() {
     tbodyProducts = document.getElementById("tbodyProducts")
     updateCancelButtons = document.getElementById("updateCancelButtons")
 
-    showSubmitButton()
+    inputName.oninput = validateForm
+    inputPrice.oninput = validateForm
+    inputStock.oninput = validateForm
+    selectCategory.onchange = validateForm
+    selectImage.onchange = validateForm
+
+    submitBtn.disabled = true
+    updateBtn.disabled = true
+
     submitBtn.onclick = (e) => {
         e.preventDefault()
         submitProduct()
@@ -44,6 +52,7 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+    showSubmitButton()
     listProducts()
     addCategoriesToSelect()
 }
@@ -63,6 +72,7 @@ function clearForm() {
     inputStock.value = ""
     selectCategory.value = ""
     selectImage.value = ""
+    resetStates()
 }
 
 function showSubmitButton() {
@@ -153,7 +163,7 @@ function listProducts() {
     tbodyProducts.innerHTML = ""
     products.forEach(element => {
         const row = document.createElement("tr")
-        const colName = document.createElement("th")
+        const colName = document.createElement("td")
         const colPrice = document.createElement("td")
         const colStock = document.createElement("td")
         const colCategory = document.createElement("td")
@@ -204,4 +214,70 @@ function listProducts() {
 
         tbodyProducts.appendChild(row)
     })
+}
+
+function validateForm() {
+    const name = inputName.value
+    const price = inputPrice.value
+    const stock = inputStock.value
+    const category = selectCategory.value
+
+    const isNameValid = !validator.isEmpty(name)
+    const isPriceValid = !validator.isEmpty(price) && validator.isFloat(price, { gt: 0 })
+    const isStockValid = !validator.isEmpty(stock) && validator.isInt(stock, { gt: 0 })
+    const isCategoryValid = !validator.isEmpty(category)
+    const isImageValid = !validator.isEmpty(selectImage.value)
+
+    if (!isNameValid) {
+        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+    } else {
+        mostrarExito(inputName, "nameError")
+    }
+
+    if (!isPriceValid) {
+        mostrarError(inputPrice, "priceError", "El precio no puede ser menor a 0.")
+    } else {
+        mostrarExito(inputPrice, "priceError")
+    }
+
+    if (!isStockValid) {
+        mostrarError(inputStock, "stockError", "El stock no puede ser menor a 0.")
+    } else {
+        mostrarExito(inputStock, "stockError")
+    }
+
+    if (!isCategoryValid) {
+        mostrarError(selectCategory, "categoryError", "Debe seleccionar una categoría.")
+    } else {
+        mostrarExito(selectCategory, "categoryError")
+    }
+
+    if (!isImageValid) {
+        mostrarError(selectImage, "imageError", "Debe seleccionar una imagen.")
+    } else {
+        mostrarExito(selectImage, "imageError")
+    }
+
+    submitBtn.disabled = !(isNameValid && isPriceValid && isStockValid && isCategoryValid && isImageValid)
+    updateBtn.disabled = !(isNameValid && isPriceValid && isStockValid && isCategoryValid && isImageValid)
+}
+
+function mostrarExito(input, idDivError) {
+    input.classList.remove("is-invalid")
+    input.classList.add("is-valid")
+    document.getElementById(idDivError).textContent = ""
+}
+
+function mostrarError(input, idDivError, mensaje) {
+    input.classList.remove("is-valid")
+    input.classList.add("is-invalid")
+    document.getElementById(idDivError).textContent = mensaje
+}
+
+function resetStates() {
+    const inputs = document.querySelectorAll(".form-control, .form-select")
+    for (const input of inputs) {
+        input.classList.remove("is-invalid")
+        input.classList.remove("is-valid")
+    }
 }

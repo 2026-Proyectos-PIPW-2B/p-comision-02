@@ -27,6 +27,15 @@ window.onload = function() {
     cancelBtn = document.getElementById("cancelUserButton")
     tbodyUsers = document.getElementById("tbodyUsers")
     updateCancelButtons = document.getElementById("updateCancelButtons")
+    userToUpdate = null
+
+    inputName.oninput = validateForm
+    inputLastname.oninput = validateForm
+    inputUsername.oninput = validateForm
+    inputPassword.oninput = validateForm
+
+    submitBtn.disabled = true
+    updateBtn.disabled = true
 
     submitBtn.onclick = (e) => {
         e.preventDefault()
@@ -85,6 +94,7 @@ function clearForm() {
     adminPermission.checked = false
     allowedPermission.checked = true
     enabledSwitchWrapper.classList.add("d-none")
+    resetStates()
 }
 
 function enabledSwitchWrapperVisibility() {
@@ -160,7 +170,7 @@ function listUsers() {
     tbodyUsers.innerHTML = ""
     users.forEach(element => {
         const row = document.createElement("tr")
-        const colUsername = document.createElement("th")
+        const colUsername = document.createElement("td")
         const colPassword = document.createElement("td")
         const colName = document.createElement("td")
         const colLastname = document.createElement("td")
@@ -220,4 +230,79 @@ function listUsers() {
 
         tbodyUsers.appendChild(row)
     })
+}
+
+function validateForm() {
+    const name = inputName.value
+    const lastname = inputLastname.value
+    const username = inputUsername.value
+    const password = inputPassword.value
+
+    const isUsernameValid = validateUsername(username)
+    const isPasswordValid = validatePassword(password)
+    const isNameValid = !validator.isEmpty(name)
+    const isLastnameValid = !validator.isEmpty(lastname)
+
+    if (!isNameValid) {
+        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+    } else {
+        mostrarExito(inputName, "nameError")
+    }
+
+    if (!isLastnameValid) {
+        mostrarError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
+    } else {
+        mostrarExito(inputLastname, "lastnameError")
+    }
+
+    if (!isUsernameValid) {
+        mostrarError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
+    } else {
+        mostrarExito(inputUsername, "usernameError")
+    }
+
+    if (!isPasswordValid) {
+        mostrarError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
+    } else {
+        mostrarExito(inputPassword, "passwordError")
+    }
+
+    submitBtn.disabled = !(isUsernameValid && isPasswordValid && isNameValid && isLastnameValid)
+    updateBtn.disabled = !(isUsernameValid && isPasswordValid && isNameValid && isLastnameValid)
+}
+
+function validateUsername(username) {
+    const isUpdating = userToUpdate !== null
+    const isSameUsername = isUpdating && userToUpdate.username === username
+    return (isSameUsername || !users.some(u => u.username === username)) && validator.isLength(username, { min: 4, max: 20 })
+}
+
+function validatePassword(password) {
+    return validator.isStrongPassword(password, {
+        minLength: 8,
+        minLowercase: 1,
+        minUppercase: 1,
+        minNumbers: 1,
+        minSymbols: 1
+    })
+}
+
+function mostrarExito(input, idDivError) {
+    input.classList.remove("is-invalid")
+    input.classList.add("is-valid")
+    document.getElementById(idDivError).textContent = ""
+}
+
+function mostrarError(input, idDivError, mensaje) {
+    input.classList.remove("is-valid")
+    input.classList.add("is-invalid")
+    document.getElementById(idDivError).textContent = mensaje
+}
+
+function resetStates() {
+    const inputs = document.querySelectorAll(".form-control")
+    for (const input of inputs) {
+        input.classList.remove("is-invalid")
+        input.classList.remove("is-valid")
+    }
 }
