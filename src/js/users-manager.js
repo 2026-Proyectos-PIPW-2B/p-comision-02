@@ -144,6 +144,18 @@ function updateUser() {
     inputBlur()
 }
 
+function deleteUser(user) {
+    const userSession = JSON.parse(sessionStorage.getItem("userSession"))
+    if (user.username === userSession.username) {
+        users = users.filter(u => u.username !== user.username)
+        localStorage.setItem("users", JSON.stringify(users))
+    } else {
+        alert("No puedes eliminar un usuario que no es el tuyo.")
+        return
+    }
+    listUsers()
+}
+
 function listUsers() {
     tbodyUsers.innerHTML = ""
     users.forEach(element => {
@@ -190,6 +202,10 @@ function listUsers() {
             inputFocus()
             enabledSwitchWrapperVisibility()
             showUpdatesButton()
+        }
+
+        deleteBtn.onclick = () => {
+            deleteUser(element)
         }
 
         colActions.appendChild(editBtn)
