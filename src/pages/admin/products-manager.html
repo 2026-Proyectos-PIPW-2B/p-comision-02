@@ -76,9 +76,10 @@
                             <div class="mb-3">
                                 <select class="form-select" name="imagen" id="selectImage">
                                     <option value="" disabled selected>Seleccione una imagen</option>
-                                    <option value="1">Imagen 1</option>
-                                    <option value="2">Imagen 2</option>
-                                    <option value="3">Imagen 3</option>
+                                    <option value="./../../img/products/cable_galvanizado.jpg" onclick="showVisualizer(this.value)">Imagen 1</option>
+                                    <option value="./../../img/products/cemento.jpg" onclick="showVisualizer(this.value)">Imagen 2</option>
+                                    <option value="./../../img/products/cetol.jpg" onclick="showVisualizer(this.value)">Imagen 3</option>
+                                    <option value="./../../img/products/ladrilo.jpg" onclick="showVisualizer(this.value)">Imagen 4</option>
                                 </select>
                                 <div class="invalid-feedback" id="imageError"></div>
                             </div>
@@ -107,6 +108,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="visualizerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Visualizador de imágen</h1>
+                    </div>
+                    <div class="modal-body" id="visualizerModal-body">
+                        <!-- modal body generado con js -->
+                    </div>
+                    <div class="modal-footer">
+                        <!-- modal footer generado con js -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
         <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
         <script src="../../js/products-manager.js"></script>

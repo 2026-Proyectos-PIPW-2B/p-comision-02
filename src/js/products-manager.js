@@ -13,6 +13,9 @@ let productToUpdate
 let tbodyProducts
 let updateCancelButtons
 
+let modalElement
+let visualizerModal
+
 window.onload = function() {
     productsId = localStorage.getItem('productsId') ? parseInt(localStorage.getItem('productsId')) : 0
     products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
@@ -27,6 +30,9 @@ window.onload = function() {
     cancelBtn = document.getElementById("cancelProductButton")
     tbodyProducts = document.getElementById("tbodyProducts")
     updateCancelButtons = document.getElementById("updateCancelButtons")
+
+    modalElement = document.getElementById("visualizerModal")
+    visualizerModal = new bootstrap.Modal(modalElement)
 
     inputName.oninput = validateForm
     inputPrice.oninput = validateForm
@@ -280,4 +286,35 @@ function resetStates() {
         input.classList.remove("is-invalid")
         input.classList.remove("is-valid")
     }
+}
+
+const showVisualizer = (imgSrc) => {
+    const modalBody = document.querySelector("#visualizerModal .modal-body")
+    const modalFooter = document.querySelector("#visualizerModal .modal-footer")
+
+    modalBody.innerHTML = ""
+    modalFooter.innerHTML = ""
+
+    const card = document.createElement("div")
+    card.className = "card border-0"
+
+    const img = document.createElement("img")
+    img.src = imgSrc
+    img.className = "card-img-top"
+    img.style.maxHeight = "250px"
+    img.style.objectFit = "contain"
+
+    card.appendChild(img)
+
+    modalBody.appendChild(card)
+
+    const closeButton = document.createElement("button")
+    closeButton.type = "button"
+    closeButton.className = "btn btn-secondary"
+    closeButton.setAttribute("data-bs-dismiss", "modal")
+    closeButton.textContent = "Cerrar"
+
+    modalFooter.appendChild(closeButton)
+
+    visualizerModal.show()
 }
