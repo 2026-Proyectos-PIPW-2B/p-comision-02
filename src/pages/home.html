@@ -50,26 +50,30 @@
 
     <div class="d-flex justify-content-center">
 
-        <div class="input-group rounded w-25">
-            <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search"
-                aria-describedby="search-addon" />
-            <span class="input-group-text border-0" id="search-addon" style="background-color: transparent;">
-                <i class="fas fa-search icon-link-hover"></i>
-            </span>
-        </div>
+<div class="position-relative w-25 shadow-sm rounded">
+    <input
+        type="search"
+        class="form-control ps-5"
+        placeholder="Buscar producto"
+        id="searchInput"
+        oninput="handleFilters()"
+    />
 
-        <div class="form-floating w-25 ms-5 shadow-sm rounded bg-light">
-            <select class="form-select" id="floatingSelect" multiple hidden>
-                <option value="1">Cementos</option>
-                <option value="2">Cables</option>
-                <option value="3">Ferreteria</option>
-                <option value="4">Pintura</option>
+    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
+</div>
+
+        <div class="form-floating w-25 ms-5 shadow-sm rounded bg-light border">
+            <select class="form-select bg-light" id="floatingSelect" multiple hidden onchange=handleFilters()>
+                <option value="Ferretería">old fe</option>
+                <option value="Construcción">old c</option>
+                <option value="Pinturería">olc p</option>
             </select>
 
             <div class="dropdown bg-light rounded">
                 <button id="multiSelectButton"
-                    class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between border-0"
-                    type="button" data-bs-toggle="dropdown">
+                    class="btn dropdown-toggle w-100 d-flex align-items-center justify-content-between border-0"
+                    type="button" data-bs-toggle="dropdown"
+                    style="background-color: white;">
                 </button>
 
                 <ul id="multiSelectMenu" class="dropdown-menu w-100 px-3"></ul>

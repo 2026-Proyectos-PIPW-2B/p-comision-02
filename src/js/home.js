@@ -65,6 +65,12 @@ const productsMock = [
     },
 ];
 
+const categoriesMock = [
+    {name: "Ferretería", description: "", color: "#DE1240"},
+    {name: "Construcción", description: "", color: "#CB3999"},
+    {name: "Pinturería", description: "", color: "#39589E"}
+]
+
 const modalElement = document.getElementById("cartModal");
 const cartModal = new bootstrap.Modal(modalElement);
 const cartModalBody = document.getElementById("cartModal-body");
@@ -76,15 +82,38 @@ const toast = document.getElementById("toastSuccess")
 window.onload = () => {
 
     // products seed
-    if(!localStorage.getItem("products")) {
+    if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0) {
         localStorage.setItem("products", JSON.stringify(productsMock))
+    } 
+    // categories seed
+    if(!localStorage.getItem("categories") || JSON.parse(localStorage.getItem("categories")).length === 0) {
+        localStorage.setItem("categories", JSON.stringify(categoriesMock))
     }
+    
     const productsContainer = document.getElementById("productsContainer");
     mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
-    updateFilterCategories();
+    console.log(JSON.parse(localStorage.getItem("categories")));
+    
+    updateFilterCategories(JSON.parse(localStorage.getItem("categories")));
 };
 
-const updateFilterCategories = () => {
+const updateFilterCategories = (categories) => {
+    const floatingSelect = document.getElementById("floatingSelect");
+
+    console.log(floatingSelect);
+
+    floatingSelect.innerHTML = "";
+
+    categories.forEach(({ name }) => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+
+        floatingSelect.appendChild(option);
+    });
+
+    console.log(floatingSelect);
+
     const selected = [...select.selectedOptions].map(
         option => option.textContent
     );
@@ -96,15 +125,8 @@ const updateFilterCategories = () => {
     } else {
         button.textContent = `${selected.length} seleccionadas`;
     }
-};
 
-const selectedValues = [...select.selectedOptions].map(
-    option => option.value
-);
-
-console.log(selectedValues);
-
-[...select.options].forEach(option => {
+    [...select.options].forEach(option => {
     const li = document.createElement("li");
 
     const wrapper = document.createElement("div");
@@ -123,6 +145,7 @@ console.log(selectedValues);
     checkbox.addEventListener("change", () => {
         option.selected = checkbox.checked;
         updateButtonText();
+        handleFilters();
     });
 
     wrapper.appendChild(checkbox);
@@ -130,8 +153,27 @@ console.log(selectedValues);
     li.appendChild(wrapper);
     menu.appendChild(li);
 });
+};
+
+const updateButtonText = () => {
+    const selected = [...select.selectedOptions].map(
+        option => option.textContent
+    );
+
+    if (selected.length === 0) {
+        button.textContent = "Filtrar Categorias";
+    } else if (selected.length <= 2) {
+        button.textContent = selected.join(", ");
+    } else {
+        button.textContent = `${selected.length} seleccionadas`;
+    }
+};
+
+
+
 
 const mapProducts = (products, productsContainer) => {
+    productsContainer.innerHTML = ""
     if(!products) return 
     products.forEach((product) => {
         const col = document.createElement("div");
@@ -384,3 +426,30 @@ function showNotification(notification) {
         );
     }, 3000);
 }
+
+const handleFilters = () => {
+    const products = JSON.parse(localStorage.getItem("products")) || [];
+
+    const floatingSelect = document.getElementById("floatingSelect");
+    const searchInput = document.getElementById("searchInput");
+
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    const selectedCategories = [...floatingSelect.selectedOptions].map(
+        option => option.value
+    );
+
+    const filteredProducts = products.filter(product => {
+        const matchesSearch =
+            product.name.toLowerCase().includes(searchTerm);
+
+        const matchesCategory =
+            selectedCategories.length === 0 ||
+            selectedCategories.includes(product.category);
+
+        return matchesSearch && matchesCategory;
+    });
+
+    console.log(filteredProducts)
+    mapProducts(filteredProducts, productsContainer);
+};
