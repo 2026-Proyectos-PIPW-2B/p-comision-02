@@ -84,6 +84,7 @@ window.onload = () => {
     // products seed
     if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0) {
         localStorage.setItem("products", JSON.stringify(productsMock))
+        localStorage.setItem("productsId", "9")
     } 
     // categories seed
     if(!localStorage.getItem("categories") || JSON.parse(localStorage.getItem("categories")).length === 0) {

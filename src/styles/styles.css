@@ -13,3 +13,7 @@ input[type="number"] {
 body, .gray-background {
     background-color: #ededed;
 }
+
+td, th {
+    vertical-align: middle;
+}

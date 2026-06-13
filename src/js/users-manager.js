@@ -155,12 +155,12 @@ function updateUser() {
 }
 
 function deleteUser(user) {
-    const userSession = JSON.parse(sessionStorage.getItem("userSession"))
-    if (user.username === userSession.username) {
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    if (user.username !== userSession.username) {
         users = users.filter(u => u.username !== user.username)
         localStorage.setItem("users", JSON.stringify(users))
     } else {
-        alert("No puedes eliminar un usuario que no es el tuyo.")
+        alert("No puedes eliminar el usuario en sesión")
         return
     }
     listUsers()

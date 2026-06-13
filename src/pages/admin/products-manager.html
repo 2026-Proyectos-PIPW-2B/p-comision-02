@@ -48,38 +48,38 @@
             <div class="row align-items-start justify-content-center w-100 gap-5">
                 <div class="card col-lg-3  shadow sticky-top" style="top: 100px;">
                     <div class="card-body">
-                        <form>
-                            <caption class="text-center mb-4">
+                        <form class="needs-validation" novalidate>
+                            <h5 class=" mb-3">
                                 Crear Producto
-                            </caption>
+                            </h5>
                             <div class="form-floating mb-3">
-                                <input type="text" id="inputName" class="form-control" placeholder="Nombre" />
+                                <input type="text" id="inputName" class="form-control" placeholder="Nombre" required/>
                                 <label class="form-label" for="inputName">Nombre</label>
                                 <div class="invalid-feedback" id="nameError"></div>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="number" id="inputPrice" class="form-control" placeholder="Precio" />
+                                <input type="number" id="inputPrice" class="form-control" placeholder="Precio" required/>
                                 <label class="form-label" for="inputPrice">Precio</label>
                                 <div class="invalid-feedback" id="priceError"></div>
                             </div>
                             <div class="form-floating mb-3">
-                                <input type="number" id="inputStock" class="form-control" placeholder="Stock" />
+                                <input type="number" id="inputStock" class="form-control" placeholder="Stock" required/>
                                 <label class="form-label" for="inputStock">Stock</label>
                                 <div class="invalid-feedback" id="stockError"></div>
                             </div>
                             <div class="mb-3">
-                                <select class="form-select" name="categories" id="selectCategories">
+                                <select class="form-select" name="categories" id="selectCategories" required>
                                     <option value="" disabled selected>Seleccione una categoría</option>
                                 </select>
                                 <div class="invalid-feedback" id="categoryError"></div>
                             </div>
                             <div class="mb-3">
-                                <select class="form-select" name="imagen" id="selectImage">
+                                <select class="form-select" name="imagen" id="selectImage" required>
                                     <option value="" disabled selected>Seleccione una imagen</option>
-                                    <option value="./../../img/products/cable_galvanizado.jpg" onclick="showVisualizer(this.value)">Imagen 1</option>
-                                    <option value="./../../img/products/cemento.jpg" onclick="showVisualizer(this.value)">Imagen 2</option>
-                                    <option value="./../../img/products/cetol.jpg" onclick="showVisualizer(this.value)">Imagen 3</option>
-                                    <option value="./../../img/products/ladrilo.jpg" onclick="showVisualizer(this.value)">Imagen 4</option>
+                                    <option value="./../../img/products/cable_galvanizado.jpg">Imagen 1</option>
+                                    <option value="./../../img/products/cemento.jpg">Imagen 2</option>
+                                    <option value="./../../img/products/cetol.jpg">Imagen 3</option>
+                                    <option value="./../../img/products/ladrilo.jpg">Imagen 4</option>
                                 </select>
                                 <div class="invalid-feedback" id="imageError"></div>
                             </div>
@@ -91,7 +91,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-8 p-3 rounded shadow bg-light">
+                <div class="col-lg-8 p-3 rounded shadow bg-white">
                     <table class="table table-hover">
                         <thead>
                             <tr>

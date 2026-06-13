@@ -47,12 +47,12 @@
             <div class="row align-items-start justify-content-center w-100 gap-5">
                 <div class="card col-lg-3 shadow sticky-top" style="top: 100px;">
                     <div class="card-body">
-                        <form>
-                            <caption class="text-center mb-4">
-                                Crear Categoria
-                            </caption>
+                        <form class="needs-validation" novalidate>
+                            <h5 class=" mb-3">
+                                Crear Categoría
+                            </h5>
                             <div class="form-floating mb-3">
-                                <input type="text" id="inputName" class="form-control" placeholder="Nombre" />
+                                <input type="text" id="inputName" class="form-control" placeholder="Nombre" required/>
                                 <label class="form-label" for="inputName">Nombre</label>
                                 <div class="invalid-feedback" id="nameError"></div>
                             </div>
@@ -69,7 +69,7 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-8 p-3 rounded shadow bg-light">
+                <div class="col-lg-8 p-3 rounded shadow bg-white">
                     <table class="table table-responsive table-hover">
                         <thead>
                             <tr>

@@ -38,7 +38,7 @@ window.onload = function() {
     inputPrice.oninput = validateForm
     inputStock.oninput = validateForm
     selectCategory.onchange = validateForm
-    selectImage.onchange = validateForm
+    selectImage.onchange = () => {showVisualizer(selectImage.value); validateForm()}
 
     submitBtn.disabled = true
     updateBtn.disabled = true
