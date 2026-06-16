@@ -1,3 +1,5 @@
+import { showNotification } from "./utils.js";
+
 const productsMock = [
     {
         id: 1,
@@ -389,43 +391,10 @@ const confirmAddToCart = (product) => {
 
     showNotification({
     type: "success",
-    title: "agregar al carrito",
-    message: "Producto agregado correctamente"
+    title: "Exito",
+    message: "Producto agregado correctamente",
+    icon: `<i class="bi bi-cart-check text-success"></i>`
 });
-}
-
-    // Modularizar fuera
-function showNotification(notification) {
-    const notificationDiv = document.createElement("div");
-    notificationDiv.className = `toast__notification toast__notification--${notification.type}`;
-
-    const contentDiv = document.createElement("div");
-    contentDiv.className = "toast__notification-content";
-
-    const strong = document.createElement("strong");
-    strong.innerHTML =
-        notification.type === "error"
-            ? `⚠️ No se puede ${notification.title}`
-            : `<i class="bi bi-cart-check text-success"><span class="text-dark"> Exito</span></i>`;
-
-    const span = document.createElement("span");
-    span.textContent = notification.message;
-
-    contentDiv.append(strong, span);
-    notificationDiv.appendChild(contentDiv);
-
-    document.body.appendChild(notificationDiv);
-
-    // Después de 3 segundos inicia la animación de salida
-    setTimeout(() => {
-        notificationDiv.classList.add("toast__notification--closing");
-
-        notificationDiv.addEventListener(
-            "animationend",
-            () => notificationDiv.remove(),
-            { once: true }
-        );
-    }, 3000);
 }
 
 const handleFilters = () => {
