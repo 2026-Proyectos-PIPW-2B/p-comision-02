@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification } from "./utils.js"
+import { createActionsButtons, showNotification } from "./common/utils.js"
 
 let productsId
 let products

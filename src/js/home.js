@@ -1,4 +1,4 @@
-import { showNotification } from "./utils.js";
+import { showNotification } from "./common/utils.js";
 
 const productsMock = [
     {
