@@ -1,4 +1,5 @@
 import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
+import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
 
 let categories
 let products
@@ -192,6 +193,7 @@ function listCategories() {
         colNameWrapper.innerHTML += element.name
         colDescription.textContent = element.description || "-"
         colCantProducts.textContent = products.filter(p => p.category === element.name).length
+        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)
@@ -228,24 +230,4 @@ function validateForm() {
 
 function validateName(name) {
     return !validator.isEmpty(name) && !categories.some(c => c.name === name && c !== categoryToUpdate)
-}
-
-function mostrarExito(input, idDivError) {
-    input.classList.remove("is-invalid")
-    input.classList.add("is-valid")
-    document.getElementById(idDivError).textContent = ""
-}
-
-function mostrarError(input, idDivError, mensaje) {
-    input.classList.remove("is-valid")
-    input.classList.add("is-invalid")
-    document.getElementById(idDivError).textContent = mensaje
-}
-
-function resetStates() {
-    const inputs = document.querySelectorAll(".form-control, .form-select")
-    for (const input of inputs) {
-        input.classList.remove("is-invalid")
-        input.classList.remove("is-valid")
-    }
 }
