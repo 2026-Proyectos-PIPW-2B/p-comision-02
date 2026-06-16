@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
 
 let categories
 let products
@@ -122,7 +122,7 @@ function deleteCategory(category) {
     if (cantProducts > 0) {
         showNotification({
             type: "error",
-            title: "eliminar",
+            title: "eliminar la categoría",
             icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
             message: "No se puede eliminar la categoría porque tiene productos asociados."
         })
@@ -179,10 +179,8 @@ function listCategories() {
 
             inputFocus()
             showUpdatesButton()
-        },
-        () => {
-            deleteCategory(element)
-        })
+        }, () => trashModal("categoría", () => {deleteCategory(element)})
+        )
 
         colName.scope = "row"
         colNameWrapper.classList.add("cell-name")

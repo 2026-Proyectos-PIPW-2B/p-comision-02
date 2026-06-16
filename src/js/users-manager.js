@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
 
 let users
 let inputName
@@ -164,11 +164,18 @@ function deleteUser(user) {
     } else {
         showNotification({
             type: "error",
-            title: "eliminar",
+            title: "eliminar el usuario",
+            icon: `<i class="bi bi-x-lg text-danger"></i>`,
             message: "No puedes eliminar el usuario en sesión"
         })
         return
     }
+    showNotification({
+        type: "success",
+        title: "Eliminación exitosa",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "Usuario eliminado correctamente"
+    })
     listUsers()
 }
 
@@ -191,13 +198,11 @@ function listUsers() {
             adminPermission.checked = element.isAdmin
             allowedPermission.checked = element.isAllowed
 
-
             inputFocus()
             enabledSwitchWrapperVisibility()
             showUpdatesButton()
-        }, () => {
-            deleteUser(element)
-        })
+        }, () => trashModal("usuario", () => {deleteUser(element)})
+        )
 
         colName.scope = "row"
         colUsername.textContent = element.username

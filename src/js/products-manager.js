@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
 
 let productsId
 let products
@@ -204,9 +204,8 @@ function listProducts() {
 
             inputFocus()
             showUpdatesButton()
-        }, () => {
-            deleteProduct(element)
-        })
+        }, () => trashModal("producto", () => {deleteProduct(element)})
+        )
 
         colName.scope = "row"
 
