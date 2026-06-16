@@ -1,6 +1,6 @@
-let cart = JSON.parse(localStorage.getItem('cart')) || []
 
 window.onload = () => {
+    let cart = JSON.parse(localStorage.getItem('cart')) || []
     const cartContainer = document.getElementById("cartContainer");
 
     if (!cart.length) {
