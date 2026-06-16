@@ -1,3 +1,5 @@
+import { createActionsButtons, showNotification } from "./utils.js"
+
 let productsId
 let products
 let listCategories
@@ -133,6 +135,12 @@ function submitProduct() {
     localStorage.setItem("products", JSON.stringify(products))
     clearForm()
     inputBlur()
+    showNotification({
+        type: "success",
+        title: "Producto creado",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "El producto se creó correctamente."
+    })
     listProducts()   
 }
 
@@ -153,6 +161,12 @@ function updateProduct() {
         localStorage.setItem("products", JSON.stringify(products))
     }
     productToUpdate = null
+    showNotification({
+        type: "success",
+        title: "Producto actualizado",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "El producto se actualizó correctamente."
+    })
     clearForm()
     showSubmitButton()
     inputBlur()
@@ -162,6 +176,12 @@ function updateProduct() {
 function deleteProduct(product) {
     products = products.filter(p => p.id !== product.id)
     localStorage.setItem("products", JSON.stringify(products))
+    showNotification({
+        type: "success",
+        title: "Producto eliminado",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "El producto se eliminó correctamente."
+    })
     listProducts()
 }
 
@@ -174,27 +194,7 @@ function listProducts() {
         const colStock = document.createElement("td")
         const colCategory = document.createElement("td")
         const colActions = document.createElement("td")
-        const editBtn = document.createElement("button")
-        const deleteBtn = document.createElement("button")
-
-        colName.scope = "row"
-
-        colName.textContent = element.name
-        colPrice.textContent = element.price
-        colStock.textContent = element.stock
-        colCategory.textContent = element.category
-
-        editBtn.classList.add("btn")
-        editBtn.classList.add("btn-sm")
-        editBtn.classList.add("btn-outline-primary")
-        deleteBtn.classList.add("btn")
-        deleteBtn.classList.add("btn-sm")
-        deleteBtn.classList.add("btn-outline-danger")
-
-        editBtn.textContent = "Editar"
-        deleteBtn.textContent = "Eliminar"
-
-        editBtn.onclick = () => {
+        createActionsButtons(colActions, () => {
             productToUpdate = element
             inputName.value = element.name
             inputPrice.value = element.price
@@ -204,14 +204,17 @@ function listProducts() {
 
             inputFocus()
             showUpdatesButton()
-        }
-
-        deleteBtn.onclick = () => {
+        }, () => {
             deleteProduct(element)
-        }
+        })
 
-        colActions.appendChild(editBtn)
-        colActions.appendChild(deleteBtn)
+        colName.scope = "row"
+
+        colName.textContent = element.name
+        colPrice.textContent = element.price
+        colStock.textContent = element.stock
+        colCategory.textContent = element.category
+
         row.appendChild(colName)
         row.appendChild(colPrice)
         row.appendChild(colStock)

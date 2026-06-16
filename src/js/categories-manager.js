@@ -1,3 +1,5 @@
+import { createActionsButtons, showNotification } from "./utils.js"
+
 let categories
 let products
 let inputName
@@ -82,6 +84,12 @@ function submitCategory() {
     }
     categories.push(category)
     localStorage.setItem("categories", JSON.stringify(categories))
+    showNotification({
+        type: "success",
+        title: "Categoría creada",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "La categoría se creó correctamente."
+    })
     listCategories()
     clearForm()
 }
@@ -97,6 +105,12 @@ function updateCategory() {
         localStorage.setItem("categories", JSON.stringify(categories))
     }
     categoryToUpdate = null
+    showNotification({
+        type: "success",
+        title: "Actualizar categoría",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "La categoría se actualizó correctamente."
+    })
     listCategories()
     clearForm()
     showSubmitButton()
@@ -106,11 +120,22 @@ function updateCategory() {
 function deleteCategory(category) {
     const cantProducts = products.filter(p => p.category === category.name).length
     if (cantProducts > 0) {
-        alert("No se puede eliminar la categoría porque tiene productos asociados.")
+        showNotification({
+            type: "error",
+            title: "eliminar",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: "No se puede eliminar la categoría porque tiene productos asociados."
+        })
         return
     }
     categories = categories.filter(c => c.name !== category.name)
     localStorage.setItem("categories", JSON.stringify(categories))
+    showNotification({
+        type: "success",
+        title: "Categoría eliminada",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "La categoría se eliminó correctamente."
+    })
     listCategories()
 }
 
@@ -147,45 +172,30 @@ function listCategories() {
         const colDescription = document.createElement("td")
         const colCantProducts = document.createElement("td")
         const colActions = document.createElement("td")
-        const editBtn = document.createElement("button")
-        const deleteBtn = document.createElement("button")
-
-        colName.scope = "row"
-        colNameWrapper.classList.add("cell-name")
-        colNameSpan.classList.add("cell-color")
-        colNameSpan.style.background = element.color
-
-        editBtn.classList.add("btn")
-        editBtn.classList.add("btn-sm")
-        editBtn.classList.add("btn-outline-primary")
-        deleteBtn.classList.add("btn")
-        deleteBtn.classList.add("btn-sm")
-        deleteBtn.classList.add("btn-outline-danger")
-
-        
-        colNameWrapper.appendChild(colNameSpan)
-        colNameWrapper.innerHTML += element.name
-        colDescription.textContent = element.description || "-"
-        colCantProducts.textContent = products.filter(p => p.category === element.name).length
-        editBtn.textContent = "Editar"
-        deleteBtn.textContent = "Eliminar"
-
-        editBtn.onclick = () => {
+        createActionsButtons(colActions, () => {
             categoryToUpdate = element
             inputName.value = element.name
             inputDescription.value = element.description
 
             inputFocus()
             showUpdatesButton()
-        }
-
-        deleteBtn.onclick = () => {
+        },
+        () => {
             deleteCategory(element)
-        }
+        })
+
+        colName.scope = "row"
+        colNameWrapper.classList.add("cell-name")
+        colNameSpan.classList.add("cell-color")
+        colNameSpan.style.background = element.color
+
+        
+        colNameWrapper.appendChild(colNameSpan)
+        colNameWrapper.innerHTML += element.name
+        colDescription.textContent = element.description || "-"
+        colCantProducts.textContent = products.filter(p => p.category === element.name).length
 
         colName.appendChild(colNameWrapper)
-        colActions.appendChild(editBtn)
-        colActions.appendChild(deleteBtn)
         row.appendChild(colName)
         row.appendChild(colDescription)
         row.appendChild(colCantProducts)

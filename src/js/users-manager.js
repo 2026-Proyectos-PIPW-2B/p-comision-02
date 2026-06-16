@@ -1,3 +1,5 @@
+import { createActionsButtons, showNotification } from "./utils.js"
+
 let users
 let inputName
 let inputLastname
@@ -160,7 +162,11 @@ function deleteUser(user) {
         users = users.filter(u => u.username !== user.username)
         localStorage.setItem("users", JSON.stringify(users))
     } else {
-        alert("No puedes eliminar el usuario en sesión")
+        showNotification({
+            type: "error",
+            title: "eliminar",
+            message: "No puedes eliminar el usuario en sesión"
+        })
         return
     }
     listUsers()
@@ -171,35 +177,12 @@ function listUsers() {
     users.forEach(element => {
         const row = document.createElement("tr")
         const colUsername = document.createElement("td")
-        const colPassword = document.createElement("td")
         const colName = document.createElement("td")
         const colLastname = document.createElement("td")
         const colAdmin = document.createElement("td")
         const colAllowed = document.createElement("td")
         const colActions = document.createElement("td")
-        const editBtn = document.createElement("button")
-        const deleteBtn = document.createElement("button")
-
-        colName.scope = "row"
-        colUsername.textContent = element.username
-        colPassword.textContent = "********"
-        colName.textContent = element.name
-        colLastname.textContent = element.lastname
-        colAdmin.textContent = element.isAdmin ? "Sí" : "No"
-        colAllowed.textContent = element.isAllowed ? "Sí" : "No"
-
-        editBtn.classList.add("btn")
-        editBtn.classList.add("btn-sm")
-        editBtn.classList.add("btn-outline-primary")
-        deleteBtn.classList.add("btn")
-        deleteBtn.classList.add("btn-sm")
-        deleteBtn.classList.add("btn-outline-danger")
-
-        
-        editBtn.textContent = "Editar"
-        deleteBtn.textContent = "Eliminar"
-
-        editBtn.onclick = () => {
+        createActionsButtons(colActions, () => {
             userToUpdate = element
             inputName.value = element.name
             inputLastname.value = element.lastname
@@ -212,16 +195,18 @@ function listUsers() {
             inputFocus()
             enabledSwitchWrapperVisibility()
             showUpdatesButton()
-        }
-
-        deleteBtn.onclick = () => {
+        }, () => {
             deleteUser(element)
-        }
+        })
 
-        colActions.appendChild(editBtn)
-        colActions.appendChild(deleteBtn)
+        colName.scope = "row"
+        colUsername.textContent = element.username
+        colName.textContent = element.name
+        colLastname.textContent = element.lastname
+        colAdmin.textContent = element.isAdmin ? "Sí" : "No"
+        colAllowed.textContent = element.isAllowed ? "Sí" : "No"
+
         row.appendChild(colUsername)
-        row.appendChild(colPassword)
         row.appendChild(colName)
         row.appendChild(colLastname)
         row.appendChild(colAdmin)
