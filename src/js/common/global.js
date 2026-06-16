@@ -3,6 +3,10 @@ import { categoriesMock } from "./mocks.js"
 import { productsMock } from "./mocks.js"
 
 const globalOnload = () => {
+    if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
+        window.location.href = "../../pages/not-found.html";
+    }
+
     // products seed
     if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0) {
         localStorage.setItem("products", JSON.stringify(productsMock))

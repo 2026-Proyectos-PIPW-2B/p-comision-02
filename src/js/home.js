@@ -12,15 +12,11 @@ window.onload = () => {
     
     const productsContainer = document.getElementById("productsContainer");
     mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
-    console.log(JSON.parse(localStorage.getItem("categories")));
-    
     updateFilterCategories(JSON.parse(localStorage.getItem("categories")));
 };
 
 const updateFilterCategories = (categories) => {
     const floatingSelect = document.getElementById("floatingSelect");
-
-    console.log(floatingSelect);
 
     floatingSelect.innerHTML = "";
 
@@ -31,8 +27,6 @@ const updateFilterCategories = (categories) => {
 
         floatingSelect.appendChild(option);
     });
-
-    console.log(floatingSelect);
 
     const selected = [...select.selectedOptions].map(
         option => option.textContent
