@@ -1,37 +1,4 @@
-const usersMock = [
-	{
-		name: "Ignacio",
-		lastname: "Alonso",
-		username: "ignacio.admin",
-		password: "Admin1234*",
-		isAdmin: true,
-		orders: [],
-		isAllowed: true,
-	},
-	{
-		name: "Juan",
-		lastname: "Pérez",
-		username: "juan.perez",
-		password: "User1234*",
-		isAdmin: false,
-		orders: [],
-		isAllowed: true,
-	},
-	{
-		name: "Pedro",
-		lastname: "Martin",
-		username: "pedro.martin",
-		password: "User1234*",
-		isAdmin: false,
-		orders: [],
-		isAllowed: false,
-	},
-];
 window.onload = () => {
-	// Admin seed y user seed
-	if(!localStorage.getItem("users"))
-	localStorage.setItem("users", JSON.stringify(usersMock))
-
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
 
