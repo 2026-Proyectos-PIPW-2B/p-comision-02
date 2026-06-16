@@ -1,4 +1,5 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
+import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
 
 let users
 let inputName
@@ -14,6 +15,7 @@ let cancelBtn
 let tbodyUsers
 let updateCancelButtons
 let userToUpdate
+let btnShowPassword
 
 window.onload = function() {
     users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : []
@@ -30,15 +32,22 @@ window.onload = function() {
     tbodyUsers = document.getElementById("tbodyUsers")
     updateCancelButtons = document.getElementById("updateCancelButtons")
     userToUpdate = null
+    btnShowPassword = document.getElementById("btnShowPassword")
 
     inputName.oninput = validateForm
     inputLastname.oninput = validateForm
     inputUsername.oninput = validateForm
     inputPassword.oninput = validateForm
+    adminPermission.onchange = validateForm
+    allowedPermission.onchange = validateForm
 
     submitBtn.disabled = true
     updateBtn.disabled = true
 
+    btnShowPassword.onclick = (e) => {
+        e.preventDefault()
+        togglePasswordVisibility()
+    }
     submitBtn.onclick = (e) => {
         e.preventDefault()
         submitUser()
@@ -164,11 +173,18 @@ function deleteUser(user) {
     } else {
         showNotification({
             type: "error",
-            title: "eliminar",
+            title: "eliminar el usuario",
+            icon: `<i class="bi bi-x-lg text-danger"></i>`,
             message: "No puedes eliminar el usuario en sesión"
         })
         return
     }
+    showNotification({
+        type: "success",
+        title: "Eliminación exitosa",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "Usuario eliminado correctamente"
+    })
     listUsers()
 }
 
@@ -191,13 +207,11 @@ function listUsers() {
             adminPermission.checked = element.isAdmin
             allowedPermission.checked = element.isAllowed
 
-
             inputFocus()
             enabledSwitchWrapperVisibility()
             showUpdatesButton()
-        }, () => {
-            deleteUser(element)
-        })
+        }, () => trashModal("usuario", () => {deleteUser(element)})
+        )
 
         colName.scope = "row"
         colUsername.textContent = element.username
@@ -205,6 +219,7 @@ function listUsers() {
         colLastname.textContent = element.lastname
         colAdmin.textContent = element.isAdmin ? "Sí" : "No"
         colAllowed.textContent = element.isAllowed ? "Sí" : "No"
+        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         row.appendChild(colUsername)
         row.appendChild(colName)
@@ -272,22 +287,12 @@ function validatePassword(password) {
     })
 }
 
-function mostrarExito(input, idDivError) {
-    input.classList.remove("is-invalid")
-    input.classList.add("is-valid")
-    document.getElementById(idDivError).textContent = ""
-}
-
-function mostrarError(input, idDivError, mensaje) {
-    input.classList.remove("is-valid")
-    input.classList.add("is-invalid")
-    document.getElementById(idDivError).textContent = mensaje
-}
-
-function resetStates() {
-    const inputs = document.querySelectorAll(".form-control")
-    for (const input of inputs) {
-        input.classList.remove("is-invalid")
-        input.classList.remove("is-valid")
+function togglePasswordVisibility() {
+    if (inputPassword.type === "password") {
+        inputPassword.type = "text"
+        btnShowPassword.innerHTML = '<i class="bi bi-eye-slash"></i>'
+    } else {
+        inputPassword.type = "password"
+        btnShowPassword.innerHTML = '<i class="bi bi-eye"></i>'
     }
 }

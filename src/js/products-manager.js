@@ -1,4 +1,5 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
+import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
 
 let productsId
 let products
@@ -190,6 +191,8 @@ function listProducts() {
     products.forEach(element => {
         const row = document.createElement("tr")
         const colName = document.createElement("td")
+        const colNameWrapper = document.createElement("div")
+        const colNameSpan = document.createElement("span")
         const colPrice = document.createElement("td")
         const colStock = document.createElement("td")
         const colCategory = document.createElement("td")
@@ -204,17 +207,22 @@ function listProducts() {
 
             inputFocus()
             showUpdatesButton()
-        }, () => {
-            deleteProduct(element)
-        })
+        }, () => trashModal("producto", () => {deleteProduct(element)})
+        )
 
         colName.scope = "row"
+        colNameWrapper.classList.add("cell-name")
+        colNameSpan.classList.add("cell-color")
+        colNameSpan.style.background = listCategories.find(c => c.name === element.category)?.color || "#000000"
 
-        colName.textContent = element.name
+        colNameWrapper.appendChild(colNameSpan)
+        colNameWrapper.innerHTML += element.name
         colPrice.textContent = element.price
         colStock.textContent = element.stock
         colCategory.textContent = element.category
+        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
+        colName.appendChild(colNameWrapper)
         row.appendChild(colName)
         row.appendChild(colPrice)
         row.appendChild(colStock)
@@ -269,26 +277,6 @@ function validateForm() {
 
     submitBtn.disabled = !(isNameValid && isPriceValid && isStockValid && isCategoryValid && isImageValid)
     updateBtn.disabled = !(isNameValid && isPriceValid && isStockValid && isCategoryValid && isImageValid)
-}
-
-function mostrarExito(input, idDivError) {
-    input.classList.remove("is-invalid")
-    input.classList.add("is-valid")
-    document.getElementById(idDivError).textContent = ""
-}
-
-function mostrarError(input, idDivError, mensaje) {
-    input.classList.remove("is-valid")
-    input.classList.add("is-invalid")
-    document.getElementById(idDivError).textContent = mensaje
-}
-
-function resetStates() {
-    const inputs = document.querySelectorAll(".form-control, .form-select")
-    for (const input of inputs) {
-        input.classList.remove("is-invalid")
-        input.classList.remove("is-valid")
-    }
 }
 
 const showVisualizer = (imgSrc) => {

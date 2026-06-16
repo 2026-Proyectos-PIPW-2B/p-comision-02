@@ -1,4 +1,5 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
+import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
 
 let categories
 let products
@@ -122,7 +123,7 @@ function deleteCategory(category) {
     if (cantProducts > 0) {
         showNotification({
             type: "error",
-            title: "eliminar",
+            title: "eliminar la categoría",
             icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
             message: "No se puede eliminar la categoría porque tiene productos asociados."
         })
@@ -179,10 +180,8 @@ function listCategories() {
 
             inputFocus()
             showUpdatesButton()
-        },
-        () => {
-            deleteCategory(element)
-        })
+        }, () => trashModal("categoría", () => {deleteCategory(element)})
+        )
 
         colName.scope = "row"
         colNameWrapper.classList.add("cell-name")
@@ -194,6 +193,7 @@ function listCategories() {
         colNameWrapper.innerHTML += element.name
         colDescription.textContent = element.description || "-"
         colCantProducts.textContent = products.filter(p => p.category === element.name).length
+        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)
@@ -230,24 +230,4 @@ function validateForm() {
 
 function validateName(name) {
     return !validator.isEmpty(name) && !categories.some(c => c.name === name && c !== categoryToUpdate)
-}
-
-function mostrarExito(input, idDivError) {
-    input.classList.remove("is-invalid")
-    input.classList.add("is-valid")
-    document.getElementById(idDivError).textContent = ""
-}
-
-function mostrarError(input, idDivError, mensaje) {
-    input.classList.remove("is-valid")
-    input.classList.add("is-invalid")
-    document.getElementById(idDivError).textContent = mensaje
-}
-
-function resetStates() {
-    const inputs = document.querySelectorAll(".form-control, .form-select")
-    for (const input of inputs) {
-        input.classList.remove("is-invalid")
-        input.classList.remove("is-valid")
-    }
 }
