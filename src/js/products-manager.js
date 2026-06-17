@@ -1,5 +1,5 @@
 import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
-import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
+import { showError, showSuccess, resetStates } from "./common/validations.js"
 
 let productsId
 let products
@@ -15,6 +15,10 @@ let cancelBtn
 let productToUpdate
 let tbodyProducts
 let updateCancelButtons
+let currentPage
+let itemsPerPage
+let nextPageBtn
+let previousPageBtn
 
 let modalElement
 let visualizerModal
@@ -33,7 +37,10 @@ window.onload = function() {
     cancelBtn = document.getElementById("cancelProductButton")
     tbodyProducts = document.getElementById("tbodyProducts")
     updateCancelButtons = document.getElementById("updateCancelButtons")
-
+    currentPage = 1
+    itemsPerPage = 10
+    nextPageBtn = document.getElementById("nextPage")
+    previousPageBtn = document.getElementById("previousPage")
     modalElement = document.getElementById("visualizerModal")
     visualizerModal = new bootstrap.Modal(modalElement)
 
@@ -61,6 +68,22 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+    previousPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(products.length / itemsPerPage)
+        if (currentPage > 1) {
+            currentPage--
+            listProducts()
+        }
+    })
+    nextPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(products.length / itemsPerPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            listProducts()
+        }
+    })
     showSubmitButton()
     listProducts()
     addCategoriesToSelect()
@@ -188,7 +211,12 @@ function deleteProduct(product) {
 
 function listProducts() {
     tbodyProducts.innerHTML = ""
-    products.forEach(element => {
+
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedProducts = products.slice(startIndex, endIndex)
+
+    paginatedProducts.forEach(element => {
         const row = document.createElement("tr")
         const colName = document.createElement("td")
         const colNameWrapper = document.createElement("div")
@@ -231,6 +259,40 @@ function listProducts() {
 
         tbodyProducts.appendChild(row)
     })
+
+    updatePagination()
+}
+
+function updatePagination() {
+    const totalPages = Math.ceil(products.length / itemsPerPage)
+    const prevButton = document.getElementById("previousPage")
+    const nextButton = document.getElementById("nextPage")
+    document.querySelectorAll('.dynamic-page-item').forEach(el => el.remove())
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li")
+        li.classList.add("page-item", "dynamic-page-item")
+        
+        if (i === currentPage) li.classList.add("active")
+
+        const a = document.createElement("a")
+        a.classList.add("page-link")
+        a.href = "#"
+        a.textContent = i
+
+        a.addEventListener("click", (e) => {
+            e.preventDefault()
+            currentPage = i
+            listProducts()
+        })
+
+        li.appendChild(a)
+
+        nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode)
+    }
+
+    prevButton.classList.toggle("disabled", currentPage === 1)
+    nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0)
 }
 
 function validateForm() {
@@ -246,33 +308,33 @@ function validateForm() {
     const isImageValid = !validator.isEmpty(selectImage.value)
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isPriceValid) {
-        mostrarError(inputPrice, "priceError", "El precio no puede ser menor a 0.")
+        showError(inputPrice, "priceError", "El precio no puede ser menor a 0.")
     } else {
-        mostrarExito(inputPrice, "priceError")
+        showSuccess(inputPrice, "priceError")
     }
 
     if (!isStockValid) {
-        mostrarError(inputStock, "stockError", "El stock no puede ser menor a 0.")
+        showError(inputStock, "stockError", "El stock no puede ser menor a 0.")
     } else {
-        mostrarExito(inputStock, "stockError")
+        showSuccess(inputStock, "stockError")
     }
 
     if (!isCategoryValid) {
-        mostrarError(selectCategory, "categoryError", "Debe seleccionar una categoría.")
+        showError(selectCategory, "categoryError", "Debe seleccionar una categoría.")
     } else {
-        mostrarExito(selectCategory, "categoryError")
+        showSuccess(selectCategory, "categoryError")
     }
 
     if (!isImageValid) {
-        mostrarError(selectImage, "imageError", "Debe seleccionar una imagen.")
+        showError(selectImage, "imageError", "Debe seleccionar una imagen.")
     } else {
-        mostrarExito(selectImage, "imageError")
+        showSuccess(selectImage, "imageError")
     }
 
     submitBtn.disabled = !(isNameValid && isPriceValid && isStockValid && isCategoryValid && isImageValid)

@@ -1,10 +1,10 @@
-export function mostrarExito(input, idDivError) {
+export function showSuccess(input, idDivError) {
     input.classList.remove("is-invalid")
     input.classList.add("is-valid")
     document.getElementById(idDivError).textContent = ""
 }
 
-export function mostrarError(input, idDivError, mensaje) {
+export function showError(input, idDivError, mensaje) {
     input.classList.remove("is-valid")
     input.classList.add("is-invalid")
     document.getElementById(idDivError).textContent = mensaje

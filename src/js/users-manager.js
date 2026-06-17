@@ -1,5 +1,5 @@
 import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
-import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
+import { showError, showSuccess, resetStates } from "./common/validations.js"
 
 let users
 let inputName
@@ -16,6 +16,10 @@ let tbodyUsers
 let updateCancelButtons
 let userToUpdate
 let btnShowPassword
+let currentPage
+let itemsPerPage
+let nextPageBtn
+let previousPageBtn
 
 window.onload = function() {
     users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : []
@@ -33,6 +37,10 @@ window.onload = function() {
     updateCancelButtons = document.getElementById("updateCancelButtons")
     userToUpdate = null
     btnShowPassword = document.getElementById("btnShowPassword")
+    currentPage = 1
+    itemsPerPage = 10
+    nextPageBtn = document.getElementById("nextPage")
+    previousPageBtn = document.getElementById("previousPage")
 
     inputName.oninput = validateForm
     inputLastname.oninput = validateForm
@@ -65,6 +73,22 @@ window.onload = function() {
         showSubmitButton()
         disabledSwitchWrapperVisibility()
     }
+    previousPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(users.length / itemsPerPage)
+        if (currentPage > 1) {
+            currentPage--
+            listUsers()
+        }
+    })
+    nextPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(users.length / itemsPerPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            listUsers()
+        }
+    })
     showSubmitButton()
     listUsers()
 }
@@ -190,7 +214,12 @@ function deleteUser(user) {
 
 function listUsers() {
     tbodyUsers.innerHTML = ""
-    users.forEach(element => {
+
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedUsers = users.slice(startIndex, endIndex)
+
+    paginatedUsers.forEach(element => {
         const row = document.createElement("tr")
         const colUsername = document.createElement("td")
         const colName = document.createElement("td")
@@ -230,6 +259,40 @@ function listUsers() {
 
         tbodyUsers.appendChild(row)
     })
+
+    updatePagination()
+}
+
+function updatePagination() {
+    const totalPages = Math.ceil(users.length / itemsPerPage)
+    const prevButton = document.getElementById("previousPage")
+    const nextButton = document.getElementById("nextPage")
+    document.querySelectorAll('.dynamic-page-item').forEach(el => el.remove())
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li")
+        li.classList.add("page-item", "dynamic-page-item")
+        
+        if (i === currentPage) li.classList.add("active")
+
+        const a = document.createElement("a")
+        a.classList.add("page-link")
+        a.href = "#"
+        a.textContent = i
+
+        a.addEventListener("click", (e) => {
+            e.preventDefault()
+            currentPage = i
+            listUsers()
+        })
+
+        li.appendChild(a)
+
+        nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode)
+    }
+
+    prevButton.classList.toggle("disabled", currentPage === 1)
+    nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0)
 }
 
 function validateForm() {
@@ -244,27 +307,27 @@ function validateForm() {
     const isLastnameValid = !validator.isEmpty(lastname)
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isLastnameValid) {
-        mostrarError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
+        showError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
     } else {
-        mostrarExito(inputLastname, "lastnameError")
+        showSuccess(inputLastname, "lastnameError")
     }
 
     if (!isUsernameValid) {
-        mostrarError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
+        showError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
     } else {
-        mostrarExito(inputUsername, "usernameError")
+        showSuccess(inputUsername, "usernameError")
     }
 
     if (!isPasswordValid) {
-        mostrarError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
+        showError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
     } else {
-        mostrarExito(inputPassword, "passwordError")
+        showSuccess(inputPassword, "passwordError")
     }
 
     submitBtn.disabled = !(isUsernameValid && isPasswordValid && isNameValid && isLastnameValid)
