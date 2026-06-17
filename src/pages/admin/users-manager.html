@@ -4,9 +4,8 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Users Manager</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-        <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/css/mdb.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
         <link rel="stylesheet" href="../../styles/styles.css" />
     </head>
     <body>
@@ -48,47 +47,58 @@
             <div class="row align-items-start justify-content-center w-100 gap-5">
                 <div class="card col-lg-3 shadow sticky-top" style="top: 100px;">
                     <div class="card-body">
-                        <form>
-                            <caption class="text-center mb-4">
+                        <form class="needs-validation" novalidate>
+                            <h5 class=" mb-3">
                                 Crear Usuario
-                            </caption>
-                            <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="text" id="inputName" class="form-control" />
+                            </h5>
+                            <div class="form-floating mb-3">
+                                <input type="text" id="inputName" class="form-control form-control-sm" placeholder="Nombre" required />
                                 <label class="form-label" for="inputName">Nombre</label>
+                                <div class="invalid-feedback" id="nameError"></div>
                             </div>
-                            <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="text" id="inputLastname" class="form-control" />
+                            <div class="form-floating mb-3">
+                                <input type="text" id="inputLastname" class="form-control form-control-sm" placeholder="Apellido" required />
                                 <label class="form-label" for="inputLastname">Apellido</label>
+                                <div class="invalid-feedback" id="lastnameError"></div>
                             </div>
-                            <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="text" id="inputUsername" class="form-control" />
+                            <div class="form-floating mb-3">
+                                <input type="text" id="inputUsername" class="form-control form-control-sm" placeholder="Nombre de usuario" required />
                                 <label class="form-label" for="inputUsername">Nombre de usuario</label>
+                                <div class="invalid-feedback" id="usernameError"></div>
                             </div>
-                            <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="password" id="inputPassword" class="form-control">
-                                <label class="form-label" for="inputPassword">Contraseña</label>
+                            <div class="input-group mb-3">
+                                <div class="form-floating">
+                                    <input type="password" id="inputPassword" class="form-control form-control-sm" placeholder="Contraseña" required>
+                                    <label class="form-label" for="inputPassword">Contraseña</label>
+                                </div>
+                                <button class="input-group-text" for="inputPassword" id="btnShowPassword"><i class="bi bi-eye"></i></button>
+                                <div class="invalid-feedback" id="passwordError"></div>
                             </div>
-                            <div class="form-check form-switch">
+                            <div class="form-check form-switch mb-3">
                                 <input class="form-check-input" type="checkbox" role="switch" id="adminPermission">
                                 <label class="form-check-label" for="adminPermission">Usuario administrador</label>
                             </div>
-                            <!-- <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" role="switch" id="switchCheckChecked" checked>
-                                <label class="form-check-label" for="switchCheckChecked">Usuario habilitado</label>
-                            </div> -->
-                            <button type="submit" class="btn btn-success" id="saveUserButton">Crear</button>
+                            <div class="form-check form-switch mb-3 d-none" id="enabledSwitchWrapper">
+                                <input class="form-check-input" type="checkbox" role="switch" id="allowedPermission">
+                                <label class="form-check-label" for="allowedPermission">Usuario habilitado</label>
+                            </div>
+                            <button class="btn btn-success" id="submitUserButton">Crear</button>
+                            <div class="d-flex justify-content-end gap-2 mt-3 d-none" id="updateCancelButtons">
+                                <button class="btn btn-success" id="updateUserButton">Actualizar</button>
+                                <button class="btn btn-danger" id="cancelUserButton">Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-8 p-3 rounded shadow bg-light">
+                <div class="col-lg-8 p-3 rounded shadow bg-white">
                     <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th scope="col">Nombre de usuario</th>
-                                <th scope="col">Contraseña</th>
                                 <th scope="col">Nombre</th>
                                 <th scope="col">Apellido</th>
                                 <th scope="col">Administrador</th>
+                                <th scope="col">Habilitado</th>
                                 <th scope="col">Acciones</th>
                             </tr>
                         </thead>
@@ -98,8 +108,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal confirm delete -->
+        <div class="modal fade" id="trashModal" tabindex="-1" aria-labelledby="trashModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="trashModalLabel"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <h3></h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/js/mdb.umd.min.js"></script>
-        <script src="./../../js/users-manager.js"></script>
+        <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+        <script type="module" src="./../../js/users-manager.js"></script>
+        <script type="module" src="../../js/common/global.js"></script>
     </body>
 </html>

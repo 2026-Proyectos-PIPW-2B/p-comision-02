@@ -1,79 +1,94 @@
-const productsMock = [
-    {
-        id: 1,
-        name: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
-        category: "Ferretería",
-        stock: 125,
-        price: 18500,
-        image: "../img/products/cable_galvanizado.jpg",
-    },
-    {
-        id: 2,
-        name: "Cemento Portland CP40 x 50 kg",
-        category: "Construcción",
-        stock: 42,
-        price: 9200,
-        image: "../img/products/cemento.jpg",
-    },
-    {
-        id: 3,
-        name: "Cetol Classic Satinado Protector para Madera 4 L",
-        category: "Pinturería",
-        stock: 8,
-        price: 48900,
-        image: "../img/products/cetol.jpg",
-    },
-    {
-        id: 4,
-        name: "Ladrillo Cerámico Portante 18x19x33 cm",
-        category: "Construcción",
-        stock: 650,
-        price: 1350,
-        image: "../img/products/ladrilo.jpg",
-    },
-    {
-        id: 5,
-        name: "Cable Galvanizado Trenzado 6 mm para Alambrados",
-        category: "Ferretería",
-        stock: 87,
-        price: 27300,
-        image: "../img/products/cable_galvanizado.jpg",
-    },
-    {
-        id: 6,
-        name: "Cemento de Albañilería Plasticor Bolsa 40 kg",
-        category: "Construcción",
-        stock: 31,
-        price: 7800,
-        image: "../img/products/cemento.jpg",
-    },
-    {
-        id: 7,
-        name: "Cetol Deck Protector para Madera Exterior 1 L",
-        category: "Pinturería",
-        stock: 15,
-        price: 21900,
-        image: "../img/products/cetol.jpg",
-    },
-    {
-        id: 8,
-        name: "Ladrillo Común de Campo para Muros y Cerramientos",
-        category: "Construcción",
-        stock: 1200,
-        price: 950,
-        image: "../img/products/ladrilo.jpg",
-    },
-];
+import { showNotification, showCartCount } from "./common/utils.js";
+
 const modalElement = document.getElementById("cartModal");
 const cartModal = new bootstrap.Modal(modalElement);
 const cartModalBody = document.getElementById("cartModal-body");
+const select = document.getElementById("floatingSelect");
+const menu = document.getElementById("multiSelectMenu");
+const button = document.getElementById("multiSelectButton");
+const toast = document.getElementById("toastSuccess")
 
 window.onload = () => {
+    
     const productsContainer = document.getElementById("productsContainer");
-    mapProducts(productsMock, productsContainer);
+    mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
+    updateFilterCategories(JSON.parse(localStorage.getItem("categories")));
 };
 
+const updateFilterCategories = (categories) => {
+    const floatingSelect = document.getElementById("floatingSelect");
+
+    floatingSelect.innerHTML = "";
+
+    categories.forEach(({ name }) => {
+        const option = document.createElement("option");
+        option.value = name;
+        option.textContent = name;
+
+        floatingSelect.appendChild(option);
+    });
+
+    const selected = [...select.selectedOptions].map(
+        option => option.textContent
+    );
+
+    if (selected.length === 0) {
+        button.textContent = "Filtrar Categorias";
+    } else if (selected.length <= 2) {
+        button.textContent = selected.join(", ");
+    } else {
+        button.textContent = `${selected.length} seleccionadas`;
+    }
+
+    [...select.options].forEach(option => {
+    const li = document.createElement("li");
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "form-check px-3";
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.className = "form-check-input";
+    checkbox.id = `option-${option.value}`;
+
+    const label = document.createElement("label");
+    label.className = "form-check-label";
+    label.htmlFor = checkbox.id;
+    label.textContent = option.textContent;
+
+    checkbox.addEventListener("change", () => {
+        option.selected = checkbox.checked;
+        updateButtonText();
+        handleFilters();
+    });
+
+    wrapper.appendChild(checkbox);
+    wrapper.appendChild(label);
+    li.appendChild(wrapper);
+    menu.appendChild(li);
+});
+};
+
+const updateButtonText = () => {
+    const selected = [...select.selectedOptions].map(
+        option => option.textContent
+    );
+
+    if (selected.length === 0) {
+        button.textContent = "Filtrar Categorias";
+    } else if (selected.length <= 2) {
+        button.textContent = selected.join(", ");
+    } else {
+        button.textContent = `${selected.length} seleccionadas`;
+    }
+};
+
+
+
+
 const mapProducts = (products, productsContainer) => {
+    productsContainer.innerHTML = ""
+    if(!products) return 
     products.forEach((product) => {
         const col = document.createElement("div");
         col.className = "col";
@@ -114,7 +129,7 @@ const mapProducts = (products, productsContainer) => {
         button.type = "button";
         button.className = "btn btn-outline-success";
         button.textContent = "Añadir al Carrito";
-        button.onclick = () => addToCart(product);
+        button.onclick = () => addToCartModal(product);
 
         infoContainer.appendChild(stock);
         infoContainer.appendChild(price);
@@ -133,10 +148,12 @@ const mapProducts = (products, productsContainer) => {
     });
 };
 
-const addToCart = (product) => {
+const addToCartModal = (product) => {
     const modalBody = document.querySelector("#cartModal .modal-body");
+    const modalFooter = document.querySelector("#cartModal .modal-footer");
 
     modalBody.innerHTML = "";
+    modalFooter.innerHTML = ""
 
     const card = document.createElement("div");
     card.className = "card border-0";
@@ -183,6 +200,21 @@ const addToCart = (product) => {
 
     modalBody.appendChild(card);
 
+    const cancelButton = document.createElement("button");
+    cancelButton.type = "button";
+    cancelButton.className = "btn btn-secondary";
+    cancelButton.setAttribute("data-bs-dismiss", "modal");
+    cancelButton.textContent = "Cancelar";
+
+    const confirmButton = document.createElement("button");
+    confirmButton.type = "button";
+    confirmButton.className = "btn btn-success";
+    confirmButton.id = "confirmAddToCart";
+    confirmButton.textContent = "Confirmar";
+    confirmButton.onclick = () => {confirmAddToCart(product)}
+    modalFooter.appendChild(cancelButton)
+    modalFooter.appendChild(confirmButton)
+
     cartModal.show();
 };
 
@@ -200,6 +232,7 @@ const quantityHandler = (product, price) => {
     quantityInput.style.width = "80px";
     quantityInput.max = product.stock;
     quantityInput.value = 1;
+    quantityInput.id = "quantityInput"
 
     const increaseButton = document.createElement("button");
     increaseButton.className = "btn btn-outline-success btn-sm";
@@ -239,55 +272,66 @@ const quantityHandler = (product, price) => {
     return quantityContainer;
 };
 
-const select = document.getElementById("floatingSelect");
-const menu = document.getElementById("multiSelectMenu");
-const button = document.getElementById("multiSelectButton");
+const confirmAddToCart = (product) => {
+    const quantity = document.getElementById("quantityInput").value
+    product.quantity = Number(quantity)
 
-const updateButtonText = () => {
-    const selected = [...select.selectedOptions].map(
-        option => option.textContent
+    const cart = JSON.parse(localStorage.getItem("cart")) || []
+
+    const index = cart.findIndex((p) => 
+        p.id === product.id
+    )
+    
+    if(index !== -1) {
+        cart[index].quantity += product.quantity
+    } else cart.push(product)
+
+    localStorage.setItem("cart", JSON.stringify(cart))
+
+    const toastTrigger = document.getElementById('confirmAddToCart')
+    const toastLiveExample = document.getElementById('liveToast')
+
+    if (toastTrigger) {
+    const toastBootstrap = bootstrap.Toast.getOrCreateInstance(toastLiveExample)
+    toastTrigger.addEventListener('click', () => {
+        toastBootstrap.show()
+    })
+    }
+
+    cartModal.hide()
+
+    showNotification({
+        type: "success",
+        title: "Exito",
+        message: "Producto agregado correctamente",
+        icon: `<i class="bi bi-cart-check text-success"></i>`
+    });
+    showCartCount()
+}
+
+const handleFilters = () => {
+    const products = JSON.parse(localStorage.getItem("products")) || [];
+
+    const floatingSelect = document.getElementById("floatingSelect");
+    const searchInput = document.getElementById("searchInput");
+
+    const searchTerm = searchInput.value.trim().toLowerCase();
+
+    const selectedCategories = [...floatingSelect.selectedOptions].map(
+        option => option.value
     );
 
-    if (selected.length === 0) {
-        button.textContent = "Filtrar Categorias";
-    } else if (selected.length <= 2) {
-        button.textContent = selected.join(", ");
-    } else {
-        button.textContent = `${selected.length} seleccionadas`;
-    }
-};
+    const filteredProducts = products.filter(product => {
+        const matchesSearch =
+            product.name.toLowerCase().includes(searchTerm);
 
-const selectedValues = [...select.selectedOptions].map(
-    option => option.value
-);
+        const matchesCategory =
+            selectedCategories.length === 0 ||
+            selectedCategories.includes(product.category);
 
-console.log(selectedValues);
-
-[...select.options].forEach(option => {
-    const li = document.createElement("li");
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "form-check px-3";
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.className = "form-check-input";
-    checkbox.id = `option-${option.value}`;
-
-    const label = document.createElement("label");
-    label.className = "form-check-label";
-    label.htmlFor = checkbox.id;
-    label.textContent = option.textContent;
-
-    checkbox.addEventListener("change", () => {
-        option.selected = checkbox.checked;
-        updateButtonText();
+        return matchesSearch && matchesCategory;
     });
 
-    wrapper.appendChild(checkbox);
-    wrapper.appendChild(label);
-    li.appendChild(wrapper);
-    menu.appendChild(li);
-});
-
-updateButtonText();
+    console.log(filteredProducts)
+    mapProducts(filteredProducts, productsContainer);
+};

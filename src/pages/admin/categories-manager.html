@@ -4,9 +4,8 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Categories Manager</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
-        <link href="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/css/mdb.min.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
         <link rel="stylesheet" href="../../styles/categories-manager.css" />
     </head>
     <body>
@@ -48,23 +47,29 @@
             <div class="row align-items-start justify-content-center w-100 gap-5">
                 <div class="card col-lg-3 shadow sticky-top" style="top: 100px;">
                     <div class="card-body">
-                        <form>
-                            <caption class="text-center mb-4">
-                                Crear Categoria
-                            </caption>
-                            <div data-mdb-input-init class="form-outline mb-3">
-                                <input type="text" id="inputName" class="form-control" />
+                        <form class="needs-validation" novalidate>
+                            <h5 class=" mb-3">
+                                Crear Categoría
+                            </h5>
+                            <div class="form-floating mb-3">
+                                <input type="text" id="inputName" class="form-control" placeholder="Nombre" required/>
                                 <label class="form-label" for="inputName">Nombre</label>
+                                <div class="invalid-feedback" id="nameError"></div>
                             </div>
-                            <div data-mdb-input-init class="form-outline mb-3">
-                                <textarea id="inputDescription" class="form-control" rows="3"></textarea>
+                            <div class="form-floating mb-3">
+                                <textarea id="inputDescription" class="form-control" placeholder="Descripción" rows="3"></textarea>
                                 <label class="form-label" for="inputDescription">Descripción</label>
+                                <div class="invalid-feedback" id="descriptionError"></div>
                             </div>
-                            <button class="btn btn-success" id="saveCategoryButton">Crear</button>
+                            <button class="btn btn-success" id="submitCategoryButton">Crear</button>
+                            <div class="d-flex justify-content-end gap-2 mt-3 d-none" id="updateCancelButtons">
+                                <button class="btn btn-success" id="updateCategoryButton">Actualizar</button>
+                                <button class="btn btn-danger" id="cancelCategoryButton">Cancelar</button>
+                            </div>
                         </form>
                     </div>
                 </div>
-                <div class="col-lg-8 p-3 rounded shadow bg-light">
+                <div class="col-lg-8 p-3 rounded shadow bg-white">
                     <table class="table table-responsive table-hover">
                         <thead>
                             <tr>
@@ -80,8 +85,29 @@
                 </div>
             </div>
         </div>
+
+        <!-- Modal confirm delete -->
+        <div class="modal fade" id="trashModal" tabindex="-1" aria-labelledby="trashModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="trashModalLabel"></h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex align-items-center">
+                        <h3></h3>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Eliminar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mdb-ui-kit@9.3.0/js/mdb.umd.min.js"></script>
-        <script src="../../js/categories-manager.js"></script>
+        <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+        <script type="module" src="../../js/categories-manager.js"></script>
+        <script type="module" src="../../js/common/global.js"></script>
     </body>
 </html>
