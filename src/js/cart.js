@@ -387,5 +387,50 @@ function confirmPurchase() {
     const modalElement = document.getElementById("exampleModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
+    const cart = JSON.parse(localStorage.getItem("cart"))
+
+    // Create order
+    const products = cart.map((p) => {
+        return {
+            id: p.id,
+            product: p.name,
+            category: p.category,
+            price: p.price,
+            quantity: p.quantity,
+        }
+    })
+    const total = cart.reduce(
+        (acc, product) =>
+            acc + Number(product.price) * Number(product.quantity),
+        0
+    );
+    const date = new Date().toLocaleString();
+    let id = JSON.parse(localStorage.getItem("ordersId"))
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    let user = {
+        name: userSession.name,
+        lastname: userSession.lastname,
+        username: userSession.username
+    }
+    // Order creada
+    const order = {id:id++, user, products, date, total}
+    const { user: orderUser, ...orderWithoutUser } = order;
+
+    // Pushear a LS orders
+    const orders = JSON.parse(localStorage.getItem("orders")) || []
+    orders.push(order)
+    localStorage.setItem("orders", JSON.stringify(orders))
+    localStorage.setItem("ordersId", JSON.stringify(id++))
+
+    // Pushear a LS userSession
+    userSession.orders.push(orderWithoutUser);
+    localStorage.setItem("userSession", JSON.stringify(userSession))
     modal.hide();
+
+    // Pushear a LS users.orders
+    let users = JSON.parse(localStorage.getItem("users"))
+    const findUserIndex = users.findIndex((u) => u.username === userSession.username)
+    users[findUserIndex].orders.push(orderWithoutUser)
+
+    localStorage.setItem("users", JSON.stringify(users))
 }

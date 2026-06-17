@@ -8,7 +8,7 @@ const globalOnload = () => {
     }
 
     // products seed
-    if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0) {
+    if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0 || (!localStorage.getItem("productsId"))) {
         localStorage.setItem("products", JSON.stringify(productsMock))
         localStorage.setItem("productsId", "9")
     } 
@@ -20,6 +20,10 @@ const globalOnload = () => {
 	if(!localStorage.getItem("users"))
 	localStorage.setItem("users", JSON.stringify(usersMock))
 
+    // order seed 
+    if(!localStorage.getItem("orders") || JSON.parse(localStorage.getItem("orders")).length === 0 || (!localStorage.getItem("ordersId"))) {
+        localStorage.setItem("ordersId", "5")
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
