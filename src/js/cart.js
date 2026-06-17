@@ -1,3 +1,4 @@
+import { showCartCount } from "./common/utils.js";
 
 window.onload = () => {
     let cart = JSON.parse(localStorage.getItem('cart')) || []
@@ -379,6 +380,7 @@ const trashProductHandler = (product) => {
         mapProductsCart(newCart, cartContainer);
     }
     modal.hide()
+    showCartCount()
 }
 
 

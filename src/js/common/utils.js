@@ -64,3 +64,9 @@ export const trashModal = (type, trashHandler) => {
 
     modal.show()
 }
+
+export function showCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || []
+    const cartCount = document.getElementById("cartItemCount")
+    cartCount.textContent = cart.length
+}

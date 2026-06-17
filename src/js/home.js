@@ -1,4 +1,4 @@
-import { showNotification } from "./common/utils.js";
+import { showNotification, showCartCount } from "./common/utils.js";
 
 const modalElement = document.getElementById("cartModal");
 const cartModal = new bootstrap.Modal(modalElement);
@@ -301,11 +301,12 @@ const confirmAddToCart = (product) => {
     cartModal.hide()
 
     showNotification({
-    type: "success",
-    title: "Exito",
-    message: "Producto agregado correctamente",
-    icon: `<i class="bi bi-cart-check text-success"></i>`
-});
+        type: "success",
+        title: "Exito",
+        message: "Producto agregado correctamente",
+        icon: `<i class="bi bi-cart-check text-success"></i>`
+    });
+    showCartCount()
 }
 
 const handleFilters = () => {

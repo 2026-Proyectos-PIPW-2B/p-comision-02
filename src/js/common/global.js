@@ -1,6 +1,7 @@
 import { usersMock } from "./mocks.js"
 import { categoriesMock } from "./mocks.js"
 import { productsMock } from "./mocks.js"
+import { showCartCount } from "./utils.js"
 
 const globalOnload = () => {
     if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
@@ -20,6 +21,7 @@ const globalOnload = () => {
 	if(!localStorage.getItem("users"))
 	localStorage.setItem("users", JSON.stringify(usersMock))
 
+    showCartCount()
 }
 
 document.addEventListener("DOMContentLoaded", () => {
