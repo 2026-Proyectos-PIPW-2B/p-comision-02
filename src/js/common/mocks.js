@@ -5,7 +5,7 @@ export const productsMock = [
         category: "Ferretería",
         stock: 125,
         price: 18500,
-        image: "../img/products/cable_galvanizado.jpg",
+        image: "/src/img/products/cable_galvanizado.jpg",
     },
     {
         id: 2,
@@ -13,7 +13,7 @@ export const productsMock = [
         category: "Construcción",
         stock: 42,
         price: 9200,
-        image: "../img/products/cemento.jpg",
+        image: "/src/img/products/cemento.jpg",
     },
     {
         id: 3,
@@ -21,7 +21,7 @@ export const productsMock = [
         category: "Pinturería",
         stock: 8,
         price: 48900,
-        image: "../img/products/cetol.jpg",
+        image: "/src/img/products/cetol.jpg",
     },
     {
         id: 4,
@@ -29,7 +29,7 @@ export const productsMock = [
         category: "Construcción",
         stock: 650,
         price: 1350,
-        image: "../img/products/ladrilo.jpg",
+        image: "/src/img/products/ladrilo.jpg",
     },
     {
         id: 5,
@@ -37,7 +37,7 @@ export const productsMock = [
         category: "Ferretería",
         stock: 87,
         price: 27300,
-        image: "../img/products/cable_galvanizado.jpg",
+        image: "/src/img/products/cable_galvanizado.jpg",
     },
     {
         id: 6,
@@ -45,7 +45,7 @@ export const productsMock = [
         category: "Construcción",
         stock: 31,
         price: 7800,
-        image: "../img/products/cemento.jpg",
+        image: "/src/img/products/cemento.jpg",
     },
     {
         id: 7,
@@ -53,7 +53,7 @@ export const productsMock = [
         category: "Pinturería",
         stock: 15,
         price: 21900,
-        image: "../img/products/cetol.jpg",
+        image: "/src/img/products/cetol.jpg",
     },
     {
         id: 8,
@@ -61,7 +61,7 @@ export const productsMock = [
         category: "Construcción",
         stock: 1200,
         price: 950,
-        image: "../img/products/ladrilo.jpg",
+        image: "/src/img/products/ladrilo.jpg",
     },
 ];
 
