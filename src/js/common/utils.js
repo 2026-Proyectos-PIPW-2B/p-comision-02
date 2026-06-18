@@ -66,7 +66,7 @@ export const trashModal = (type, trashHandler) => {
 }
 
 export function showCartCount() {
-    const cart = JSON.parse(localStorage.getItem("cart")) || []
+    const cart = JSON.parse(localStorage.getItem("userSession")).cart || []
     const cartCount = document.getElementById("cartItemCount")
     cartCount.textContent = cart.length
 }

@@ -27,7 +27,7 @@ const globalOnload = () => {
     }
   
     showCartCount()
-
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     globalOnload()
