@@ -20,6 +20,8 @@ const login = () => {
 };
 
 const loginSuccess = (userMatch) => {
+	const allOrders = JSON.parse(localStorage.getItem("orders")) || []
+	const userOrders = allOrders.filter( o => userMatch.username === o.username )
 	localStorage.setItem(
 		"userSession",
 		JSON.stringify({
@@ -27,7 +29,7 @@ const loginSuccess = (userMatch) => {
 			lastname: userMatch.lastname || "Doe",
 			username: userMatch.username,
 			isAdmin: userMatch.isAdmin,
-			orders: userMatch.orders || [],
+			orders: userOrders,
 			cart: [],
 		}),
 	);

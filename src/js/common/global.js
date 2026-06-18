@@ -1,4 +1,4 @@
-import { usersMock } from "./mocks.js"
+import { ordersMock, usersMock } from "./mocks.js"
 import { categoriesMock } from "./mocks.js"
 import { productsMock } from "./mocks.js"
 
@@ -22,7 +22,8 @@ const globalOnload = () => {
 
     // order seed 
     if(!localStorage.getItem("orders") || JSON.parse(localStorage.getItem("orders")).length === 0 || (!localStorage.getItem("ordersId"))) {
-        localStorage.setItem("ordersId", "5")
+        localStorage.setItem("orders", JSON.stringify(ordersMock))
+        localStorage.setItem("ordersId", "11")
     }
 }
 
