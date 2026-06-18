@@ -1,4 +1,5 @@
-import { createActionsButtons, showNotification } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
+import { showError, showSuccess, resetStates } from "./common/validations.js"
 
 let users
 let inputName
@@ -14,6 +15,11 @@ let cancelBtn
 let tbodyUsers
 let updateCancelButtons
 let userToUpdate
+let btnShowPassword
+let currentPage
+let itemsPerPage
+let nextPageBtn
+let previousPageBtn
 
 window.onload = function() {
     users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : []
@@ -30,15 +36,26 @@ window.onload = function() {
     tbodyUsers = document.getElementById("tbodyUsers")
     updateCancelButtons = document.getElementById("updateCancelButtons")
     userToUpdate = null
+    btnShowPassword = document.getElementById("btnShowPassword")
+    currentPage = 1
+    itemsPerPage = 10
+    nextPageBtn = document.getElementById("nextPage")
+    previousPageBtn = document.getElementById("previousPage")
 
     inputName.oninput = validateForm
     inputLastname.oninput = validateForm
     inputUsername.oninput = validateForm
     inputPassword.oninput = validateForm
+    adminPermission.onchange = validateForm
+    allowedPermission.onchange = validateForm
 
     submitBtn.disabled = true
     updateBtn.disabled = true
 
+    btnShowPassword.onclick = (e) => {
+        e.preventDefault()
+        togglePasswordVisibility()
+    }
     submitBtn.onclick = (e) => {
         e.preventDefault()
         submitUser()
@@ -56,6 +73,22 @@ window.onload = function() {
         showSubmitButton()
         disabledSwitchWrapperVisibility()
     }
+    previousPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(users.length / itemsPerPage)
+        if (currentPage > 1) {
+            currentPage--
+            listUsers()
+        }
+    })
+    nextPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(users.length / itemsPerPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            listUsers()
+        }
+    })
     showSubmitButton()
     listUsers()
 }
@@ -164,17 +197,29 @@ function deleteUser(user) {
     } else {
         showNotification({
             type: "error",
-            title: "eliminar",
+            title: "eliminar el usuario",
+            icon: `<i class="bi bi-x-lg text-danger"></i>`,
             message: "No puedes eliminar el usuario en sesión"
         })
         return
     }
+    showNotification({
+        type: "success",
+        title: "Eliminación exitosa",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "Usuario eliminado correctamente"
+    })
     listUsers()
 }
 
 function listUsers() {
     tbodyUsers.innerHTML = ""
-    users.forEach(element => {
+
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedUsers = users.slice(startIndex, endIndex)
+
+    paginatedUsers.forEach(element => {
         const row = document.createElement("tr")
         const colUsername = document.createElement("td")
         const colName = document.createElement("td")
@@ -191,13 +236,11 @@ function listUsers() {
             adminPermission.checked = element.isAdmin
             allowedPermission.checked = element.isAllowed
 
-
             inputFocus()
             enabledSwitchWrapperVisibility()
             showUpdatesButton()
-        }, () => {
-            deleteUser(element)
-        })
+        }, () => trashModal("usuario", () => {deleteUser(element)})
+        )
 
         colName.scope = "row"
         colUsername.textContent = element.username
@@ -205,6 +248,7 @@ function listUsers() {
         colLastname.textContent = element.lastname
         colAdmin.textContent = element.isAdmin ? "Sí" : "No"
         colAllowed.textContent = element.isAllowed ? "Sí" : "No"
+        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         row.appendChild(colUsername)
         row.appendChild(colName)
@@ -215,6 +259,40 @@ function listUsers() {
 
         tbodyUsers.appendChild(row)
     })
+
+    updatePagination()
+}
+
+function updatePagination() {
+    const totalPages = Math.ceil(users.length / itemsPerPage)
+    const prevButton = document.getElementById("previousPage")
+    const nextButton = document.getElementById("nextPage")
+    document.querySelectorAll('.dynamic-page-item').forEach(el => el.remove())
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li")
+        li.classList.add("page-item", "dynamic-page-item")
+        
+        if (i === currentPage) li.classList.add("active")
+
+        const a = document.createElement("a")
+        a.classList.add("page-link")
+        a.href = "#"
+        a.textContent = i
+
+        a.addEventListener("click", (e) => {
+            e.preventDefault()
+            currentPage = i
+            listUsers()
+        })
+
+        li.appendChild(a)
+
+        nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode)
+    }
+
+    prevButton.classList.toggle("disabled", currentPage === 1)
+    nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0)
 }
 
 function validateForm() {
@@ -229,27 +307,27 @@ function validateForm() {
     const isLastnameValid = !validator.isEmpty(lastname)
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isLastnameValid) {
-        mostrarError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
+        showError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
     } else {
-        mostrarExito(inputLastname, "lastnameError")
+        showSuccess(inputLastname, "lastnameError")
     }
 
     if (!isUsernameValid) {
-        mostrarError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
+        showError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
     } else {
-        mostrarExito(inputUsername, "usernameError")
+        showSuccess(inputUsername, "usernameError")
     }
 
     if (!isPasswordValid) {
-        mostrarError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
+        showError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
     } else {
-        mostrarExito(inputPassword, "passwordError")
+        showSuccess(inputPassword, "passwordError")
     }
 
     submitBtn.disabled = !(isUsernameValid && isPasswordValid && isNameValid && isLastnameValid)
@@ -272,22 +350,12 @@ function validatePassword(password) {
     })
 }
 
-function mostrarExito(input, idDivError) {
-    input.classList.remove("is-invalid")
-    input.classList.add("is-valid")
-    document.getElementById(idDivError).textContent = ""
-}
-
-function mostrarError(input, idDivError, mensaje) {
-    input.classList.remove("is-valid")
-    input.classList.add("is-invalid")
-    document.getElementById(idDivError).textContent = mensaje
-}
-
-function resetStates() {
-    const inputs = document.querySelectorAll(".form-control")
-    for (const input of inputs) {
-        input.classList.remove("is-invalid")
-        input.classList.remove("is-valid")
+function togglePasswordVisibility() {
+    if (inputPassword.type === "password") {
+        inputPassword.type = "text"
+        btnShowPassword.innerHTML = '<i class="bi bi-eye-slash"></i>'
+    } else {
+        inputPassword.type = "password"
+        btnShowPassword.innerHTML = '<i class="bi bi-eye"></i>'
     }
 }

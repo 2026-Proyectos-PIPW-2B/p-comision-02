@@ -1,3 +1,4 @@
+import { showCartCount } from "./common/utils.js";
 const cartContainer = document.getElementById("cartContainer");
 
 window.onload = () => {
@@ -383,6 +384,7 @@ const trashProductHandler = (product) => {
         mapProductsCart(newCart, cartContainer);
     }
     modal.hide()
+    showCartCount()
 }
 
 

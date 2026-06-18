@@ -48,3 +48,25 @@ export function createActionsButtons(parent, editHandler, deleteHandler) {
     parent.appendChild(editBtn)
     parent.appendChild(deleteBtn)
 }
+
+export const trashModal = (type, trashHandler) => {
+    
+    const modalElement = document.getElementById("trashModal")
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement)
+    
+    const title = document.getElementById("trashModalLabel")
+    const subtitle = document.querySelector("#trashModal h3")
+    const modalButton = document.querySelector("#trashModal .btn-danger")
+    
+    title.textContent = `Eliminar ${type}`
+    subtitle.textContent = `¿Quieres eliminar ${type === 'categoría' ? 'esta' : 'este'} ${type}?`
+    modalButton.onclick = () => {trashHandler()}
+
+    modal.show()
+}
+
+export function showCartCount() {
+    const cart = JSON.parse(localStorage.getItem("cart")) || []
+    const cartCount = document.getElementById("cartItemCount")
+    cartCount.textContent = cart.length
+}

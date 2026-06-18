@@ -1,4 +1,5 @@
 import { createActionsButtons, showNotification } from "./common/utils.js"
+import { showError, showSuccess, resetStates } from "./common/validations.js"
 
 let categories
 let products
@@ -10,6 +11,10 @@ let cancelBtn
 let tbodyCategories
 let categoryToUpdate
 let updateCancelButtons
+let currentPage
+let itemsPerPage
+let nextPageBtn
+let previousPageBtn
 
 window.onload = function() {
     categories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
@@ -21,6 +26,10 @@ window.onload = function() {
     cancelBtn = document.getElementById("cancelCategoryButton")
     tbodyCategories = document.getElementById("tbodyCategories")
     updateCancelButtons = document.getElementById("updateCancelButtons")
+    currentPage = 1
+    itemsPerPage = 10
+    nextPageBtn = document.getElementById("nextPage")
+    previousPageBtn = document.getElementById("previousPage")
 
     inputName.oninput = validateForm
     inputDescription.oninput = validateForm
@@ -43,6 +52,29 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+    document.getElementById("previousPage").addEventListener("click", (e) => {
+        e.preventDefault()
+        if (currentPage > 1) {
+            currentPage--
+            listCategories()
+        }
+    })
+    previousPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(categories.length / itemsPerPage)
+        if (currentPage > 1) {
+            currentPage--
+            listCategories()
+        }
+    })
+    nextPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(categories.length / itemsPerPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            listCategories()
+        }
+    })
     showSubmitButton()
     listCategories()
 }
@@ -164,7 +196,12 @@ function clearForm() {
 
 function listCategories() {
     tbodyCategories.innerHTML = ""
-    categories.forEach(element => {
+    
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedCategories = categories.slice(startIndex, endIndex)
+
+    paginatedCategories.forEach(element => {
         const row = document.createElement("tr")
         const colName = document.createElement("td")
         const colNameWrapper = document.createElement("div")
@@ -172,16 +209,15 @@ function listCategories() {
         const colDescription = document.createElement("td")
         const colCantProducts = document.createElement("td")
         const colActions = document.createElement("td")
+        
         createActionsButtons(colActions, () => {
-            categoryToUpdate = element
-            inputName.value = element.name
-            inputDescription.value = element.description
-
-            inputFocus()
-            showUpdatesButton()
-        },
-        () => {
-            deleteCategory(element)
+            categoryToUpdate = element;
+            inputName.value = element.name;
+            inputDescription.value = element.description;
+            inputFocus();
+            showUpdatesButton();
+        }, () => {
+            deleteCategory(element);
         })
 
         colName.scope = "row"
@@ -189,11 +225,12 @@ function listCategories() {
         colNameSpan.classList.add("cell-color")
         colNameSpan.style.background = element.color
 
-        
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
         colDescription.textContent = element.description || "-"
+        
         colCantProducts.textContent = products.filter(p => p.category === element.name).length
+        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)
@@ -203,6 +240,40 @@ function listCategories() {
 
         tbodyCategories.appendChild(row)
     })
+
+    updatePagination()
+}
+
+function updatePagination() {
+    const totalPages = Math.ceil(categories.length / itemsPerPage)
+    const prevButton = document.getElementById("previousPage")
+    const nextButton = document.getElementById("nextPage")
+    document.querySelectorAll('.dynamic-page-item').forEach(el => el.remove())
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li")
+        li.classList.add("page-item", "dynamic-page-item")
+        
+        if (i === currentPage) li.classList.add("active")
+
+        const a = document.createElement("a")
+        a.classList.add("page-link")
+        a.href = "#"
+        a.textContent = i
+
+        a.addEventListener("click", (e) => {
+            e.preventDefault()
+            currentPage = i
+            listCategories()
+        })
+
+        li.appendChild(a)
+
+        nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode)
+    }
+
+    prevButton.classList.toggle("disabled", currentPage === 1)
+    nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0)
 }
 
 function validateForm() {
@@ -213,15 +284,15 @@ function validateForm() {
     const isDescriptionValid = validator.isLength(description, { min: 0, max: 200 })
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isDescriptionValid) {
-        mostrarError(inputDescription, "descriptionError", "La descripción no puede tener más de 200 caracteres.")
+        showError(inputDescription, "descriptionError", "La descripción no puede tener más de 200 caracteres.")
     } else {
-        mostrarExito(inputDescription, "descriptionError")
+        showSuccess(inputDescription, "descriptionError")
     }
 
     submitBtn.disabled = !(isNameValid && isDescriptionValid)
@@ -230,24 +301,4 @@ function validateForm() {
 
 function validateName(name) {
     return !validator.isEmpty(name) && !categories.some(c => c.name === name && c !== categoryToUpdate)
-}
-
-function mostrarExito(input, idDivError) {
-    input.classList.remove("is-invalid")
-    input.classList.add("is-valid")
-    document.getElementById(idDivError).textContent = ""
-}
-
-function mostrarError(input, idDivError, mensaje) {
-    input.classList.remove("is-valid")
-    input.classList.add("is-invalid")
-    document.getElementById(idDivError).textContent = mensaje
-}
-
-function resetStates() {
-    const inputs = document.querySelectorAll(".form-control, .form-select")
-    for (const input of inputs) {
-        input.classList.remove("is-invalid")
-        input.classList.remove("is-valid")
-    }
 }
