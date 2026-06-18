@@ -1,8 +1,8 @@
 import { showCartCount } from "./common/utils.js";
+const cartContainer = document.getElementById("cartContainer");
 
 window.onload = () => {
-    let cart = JSON.parse(localStorage.getItem('cart')) || []
-    const cartContainer = document.getElementById("cartContainer");
+    let cart = JSON.parse(localStorage.getItem("userSession")).cart || []
 
     if (!cart.length) {
         mapEmptyCart(cartContainer);
@@ -282,8 +282,9 @@ const quantityHandler = (product, price) => {
         if (Number(quantityInput.value) > 1) {
             quantityInput.value = Number(quantityInput.value) - 1;
             updatePrice();
-
-            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
+            const userSession = JSON.parse(localStorage.getItem("userSession"))
+            const cart = userSession.cart  || []
+            const newCart = cart.map((p) => {
                 if (p.id === product.id) {
                     return {
                         ...p,
@@ -294,7 +295,7 @@ const quantityHandler = (product, price) => {
                 return p;
             });
             
-            localStorage.setItem("cart", JSON.stringify(newCart));
+            localStorage.setItem("userSession", JSON.stringify({...userSession, newCart}))
             const totalLabel = document.getElementById('totalCart')
             const total = newCart.reduce(
                 (acc, product) =>
@@ -313,7 +314,9 @@ const quantityHandler = (product, price) => {
             quantityInput.value = Number(quantityInput.value) + 1;
             updatePrice();
 
-            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
+            const userSession = JSON.parse(localStorage.getItem("userSession"))
+            const cart = userSession.cart  || []
+            const newCart = cart.map((p) => {
                 if (p.id === product.id) {
                     return {
                         ...p,
@@ -324,7 +327,7 @@ const quantityHandler = (product, price) => {
                 return p;
             });
             
-            localStorage.setItem("cart", JSON.stringify(newCart));
+            localStorage.setItem("userSession", JSON.stringify({...userSession, cart: newCart}))
             const totalLabel = document.getElementById('totalCart')
             const total = newCart.reduce(
                 (acc, product) =>
@@ -369,9 +372,10 @@ const trashProductHandler = (product) => {
     const modalElement = document.getElementById("trashProductModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
-    const cart = JSON.parse(localStorage.getItem("cart"))
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    const cart = userSession.cart
     const newCart = cart.filter(p => p.id !== product.id);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    localStorage.setItem("userSession", JSON.stringify({...userSession, cart:newCart}));
 
 
     if (!newCart.length) {
@@ -389,5 +393,44 @@ function confirmPurchase() {
     const modalElement = document.getElementById("exampleModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
+    const cart = JSON.parse(localStorage.getItem("userSession")).cart
+
+    // Create order
+    const products = cart.map((p) => {
+        return {
+            id: p.id,
+            product: p.name,
+            category: p.category,
+            price: p.price,
+            quantity: p.quantity,
+            image: p.image,
+        }
+    })
+    const total = cart.reduce(
+        (acc, product) =>
+            acc + Number(product.price) * Number(product.quantity),
+        0
+    );
+    const date = new Date().toLocaleString();
+    let id = JSON.parse(localStorage.getItem("ordersId"))
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    let username = userSession.username
+
+    // Order creada
+    const order = {id:id++, username, products, date, total, }
+    const { username: orderUser, ...orderWithoutUser } = order;
+
+    // Pushear a LS orders
+    const orders = JSON.parse(localStorage.getItem("orders")) || []
+    orders.push(order)
+    localStorage.setItem("orders", JSON.stringify(orders))
+    localStorage.setItem("ordersId", JSON.stringify(id++))
+
+    // Pushear a LS userSession
+    userSession.orders.push(orderWithoutUser);
+    userSession.cart = []
+    localStorage.setItem("userSession", JSON.stringify(userSession))
+    mapEmptyCart(cartContainer);
     modal.hide();
+
 }

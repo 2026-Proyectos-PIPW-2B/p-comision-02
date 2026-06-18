@@ -276,7 +276,8 @@ const confirmAddToCart = (product) => {
     const quantity = document.getElementById("quantityInput").value
     product.quantity = Number(quantity)
 
-    const cart = JSON.parse(localStorage.getItem("cart")) || []
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    const cart = userSession.cart  || []
 
     const index = cart.findIndex((p) => 
         p.id === product.id
@@ -286,7 +287,7 @@ const confirmAddToCart = (product) => {
         cart[index].quantity += product.quantity
     } else cart.push(product)
 
-    localStorage.setItem("cart", JSON.stringify(cart))
+    localStorage.setItem("userSession", JSON.stringify({...userSession, cart}))
 
     const toastTrigger = document.getElementById('confirmAddToCart')
     const toastLiveExample = document.getElementById('liveToast')

@@ -1,4 +1,4 @@
-import { usersMock } from "./mocks.js"
+import { ordersMock, usersMock } from "./mocks.js"
 import { categoriesMock } from "./mocks.js"
 import { productsMock } from "./mocks.js"
 import { showCartCount } from "./utils.js"
@@ -9,7 +9,7 @@ const globalOnload = () => {
     }
 
     // products seed
-    if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0) {
+    if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0 || (!localStorage.getItem("productsId"))) {
         localStorage.setItem("products", JSON.stringify(productsMock))
         localStorage.setItem("productsId", "9")
     } 
@@ -18,11 +18,16 @@ const globalOnload = () => {
         localStorage.setItem("categories", JSON.stringify(categoriesMock))
     }
     // Admin seed y user seed
-	if(!localStorage.getItem("users"))
-	localStorage.setItem("users", JSON.stringify(usersMock))
+    if(!localStorage.getItem("users"))
+      localStorage.setItem("users", JSON.stringify(usersMock))
 
+    if(!localStorage.getItem("orders") || JSON.parse(localStorage.getItem("orders")).length === 0 || (!localStorage.getItem("ordersId"))) {
+        localStorage.setItem("orders", JSON.stringify(ordersMock))
+        localStorage.setItem("ordersId", "11")
+    }
+  
     showCartCount()
-}
+
 
 document.addEventListener("DOMContentLoaded", () => {
     globalOnload()
