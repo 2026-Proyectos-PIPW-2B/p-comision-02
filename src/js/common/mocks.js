@@ -412,7 +412,7 @@ export const configurationMock = {
         profile: 8,
         admin: 12,
     },
-    minimumPurchaseAmount: 5000,
+    minimumPurchaseAmount: 20000,
     stock: {
         lowThreshold: 10,
         mediumThreshold: 50,

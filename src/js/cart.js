@@ -1,8 +1,10 @@
-import { showCartCount } from "./common/utils.js";
+import { showCartCount, showNotification } from "./common/utils.js";
 const cartContainer = document.getElementById("cartContainer");
 
 window.onload = () => {
     let cart = JSON.parse(localStorage.getItem("userSession")).cart || []
+    const confirmPurchaseButton = document.getElementById("confirmPurchaseButton")
+    confirmPurchaseButton.addEventListener("click", confirmPurchase)
 
     if (!cart.length) {
         mapEmptyCart(cartContainer);
@@ -389,11 +391,27 @@ const trashProductHandler = (product) => {
 
 
 function confirmPurchase() {
-    
     const modalElement = document.getElementById("exampleModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-
+    
     const cart = JSON.parse(localStorage.getItem("userSession")).cart
+    
+    const total = cart.reduce(
+        (acc, product) =>
+            acc + Number(product.price) * Number(product.quantity),
+        0
+    );
+
+    if(total < JSON.parse(localStorage.getItem("configuration")).minimumPurchaseAmount) {
+        showNotification({
+            type: "error",
+            title: "realizarla compra",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: `La compra no alcanza el monto minimo: ${JSON.parse(localStorage.getItem("configuration")).minimumPurchaseAmount}`
+        })
+        modal.hide()
+        return
+    } 
 
     // Create order
     const products = cart.map((p) => {
@@ -406,11 +424,6 @@ function confirmPurchase() {
             image: p.image,
         }
     })
-    const total = cart.reduce(
-        (acc, product) =>
-            acc + Number(product.price) * Number(product.quantity),
-        0
-    );
     const date = new Date().toLocaleString();
     let id = JSON.parse(localStorage.getItem("ordersId"))
     const userSession = JSON.parse(localStorage.getItem("userSession"))
@@ -427,10 +440,14 @@ function confirmPurchase() {
     localStorage.setItem("ordersId", JSON.stringify(id++))
 
     // Pushear a LS userSession
-    userSession.orders.push(orderWithoutUser);
-    userSession.cart = []
-    localStorage.setItem("userSession", JSON.stringify(userSession))
+    localStorage.setItem("userSession", JSON.stringify({...userSession, cart: []}))
     mapEmptyCart(cartContainer);
     modal.hide();
+    showNotification({
+        type: "success",
+        title: "Compra realizada",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "Su compra se registró correctamente"
+    })
 
 }
