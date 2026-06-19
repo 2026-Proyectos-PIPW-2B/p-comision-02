@@ -32,8 +32,22 @@ const globalOnload = () => {
         localStorage.setItem("configuration", JSON.stringify(configurationMock))
     }
 
-    showCartCount()
-}
+    // Session expiring
+    const session = JSON.parse(localStorage.getItem("userSession"));
+    if (session) {
+        const expirationDate = new Date(session.expiresAt);
+
+        if (Date.now() > expirationDate.getTime()) {
+            localStorage.removeItem("userSession");
+            window.location.href = "/src/pages/login.html?reason=session_expired";
+        }
+    }
+
+    // Cart counter icon
+    if(!window.location.href.includes("admin") && !window.location.href.includes("login")) {
+        showCartCount()
+    }
+    }
 
 document.addEventListener("DOMContentLoaded", () => {
     globalOnload()

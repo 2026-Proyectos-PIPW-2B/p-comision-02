@@ -405,7 +405,8 @@ export const ordersMock = [
 ];
 
 export const configurationMock = {
-    sessionExpiring: 72,
+    userSessionExpiring: 72,
+    adminSessionExpiring: 72,
     pagination: {
         catalog: 10,
         profile: 8,

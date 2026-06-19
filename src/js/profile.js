@@ -20,9 +20,11 @@ const mapOrders = () => {
     const tbody = document.getElementById("tbodyCategories");
     tbody.innerHTML = "";
 
-    const userSession = JSON.parse(localStorage.getItem("userSession"));
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+	const allOrders = JSON.parse(localStorage.getItem("orders")) || []
+	const userOrders = allOrders.filter( o => userSession.username === o.username )
 
-    if (!userSession?.orders?.length) {
+    if (!userOrders.length) {
         const tr = document.createElement("tr");
 
         const td = document.createElement("td");
@@ -36,7 +38,7 @@ const mapOrders = () => {
         return;
     }
 
-    userSession.orders.forEach((order) => {
+    userOrders.forEach((order) => {
         const tr = document.createElement("tr");
 
         // ID

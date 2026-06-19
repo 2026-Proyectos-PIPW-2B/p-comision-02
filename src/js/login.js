@@ -1,11 +1,17 @@
 window.onload = () => {
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
-
 	userInput.value = ""
+
+	const divErrorMessage = document.getElementById("divErrorMessage")
+	const params = new URLSearchParams(window.location.search);
+	if (params.get("reason") === "session_expired") {
+		divErrorMessage.textContent = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+	}
 };
 
 const login = () => {
+	
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
 
@@ -20,8 +26,9 @@ const login = () => {
 };
 
 const loginSuccess = (userMatch) => {
-	const allOrders = JSON.parse(localStorage.getItem("orders")) || []
-	const userOrders = allOrders.filter( o => userMatch.username === o.username )
+	const userExpiringTime = JSON.parse(localStorage.getItem("configuration")).userSessionExpiring
+	const adminExpiringTime = JSON.parse(localStorage.getItem("configuration")).adminSessionExpiring
+	const expiresAt = userMatch.isAdmin ? new Date(Date.now() + adminExpiringTime * 60 * 60 * 1000) : new Date(Date.now() + userExpiringTime * 60 * 60 * 1000)
 	localStorage.setItem(
 		"userSession",
 		JSON.stringify({
@@ -29,8 +36,9 @@ const loginSuccess = (userMatch) => {
 			lastname: userMatch.lastname || "Doe",
 			username: userMatch.username,
 			isAdmin: userMatch.isAdmin,
-			orders: userOrders,
 			cart: [],
+			expiresAt,
+			expiresAtFormatted: expiresAt.toLocaleString()
 		}),
 	);
 

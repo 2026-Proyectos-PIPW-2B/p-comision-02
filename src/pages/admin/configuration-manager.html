@@ -59,15 +59,28 @@
         <!-- Sesión -->
         <div class="card mb-4">
             <div class="card-header">
-                <h5 class="mb-0">Sesión de Usuario</h5>
+                <h5 class="mb-0">Expiración de sesión</h5>
             </div>
             <div class="card-body">
-                <label for="sessionDuration" class="form-label">
-                    Tiempo de validez de la sesión (horas)
-                </label>
-                <input type="number" class="form-control" id="sessionDuration" min="1">
-                <div class="form-text">
-                    Tiempo máximo que permanecerá iniciada una sesión.
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label for="sessionDurationUser" class="form-label">
+                            Usuario (horas)
+                        </label>
+                        <input type="number" class="form-control" id="sessionDurationUser">
+                        <div class="form-text">
+                            Tiempo máximo que permanecerá iniciada la sesión de usuario.
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="sessionDurationAdmin" class="form-label">
+                            Duración de sesión administrador (horas)
+                        </label>
+                        <input type="number" class="form-control" id="sessionDurationAdmin">
+                        <div class="form-text">
+                            Tiempo máximo que permanecerá iniciada una sesión.
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

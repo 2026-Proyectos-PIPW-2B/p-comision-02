@@ -9,7 +9,8 @@ window.addEventListener("load", () => {
 const loadParameters = () => {
 	const configuration = JSON.parse(localStorage.getItem("configuration"));
 	if (!configuration) return;
-	document.getElementById("sessionDuration").value = configuration.sessionExpiring;
+	document.getElementById("sessionDurationUser").value = configuration.userSessionExpiring;
+	document.getElementById("sessionDurationAdmin").value = configuration.adminSessionExpiring;
 	document.getElementById("catalogPagination").value = configuration.pagination.catalog;
 	document.getElementById("profilePagination").value = configuration.pagination.profile;
 	document.getElementById("adminPagination").value = configuration.pagination.admin;
@@ -20,10 +21,13 @@ const loadParameters = () => {
 };
 
 const submitParameters = () => {
-	const configuration = { sessionExpiring: Number(
-			document.getElementById("sessionDuration").value,
+	const configuration = { 
+		userSessionExpiring: Number(
+			document.getElementById("sessionDurationUser").value,
 		),
-
+		adminSessionExpiring: Number(
+			document.getElementById("sessionDurationAdmin").value,
+		),
 		pagination: {
 			catalog: Number(document.getElementById("catalogPagination").value),
 			profile: Number(document.getElementById("profilePagination").value),
