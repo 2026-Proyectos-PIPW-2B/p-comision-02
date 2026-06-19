@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Products Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="../../styles/styles.css">
+</head>
+
+<body>
+
+    <!-- navbar -->
+    <nav class="navbar navbar-dark navbar-expand-lg bg-dark fixed-top">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas"
+                data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand fs-4" href="#"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Panel
+                Administrador</a>
+            <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
+                aria-labelledby="offcanvasDarkNavbarLabel">
+                <div class="offcanvas-header">
+                    <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">Panel Administrador</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
+                        aria-label="Close"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="products-manager.html">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="categories-manager.html">Categorías</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="users-manager.html">Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link " href="orders-manager.html">Ordenes</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page"
+                                href="configuration-manager.html">Configuración</a>
+                        </li>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <br><br>
+
+    <form class="m-5" id="settingsForm">
+
+        <!-- Sesión -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Sesión de Usuario</h5>
+            </div>
+            <div class="card-body">
+                <label for="sessionDuration" class="form-label">
+                    Tiempo de validez de la sesión (horas)
+                </label>
+                <input type="number" class="form-control" id="sessionDuration" min="1">
+                <div class="form-text">
+                    Tiempo máximo que permanecerá iniciada una sesión.
+                </div>
+            </div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Paginación</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label for="catalogPagination" class="form-label">
+                            Catálogo
+                        </label>
+                        <input type="number" class="form-control" id="catalogPagination" min="1">
+                        <div class="form-text">
+                            Productos visibles por página en el catálogo.
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="profilePagination" class="form-label">
+                            Perfil de Usuario
+                        </label>
+                        <input type="number" class="form-control" id="profilePagination" min="1">
+                        <div class="form-text">
+                            Órdenes visibles por página en el perfil.
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="adminPagination" class="form-label">
+                            Panel Administrador
+                        </label>
+                        <input type="number" class="form-control" id="adminPagination" min="1">
+                        <div class="form-text">
+                            Registros visibles por página en tablas administrativas.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Compras -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Compras</h5>
+            </div>
+            <div class="card-body">
+                <label for="minimumPurchase" class="form-label">
+                    Monto mínimo de compra ($)
+                </label>
+                <input type="number" class="form-control" id="minimumPurchase" min="0" step="100">
+                <div class="form-text">
+                    Importe mínimo requerido para finalizar una compra.
+                </div>
+            </div>
+        </div>
+
+        <!-- Stock -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">Umbrales de Stock</h5>
+            </div>
+
+            <div class="card-body">
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+                        <label for="lowStockThreshold" class="form-label">
+                            Stock Bajo
+                        </label>
+                        <input type="number" class="form-control" id="lowStockThreshold" min="0">
+                        <div class="form-text">
+                            Hasta esta cantidad se considera stock bajo.
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="mediumStockThreshold" class="form-label">
+                            Stock Medio
+                        </label>
+                        <input type="number" class="form-control" id="mediumStockThreshold" min="0">
+                        <div class="form-text">
+                            Límite superior para stock medio.
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="highStockThreshold" class="form-label">
+                            Stock Alto
+                        </label>
+                        <input type="number" class="form-control" id="highStockThreshold" min="0">
+                        <div class="form-text">
+                            Desde esta cantidad se considera stock alto.
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2">
+            <button type="button" id="resetValuesButton" class="btn btn-secondary">
+                Resetear valores
+            </button>
+            <button type="button" id="submitValuesButton" class="btn btn-primary">
+                Guardar Configuración
+            </button>
+        </div>
+
+    </form>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/validator@latest/validator.min.js"></script>
+    <script type="module" src="../../js/common/global.js"></script>
+    <script type="module" src="../../js/configuration-manager.js"></script>
+</body>
+
+</html>

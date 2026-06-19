@@ -403,3 +403,18 @@ export const ordersMock = [
         ],
     },
 ];
+
+export const configurationMock = {
+    sessionExpiring: 72,
+    pagination: {
+        catalog: 10,
+        profile: 8,
+        admin: 12,
+    },
+    minimumPurchaseAmount: 5000,
+    stock: {
+        lowThreshold: 10,
+        mediumThreshold: 50,
+        highThreshold: 100,
+    },
+};
