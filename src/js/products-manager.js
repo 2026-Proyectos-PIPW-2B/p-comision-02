@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination } from "./common/utils.js"
 import { showError, showSuccess, resetStates } from "./common/validations.js"
 
 let productsId
@@ -209,8 +209,10 @@ function deleteProduct(product) {
     listProducts()
 }
 
-function listProducts() {
+function listProducts(page) {
     tbodyProducts.innerHTML = ""
+
+    currentPage = page || currentPage;
 
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
@@ -260,39 +262,7 @@ function listProducts() {
         tbodyProducts.appendChild(row)
     })
 
-    updatePagination()
-}
-
-function updatePagination() {
-    const totalPages = Math.ceil(products.length / itemsPerPage)
-    const prevButton = document.getElementById("previousPage")
-    const nextButton = document.getElementById("nextPage")
-    document.querySelectorAll('.dynamic-page-item').forEach(el => el.remove())
-
-    for (let i = 1; i <= totalPages; i++) {
-        const li = document.createElement("li")
-        li.classList.add("page-item", "dynamic-page-item")
-        
-        if (i === currentPage) li.classList.add("active")
-
-        const a = document.createElement("a")
-        a.classList.add("page-link")
-        a.href = "#"
-        a.textContent = i
-
-        a.addEventListener("click", (e) => {
-            e.preventDefault()
-            currentPage = i
-            listProducts()
-        })
-
-        li.appendChild(a)
-
-        nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode)
-    }
-
-    prevButton.classList.toggle("disabled", currentPage === 1)
-    nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0)
+    updatePagination(products, listProducts, itemsPerPage, currentPage)
 }
 
 function validateForm() {

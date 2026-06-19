@@ -1,24 +1,58 @@
-window.addEventListener("load", () => {
-    const logoutButton = document.getElementById("logoutButton")
-    logoutButton.addEventListener("click", () => {logout()})
-    const userSession = JSON.parse(localStorage.getItem("userSession"))
-    const namelastname = document.getElementById("namelastname")
-    const username = document.getElementById("username") 
-    namelastname.textContent = `${userSession.name} ${userSession.lastname}`
-    username.textContent = userSession.username
+import { updatePagination } from "./common/utils.js";
 
-    
-    mapOrders()
-})
+let ordersUser
+let currentPage;
+let itemsPerPage;
+let nextPageBtn;
+let previousPageBtn;
+
+window.addEventListener("load", () => {
+    const logoutButton = document.getElementById("logoutButton");
+    logoutButton.addEventListener("click", () => {
+        logout();
+    });
+    const userSession = JSON.parse(localStorage.getItem("userSession"));
+    const namelastname = document.getElementById("namelastname");
+    const username = document.getElementById("username");
+    namelastname.textContent = `${userSession.name} ${userSession.lastname}`;
+    username.textContent = userSession.username;
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    ordersUser = orders.filter((order) => order.username === userSession.username);
+    currentPage = 1;
+    itemsPerPage = 10;
+    nextPageBtn = document.getElementById("nextPage");
+    previousPageBtn = document.getElementById("previousPage");
+
+
+    previousPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(ordersUser.length / itemsPerPage)
+        if (currentPage > 1) {
+            currentPage--
+            mapOrders()
+        }
+    })
+    nextPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(ordersUser.length / itemsPerPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            mapOrders()
+        }
+    })
+    mapOrders();
+});
 
 const logout = () => {
-    localStorage.removeItem("userSession")
-    window.location.href = `/src/pages/login.html`
-}
+    localStorage.removeItem("userSession");
+    window.location.href = `/src/pages/login.html`;
+};
 
-const mapOrders = () => {
+const mapOrders = (page) => {
     const tbody = document.getElementById("tbodyCategories");
     tbody.innerHTML = "";
+
+    currentPage = page || currentPage;
 
     const userSession = JSON.parse(localStorage.getItem("userSession"));
 
@@ -36,7 +70,11 @@ const mapOrders = () => {
         return;
     }
 
-    userSession.orders.forEach((order) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedOrders = ordersUser.slice(startIndex, endIndex);
+
+    paginatedOrders.forEach((order) => {
         const tr = document.createElement("tr");
 
         // ID
@@ -54,7 +92,7 @@ const mapOrders = () => {
         viewButton.textContent = "Ver productos";
 
         viewButton.onclick = () => {
-            showProductsModal(order.products)
+            showProductsModal(order.products);
         };
 
         tdProducts.appendChild(productsInfo);
@@ -75,13 +113,14 @@ const mapOrders = () => {
 
         tbody.appendChild(tr);
     });
+    updatePagination(ordersUser, mapOrders, itemsPerPage, currentPage);
 };
 
 const showProductsModal = (products) => {
     const modalTitle = document.getElementById("staticBackdropLabel");
     const modalBody = document.querySelector("#staticBackdrop .modal-body");
 
-    modalTitle.textContent = `Mostrando ${products.length} producto${products.length>1 ? `s` : ``}`;
+    modalTitle.textContent = `Mostrando ${products.length} producto${products.length > 1 ? `s` : ``}`;
 
     // Limpiar contenido anterior
     modalBody.innerHTML = "";
@@ -141,8 +180,8 @@ const showProductsModal = (products) => {
     });
 
     const modal = new bootstrap.Modal(
-        document.getElementById("staticBackdrop")
+        document.getElementById("staticBackdrop"),
     );
 
     modal.show();
-}
+};

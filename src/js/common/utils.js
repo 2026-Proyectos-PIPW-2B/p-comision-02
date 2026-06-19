@@ -26,47 +26,78 @@ export function showNotification(notification) {
         notificationDiv.addEventListener(
             "animationend",
             () => notificationDiv.remove(),
-            { once: true }
+            { once: true },
         );
     }, 3000);
 }
 
-
 export function createActionsButtons(parent, editHandler, deleteHandler) {
-    const editBtn = document.createElement("button")
-    const deleteBtn = document.createElement("button")
+    const editBtn = document.createElement("button");
+    const deleteBtn = document.createElement("button");
 
-    editBtn.classList.add("btn", "btn-sm", "btn-outline-primary")
-    deleteBtn.classList.add("btn", "btn-sm", "btn-outline-danger")
+    editBtn.classList.add("btn", "btn-sm", "btn-outline-primary");
+    deleteBtn.classList.add("btn", "btn-sm", "btn-outline-danger");
 
-    editBtn.innerHTML = '<i class="bi bi-pencil-fill"></i>'
-    deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>'
+    editBtn.innerHTML = '<i class="bi bi-pencil-fill"></i>';
+    deleteBtn.innerHTML = '<i class="bi bi-trash-fill"></i>';
 
-    editBtn.onclick = editHandler
-    deleteBtn.onclick = deleteHandler
+    editBtn.onclick = editHandler;
+    deleteBtn.onclick = deleteHandler;
 
-    parent.appendChild(editBtn)
-    parent.appendChild(deleteBtn)
+    parent.appendChild(editBtn);
+    parent.appendChild(deleteBtn);
 }
 
 export const trashModal = (type, trashHandler) => {
-    
-    const modalElement = document.getElementById("trashModal")
-    const modal = bootstrap.Modal.getOrCreateInstance(modalElement)
-    
-    const title = document.getElementById("trashModalLabel")
-    const subtitle = document.querySelector("#trashModal h3")
-    const modalButton = document.querySelector("#trashModal .btn-danger")
-    
-    title.textContent = `Eliminar ${type}`
-    subtitle.textContent = `¿Quieres eliminar ${type === 'categoría' ? 'esta' : 'este'} ${type}?`
-    modalButton.onclick = () => {trashHandler()}
+    const modalElement = document.getElementById("trashModal");
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
-    modal.show()
-}
+    const title = document.getElementById("trashModalLabel");
+    const subtitle = document.querySelector("#trashModal h3");
+    const modalButton = document.querySelector("#trashModal .btn-danger");
+
+    title.textContent = `Eliminar ${type}`;
+    subtitle.textContent = `¿Quieres eliminar ${type === "categoría" ? "esta" : "este"} ${type}?`;
+    modalButton.onclick = () => {
+        trashHandler();
+    };
+
+    modal.show();
+};
 
 export function showCartCount() {
-    const cart = JSON.parse(localStorage.getItem("userSession")).cart || []
-    const cartCount = document.getElementById("cartItemCount")
-    cartCount.textContent = cart.length
+    const cart = JSON.parse(localStorage.getItem("userSession")).cart || [];
+    const cartCount = document.getElementById("cartItemCount");
+    cartCount.textContent = cart.length;
+}
+
+export function updatePagination(array, listFunction, itemsPerPage, currentPage) {
+    const totalPages = Math.ceil(array.length / itemsPerPage);
+    const prevButton = document.getElementById("previousPage");
+    const nextButton = document.getElementById("nextPage");
+    document.querySelectorAll(".dynamic-page-item").forEach((el) => el.remove());
+
+    for (let i = 1; i <= totalPages; i++) {
+        const li = document.createElement("li");
+        li.classList.add("page-item", "dynamic-page-item");
+
+        if (i === currentPage) li.classList.add("active");
+
+        const a = document.createElement("a");
+        a.classList.add("page-link");
+        a.href = "#";
+        a.textContent = i;
+
+        a.addEventListener("click", (e) => {
+            e.preventDefault();
+            listFunction(i);
+        });
+
+        li.appendChild(a);
+
+        nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode);
+    }
+
+    prevButton.classList.toggle("disabled", currentPage === 1);
+    nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0);
 }
