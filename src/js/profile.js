@@ -1,6 +1,6 @@
 import { updatePagination } from "./common/utils.js";
 
-let ordersUser
+let ordersUser;
 let currentPage;
 let itemsPerPage;
 let nextPageBtn;
@@ -16,30 +16,46 @@ window.addEventListener("load", () => {
     const username = document.getElementById("username");
     namelastname.textContent = `${userSession.name} ${userSession.lastname}`;
     username.textContent = userSession.username;
+
     const orders = JSON.parse(localStorage.getItem("orders")) || [];
-    ordersUser = orders.filter((order) => order.username === userSession.username);
+    ordersUser = orders.filter(
+        (order) => order.username === userSession.username,
+    );
     currentPage = 1;
     itemsPerPage = 10;
     nextPageBtn = document.getElementById("nextPage");
     previousPageBtn = document.getElementById("previousPage");
 
+    const editProfileImageButton = document.getElementById(
+        "editProfileImageButton",
+    );
+    editProfileImageButton.addEventListener("click", () => {
+        const profileImages = [
+            "/src/img/blank-profile-picture-973460_960_720.png",
+            "/src/img/cat-profile-img.jpg",
+            "/src/img/minion-profile-img.jpg",
+            "/src/img/profile-1197063289.png"
+        ];
+        showProfileModal(profileImages);
+    });
 
     previousPageBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const totalPages = Math.ceil(ordersUser.length / itemsPerPage)
+        const totalPages = Math.ceil(ordersUser.length / itemsPerPage);
         if (currentPage > 1) {
-            currentPage--
-            mapOrders()
+            currentPage--;
+            mapOrders();
         }
-    })
+    });
     nextPageBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const totalPages = Math.ceil(ordersUser.length / itemsPerPage)
+        const totalPages = Math.ceil(ordersUser.length / itemsPerPage);
         if (currentPage < totalPages) {
-            currentPage++
-            mapOrders()
+            currentPage++;
+            mapOrders();
         }
-    })
+    });
+
     mapOrders();
 });
 
@@ -185,3 +201,47 @@ const showProductsModal = (products) => {
 
     modal.show();
 };
+
+const showProfileModal = (images) => {
+    const modalElement = document.getElementById("staticBackdropProfile");
+    const modalTitle = document.getElementById("staticBackdropLabelProfile");
+    const modalBody = document.querySelector("#staticBackdropProfile .row");
+
+    modalTitle.textContent = `Cambiar foto de perfil`;
+
+    // Limpiar contenido anterior
+    modalBody.innerHTML = "";
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement)
+
+    images.forEach((element) => {
+        const col = document.createElement("div");
+        col.className = "col mb-3";
+
+        const card = document.createElement("div");
+        card.className = "card h-100 cursor-pointer overflow-hidden";
+
+        const image = document.createElement("img");
+        image.src = element;
+        image.className = "img-fluid w-100 h-100 object-fit-cover";
+
+        card.appendChild(image);
+        col.appendChild(card);
+
+        card.addEventListener("click", () => {
+            changeProfileImage(element);
+            modal.hide()
+        });
+
+        modalBody.appendChild(col);
+    });
+
+    modal.show();
+};
+
+function changeProfileImage(newImageUrl) {
+    const profileImage = document.getElementById("profileImage");
+    if (profileImage) {
+        profileImage.src = newImageUrl;
+    }
+}
