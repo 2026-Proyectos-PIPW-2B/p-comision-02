@@ -28,7 +28,7 @@ export function showNotification(notification) {
             () => notificationDiv.remove(),
             { once: true },
         );
-    }, 3000);
+    }, notification.time || 3000);
 }
 
 export function createActionsButtons(parent, editHandler, deleteHandler) {

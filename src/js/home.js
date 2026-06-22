@@ -117,9 +117,24 @@ const mapProducts = (products, productsContainer) => {
         const infoContainer = document.createElement("div");
         infoContainer.className = "d-flex justify-content-between";
 
-        const stock = document.createElement("p");
-        stock.className = "card-text";
-        stock.textContent = `Stock: ${product.stock}`;
+        const stock = document.createElement("span");
+        stock.className = "card-text mb-3";
+        stock.textContent = `Stock: `;
+        const stockNumber = document.createElement("span");
+        
+        const {lowThreshold, mediumThreshold, highThreshold} = JSON.parse(localStorage.getItem("configuration")).stock
+        console.log(lowThreshold, mediumThreshold, highThreshold);
+        
+        const stockLevel =
+        product.stock <= lowThreshold ? "text-bg-danger" :
+        product.stock <= mediumThreshold ? "text-bg-warning" :
+        product.stock <= highThreshold ? "text-bg-success" :
+        "text-bg-dark";    
+
+        stockNumber.classList = `badge ${stockLevel} fs-6 px-2 py-1`
+        stockNumber.textContent = `${product.stock}`;
+        stock.appendChild(stockNumber)
+
 
         const price = document.createElement("p");
         price.className = "card-text";
@@ -176,9 +191,21 @@ const addToCartModal = (product) => {
     category.className = "card-text";
     category.textContent = `Categoria: ${product.category}`;
 
-    const stock = document.createElement("p");
+    const stock = document.createElement("span");
     stock.className = "card-text";
-    stock.textContent = `Stock: ${product.stock}`;
+    stock.textContent = `Stock: `;
+    const stockNumber = document.createElement("span");
+    
+    const {lowThreshold, mediumThreshold, highThreshold} = JSON.parse(localStorage.getItem("configuration")).stock
+    const stockLevel =
+    product.stock <= lowThreshold ? "text-bg-danger" :
+    product.stock <= mediumThreshold ? "text-bg-warning" :
+    product.stock <= highThreshold ? "text-bg-success" :
+    "text-bg-dark";    
+
+    stockNumber.classList = `badge ${stockLevel} fs-6 px-2 py-1`
+    stockNumber.textContent = `${product.stock}`;
+    stock.appendChild(stockNumber)
 
     const price = document.createElement("span");
     price.style.maxHeight = 'fit-content'
@@ -188,7 +215,7 @@ const addToCartModal = (product) => {
     const priceQuantityWrapper = document.createElement("div");
     priceQuantityWrapper.appendChild(quantityHandler(product, price));
     priceQuantityWrapper.appendChild(price);
-    priceQuantityWrapper.className = "d-flex justify-content-between align-items-center"
+    priceQuantityWrapper.className = "d-flex justify-content-between align-items-center mt-3"
 
     cardBody.appendChild(title);
     cardBody.appendChild(category);

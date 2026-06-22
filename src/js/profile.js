@@ -67,12 +67,10 @@ const logout = () => {
 const mapOrders = (page) => {
     const tbody = document.getElementById("tbodyCategories");
     tbody.innerHTML = "";
-
     currentPage = page || currentPage;
-
     const userSession = JSON.parse(localStorage.getItem("userSession"));
 
-    if (!userSession?.orders?.length) {
+    if (!userOrders.length) {
         const tr = document.createElement("tr");
 
         const td = document.createElement("td");
