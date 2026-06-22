@@ -2,7 +2,7 @@ import { updatePagination } from "./common/utils.js";
 import { usersApi } from "./api/usersApi.js";
 
 let user;
-let ordersUser;
+let userOrders;
 let currentPage;
 let itemsPerPage;
 let nextPageBtn;
@@ -21,7 +21,7 @@ window.addEventListener("load", () => {
     username.textContent = userSession.username;
 
     const orders = JSON.parse(localStorage.getItem("orders")) || [];
-    ordersUser = orders.filter(
+    userOrders = orders.filter(
         (order) => order.username === userSession.username,
     );
     currentPage = 1;
@@ -29,7 +29,7 @@ window.addEventListener("load", () => {
     nextPageBtn = document.getElementById("nextPage");
     previousPageBtn = document.getElementById("previousPage");
 
-    user = users.find((user) => user.username === userSession.username);
+    user = usersApi.getUserByUsername(userSession.username);
     changeProfileImage(user?.profileImage);
     const editProfileImageButton = document.getElementById(
         "editProfileImageButton",
@@ -46,7 +46,7 @@ window.addEventListener("load", () => {
 
     previousPageBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const totalPages = Math.ceil(ordersUser.length / itemsPerPage);
+        const totalPages = Math.ceil(userOrders.length / itemsPerPage);
         if (currentPage > 1) {
             currentPage--;
             mapOrders();
@@ -54,7 +54,7 @@ window.addEventListener("load", () => {
     });
     nextPageBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        const totalPages = Math.ceil(ordersUser.length / itemsPerPage);
+        const totalPages = Math.ceil(userOrders.length / itemsPerPage);
         if (currentPage < totalPages) {
             currentPage++;
             mapOrders();
@@ -91,7 +91,7 @@ const mapOrders = (page) => {
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedOrders = ordersUser.slice(startIndex, endIndex);
+    const paginatedOrders = userOrders.slice(startIndex, endIndex);
 
     paginatedOrders.forEach((order) => {
         const tr = document.createElement("tr");
@@ -132,7 +132,7 @@ const mapOrders = (page) => {
 
         tbody.appendChild(tr);
     });
-    updatePagination(ordersUser, mapOrders, itemsPerPage, currentPage);
+    updatePagination(userOrders, mapOrders, itemsPerPage, currentPage);
 };
 
 const showProductsModal = (products) => {
