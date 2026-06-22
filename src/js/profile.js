@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
     logoutButton.addEventListener("click", () => {
         logout();
     });
-    const users = JSON.parse(localStorage.getItem("users")) || [];
+    const users = usersApi.getAllUsers();
     const userSession = JSON.parse(localStorage.getItem("userSession"));
     const namelastname = document.getElementById("namelastname");
     const username = document.getElementById("username");

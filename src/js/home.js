@@ -1,3 +1,5 @@
+import { categoriesApi } from "./api/categoriesApi.js";
+import { productsApi } from "./api/productsApi.js";
 import { showNotification, showCartCount } from "./common/utils.js";
 
 const modalElement = document.getElementById("cartModal");
@@ -12,8 +14,8 @@ const searchInput = document.getElementById("searchInput")
 window.onload = () => {
     
     const productsContainer = document.getElementById("productsContainer");
-    mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
-    updateFilterCategories(JSON.parse(localStorage.getItem("categories")));
+    mapProducts(productsApi.getAllProducts(), productsContainer);
+    updateFilterCategories(categoriesApi.getAllCategories());
     searchInput.oninput = handleFilters
 };
 
@@ -339,7 +341,7 @@ const confirmAddToCart = (product) => {
 }
 
 const handleFilters = () => {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
+    const products = productsApi.getAllProducts();
 
     const floatingSelect = document.getElementById("floatingSelect");
     const searchInput = document.getElementById("searchInput");
