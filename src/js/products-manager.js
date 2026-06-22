@@ -1,5 +1,7 @@
 import { createActionsButtons, showNotification, trashModal, updatePagination } from "./common/utils.js"
 import { showError, showSuccess, resetStates } from "./common/validations.js"
+import { productsApi } from "./api/productsApi.js"
+import { categoriesApi } from "./api/categoriesApi.js"
 
 let productsId
 let products
@@ -25,8 +27,8 @@ let visualizerModal
 
 window.onload = function() {
     productsId = localStorage.getItem('productsId') ? parseInt(localStorage.getItem('productsId')) : 0
-    products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
-    listCategories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
+    products = productsApi.getAllProducts()
+    listCategories = categoriesApi.getAllCategories()
     inputName = document.getElementById('inputName')
     inputPrice = document.getElementById('inputPrice')
     inputStock = document.getElementById('inputStock')
@@ -155,8 +157,8 @@ function submitProduct() {
     }
     productsId++
     localStorage.setItem("productsId", productsId)
-    products.push(product)
-    localStorage.setItem("products", JSON.stringify(products))
+    productsApi.createProduct(product)
+    products = productsApi.getAllProducts()
     clearForm()
     inputBlur()
     showNotification({
@@ -175,15 +177,15 @@ function updateProduct() {
     const productCategory = selectCategory.value
     const productImage = selectImage.value
 
-    const productIndex = products.findIndex(p => p.id === productToUpdate.id)
-    if (productIndex !== -1) {
-        products[productIndex].name = productName
-        products[productIndex].price = productPrice
-        products[productIndex].stock = productStock
-        products[productIndex].category = productCategory
-        products[productIndex].image = productImage
-        localStorage.setItem("products", JSON.stringify(products))
+    const updatedProduct = {
+        name: productName,
+        price: productPrice,
+        stock: productStock,
+        category: productCategory,
+        image: productImage
     }
+    productsApi.updateProduct(updatedProduct)
+    products = productsApi.getAllProducts()
     productToUpdate = null
     showNotification({
         type: "success",
@@ -198,8 +200,8 @@ function updateProduct() {
 }
 
 function deleteProduct(product) {
-    products = products.filter(p => p.id !== product.id)
-    localStorage.setItem("products", JSON.stringify(products))
+    productsApi.deleteProduct(product.id)
+    products = productsApi.getAllProducts()
     showNotification({
         type: "success",
         title: "Producto eliminado",

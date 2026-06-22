@@ -1,5 +1,7 @@
 import { updatePagination } from "./common/utils.js";
+import { usersApi } from "./api/usersApi.js";
 
+let user;
 let ordersUser;
 let currentPage;
 let itemsPerPage;
@@ -11,6 +13,7 @@ window.addEventListener("load", () => {
     logoutButton.addEventListener("click", () => {
         logout();
     });
+    const users = JSON.parse(localStorage.getItem("users")) || [];
     const userSession = JSON.parse(localStorage.getItem("userSession"));
     const namelastname = document.getElementById("namelastname");
     const username = document.getElementById("username");
@@ -26,6 +29,8 @@ window.addEventListener("load", () => {
     nextPageBtn = document.getElementById("nextPage");
     previousPageBtn = document.getElementById("previousPage");
 
+    user = users.find((user) => user.username === userSession.username);
+    changeProfileImage(user?.profileImage);
     const editProfileImageButton = document.getElementById(
         "editProfileImageButton",
     );
@@ -240,6 +245,8 @@ const showProfileModal = (images) => {
 function changeProfileImage(newImageUrl) {
     const profileImage = document.getElementById("profileImage");
     if (profileImage) {
+        user.profileImage = newImageUrl;
+        usersApi.updateUser(user);
         profileImage.src = newImageUrl;
     }
 }

@@ -1,5 +1,7 @@
 import { createActionsButtons, showNotification, updatePagination } from "./common/utils.js"
 import { showError, showSuccess, resetStates } from "./common/validations.js"
+import { categoriesApi } from "./api/categoriesApi.js"
+import { productsApi } from "./api/productsApi.js"
 
 let categories
 let products
@@ -17,8 +19,8 @@ let nextPageBtn
 let previousPageBtn
 
 window.onload = function() {
-    categories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
-    products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
+    categories = categoriesApi.getAllCategories()
+    products = productsApi.getAllProducts()
     inputName = document.getElementById('inputName')
     inputDescription = document.getElementById('inputDescription')
     submitBtn = document.getElementById("submitCategoryButton")
@@ -114,8 +116,8 @@ function submitCategory() {
         description: categoryDescription,
         color: categoryColor
     }
-    categories.push(category)
-    localStorage.setItem("categories", JSON.stringify(categories))
+    categoriesApi.createCategory(category)
+    categories = categoriesApi.getAllCategories()
     showNotification({
         type: "success",
         title: "Categoría creada",
@@ -130,12 +132,12 @@ function updateCategory() {
     const categoryName = inputName.value
     const categoryDescription = inputDescription.value
 
-    const categoryIndex = categories.findIndex(c => c.name === categoryToUpdate.name)
-    if (categoryIndex !== -1) {
-        categories[categoryIndex].name = categoryName
-        categories[categoryIndex].description = categoryDescription
-        localStorage.setItem("categories", JSON.stringify(categories))
+    const updatedCategory = {
+        name: categoryName,
+        description: categoryDescription
     }
+    categoriesApi.updateCategory(updatedCategory)
+    categories = categoriesApi.getAllCategories()
     categoryToUpdate = null
     showNotification({
         type: "success",
@@ -160,8 +162,8 @@ function deleteCategory(category) {
         })
         return
     }
-    categories = categories.filter(c => c.name !== category.name)
-    localStorage.setItem("categories", JSON.stringify(categories))
+    categoriesApi.deleteCategory(category.name)
+    categories = categoriesApi.getAllCategories()
     showNotification({
         type: "success",
         title: "Categoría eliminada",

@@ -1,5 +1,6 @@
 import { createActionsButtons, showNotification, trashModal, updatePagination } from "./common/utils.js"
 import { showError, showSuccess, resetStates } from "./common/validations.js"
+import { usersApi } from "./api/usersApi.js"
 
 let users
 let inputName
@@ -22,7 +23,7 @@ let nextPageBtn
 let previousPageBtn
 
 window.onload = function() {
-    users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : []
+    users = usersApi.getAllUsers()
     inputName = document.getElementById('inputName')
     inputLastname = document.getElementById('inputLastname')
     inputUsername = document.getElementById('inputUsername')
@@ -158,8 +159,8 @@ function submitUser() {
         isAllowed: true,
         orders: []
     }
-    users.push(user)
-    localStorage.setItem("users", JSON.stringify(users))
+    usersApi.createUser(user)
+    users = usersApi.getAllUsers()
     listUsers()
     clearForm()
 }
@@ -172,16 +173,16 @@ function updateUser() {
     const isAdmin = adminPermission.checked
     const isAllowed = allowedPermission.checked
 
-    const userIndex = users.findIndex(u => u.username === userToUpdate.username)
-    if (userIndex !== -1) {
-        users[userIndex].name = userName
-        users[userIndex].lastname = userLastname
-        users[userIndex].username = userUsername
-        users[userIndex].password = userPassword
-        users[userIndex].isAdmin = isAdmin
-        users[userIndex].isAllowed = isAllowed
-        localStorage.setItem("users", JSON.stringify(users))
+    const updatedUser = {
+        name: userName,
+        lastname: userLastname,
+        username: userUsername,
+        password: userPassword,
+        isAdmin: isAdmin,
+        isAllowed: isAllowed
     }
+    usersApi.updateUser(updatedUser)
+    users = usersApi.getAllUsers()
     userToUpdate = null
     listUsers()
     clearForm()
@@ -192,8 +193,8 @@ function updateUser() {
 function deleteUser(user) {
     const userSession = JSON.parse(localStorage.getItem("userSession"))
     if (user.username !== userSession.username) {
-        users = users.filter(u => u.username !== user.username)
-        localStorage.setItem("users", JSON.stringify(users))
+        usersApi.deleteUser(user.username)
+        users = usersApi.getAllUsers()
     } else {
         showNotification({
             type: "error",
