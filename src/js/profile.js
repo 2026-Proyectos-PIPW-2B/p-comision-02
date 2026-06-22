@@ -1,5 +1,6 @@
 import { updatePagination } from "./common/utils.js";
 import { usersApi } from "./api/usersApi.js";
+import { configurationApi } from "./api/configurationApi.js";
 
 let user;
 let userOrders;
@@ -25,7 +26,7 @@ window.addEventListener("load", () => {
         (order) => order.username === userSession.username,
     );
     currentPage = 1;
-    itemsPerPage = 10;
+    itemsPerPage = configurationApi.getConfiguration().pagination.profile
     nextPageBtn = document.getElementById("nextPage");
     previousPageBtn = document.getElementById("previousPage");
 

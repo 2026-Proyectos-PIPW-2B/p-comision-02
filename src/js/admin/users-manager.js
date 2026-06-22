@@ -1,6 +1,7 @@
-import { createActionsButtons, showNotification, trashModal, updatePagination } from "./common/utils.js"
-import { showError, showSuccess, resetStates } from "./common/validations.js"
-import { usersApi } from "./api/usersApi.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { usersApi } from "../api/usersApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let users
 let inputName
@@ -39,7 +40,7 @@ window.onload = function() {
     userToUpdate = null
     btnShowPassword = document.getElementById("btnShowPassword")
     currentPage = 1
-    itemsPerPage = 10
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
     nextPageBtn = document.getElementById("nextPage")
     previousPageBtn = document.getElementById("previousPage")
 

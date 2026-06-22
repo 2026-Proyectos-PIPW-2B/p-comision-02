@@ -1,4 +1,5 @@
-import { showNotification } from "./common/utils.js";
+import { showNotification } from "../common/utils.js";
+import { configurationApi } from "../api/configurationApi.js";
 
 window.addEventListener("load", () => {
 	loadParameters();
@@ -7,7 +8,7 @@ window.addEventListener("load", () => {
 });
 
 const loadParameters = () => {
-	const configuration = JSON.parse(localStorage.getItem("configuration"));
+	const configuration = configurationApi.getConfiguration();
 	if (!configuration) return;
 	document.getElementById("sessionDurationUser").value = configuration.userSessionExpiring;
 	document.getElementById("sessionDurationAdmin").value = configuration.adminSessionExpiring;
@@ -51,8 +52,7 @@ const submitParameters = () => {
 		},
 	};
 
-	localStorage.setItem("configuration", JSON.stringify(configuration));
-
+	configurationApi.setConfiguration(configuration);
     loadParameters()
     showNotification({
         type: "success",

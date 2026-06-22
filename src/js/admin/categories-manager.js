@@ -1,7 +1,8 @@
-import { createActionsButtons, showNotification, updatePagination } from "./common/utils.js"
-import { showError, showSuccess, resetStates } from "./common/validations.js"
-import { categoriesApi } from "./api/categoriesApi.js"
-import { productsApi } from "./api/productsApi.js"
+import { createActionsButtons, showNotification, updatePagination } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { categoriesApi } from "../api/categoriesApi.js"
+import { productsApi } from "../api/productsApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let categories
 let products
@@ -29,7 +30,7 @@ window.onload = function() {
     tbodyCategories = document.getElementById("tbodyCategories")
     updateCancelButtons = document.getElementById("updateCancelButtons")
     currentPage = 1
-    itemsPerPage = 10
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
     nextPageBtn = document.getElementById("nextPage")
     previousPageBtn = document.getElementById("previousPage")
 
