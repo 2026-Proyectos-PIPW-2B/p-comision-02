@@ -1,28 +1,74 @@
-window.addEventListener("load", () => {
-    const logoutButton = document.getElementById("logoutButton")
-    logoutButton.addEventListener("click", () => {logout()})
-    const userSession = JSON.parse(localStorage.getItem("userSession"))
-    const namelastname = document.getElementById("namelastname")
-    const username = document.getElementById("username") 
-    namelastname.textContent = `${userSession.name} ${userSession.lastname}`
-    username.textContent = userSession.username
+import { updatePagination } from "./common/utils.js";
 
-    
-    mapOrders()
-})
+let ordersUser;
+let currentPage;
+let itemsPerPage;
+let nextPageBtn;
+let previousPageBtn;
+
+window.addEventListener("load", () => {
+    const logoutButton = document.getElementById("logoutButton");
+    logoutButton.addEventListener("click", () => {
+        logout();
+    });
+    const userSession = JSON.parse(localStorage.getItem("userSession"));
+    const namelastname = document.getElementById("namelastname");
+    const username = document.getElementById("username");
+    namelastname.textContent = `${userSession.name} ${userSession.lastname}`;
+    username.textContent = userSession.username;
+
+    const orders = JSON.parse(localStorage.getItem("orders")) || [];
+    ordersUser = orders.filter(
+        (order) => order.username === userSession.username,
+    );
+    currentPage = 1;
+    itemsPerPage = 10;
+    nextPageBtn = document.getElementById("nextPage");
+    previousPageBtn = document.getElementById("previousPage");
+
+    const editProfileImageButton = document.getElementById(
+        "editProfileImageButton",
+    );
+    editProfileImageButton.addEventListener("click", () => {
+        const profileImages = [
+            "/src/img/blank-profile-picture-973460_960_720.png",
+            "/src/img/cat-profile-img.jpg",
+            "/src/img/minion-profile-img.jpg",
+            "/src/img/profile-1197063289.png"
+        ];
+        showProfileModal(profileImages);
+    });
+
+    previousPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(ordersUser.length / itemsPerPage);
+        if (currentPage > 1) {
+            currentPage--;
+            mapOrders();
+        }
+    });
+    nextPageBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(ordersUser.length / itemsPerPage);
+        if (currentPage < totalPages) {
+            currentPage++;
+            mapOrders();
+        }
+    });
+
+    mapOrders();
+});
 
 const logout = () => {
-    localStorage.removeItem("userSession")
-    window.location.href = `/src/pages/login.html`
-}
+    localStorage.removeItem("userSession");
+    window.location.href = `/src/pages/login.html`;
+};
 
-const mapOrders = () => {
+const mapOrders = (page) => {
     const tbody = document.getElementById("tbodyCategories");
     tbody.innerHTML = "";
-
-    const userSession = JSON.parse(localStorage.getItem("userSession"))
-	const allOrders = JSON.parse(localStorage.getItem("orders")) || []
-	const userOrders = allOrders.filter( o => userSession.username === o.username )
+    currentPage = page || currentPage;
+    const userSession = JSON.parse(localStorage.getItem("userSession"));
 
     if (!userOrders.length) {
         const tr = document.createElement("tr");
@@ -38,7 +84,11 @@ const mapOrders = () => {
         return;
     }
 
-    userOrders.forEach((order) => {
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedOrders = ordersUser.slice(startIndex, endIndex);
+
+    paginatedOrders.forEach((order) => {
         const tr = document.createElement("tr");
 
         // ID
@@ -56,7 +106,7 @@ const mapOrders = () => {
         viewButton.textContent = "Ver productos";
 
         viewButton.onclick = () => {
-            showProductsModal(order.products)
+            showProductsModal(order.products);
         };
 
         tdProducts.appendChild(productsInfo);
@@ -77,13 +127,14 @@ const mapOrders = () => {
 
         tbody.appendChild(tr);
     });
+    updatePagination(ordersUser, mapOrders, itemsPerPage, currentPage);
 };
 
 const showProductsModal = (products) => {
     const modalTitle = document.getElementById("staticBackdropLabel");
     const modalBody = document.querySelector("#staticBackdrop .modal-body");
 
-    modalTitle.textContent = `Mostrando ${products.length} producto${products.length>1 ? `s` : ``}`;
+    modalTitle.textContent = `Mostrando ${products.length} producto${products.length > 1 ? `s` : ``}`;
 
     // Limpiar contenido anterior
     modalBody.innerHTML = "";
@@ -143,8 +194,52 @@ const showProductsModal = (products) => {
     });
 
     const modal = new bootstrap.Modal(
-        document.getElementById("staticBackdrop")
+        document.getElementById("staticBackdrop"),
     );
 
     modal.show();
+};
+
+const showProfileModal = (images) => {
+    const modalElement = document.getElementById("staticBackdropProfile");
+    const modalTitle = document.getElementById("staticBackdropLabelProfile");
+    const modalBody = document.querySelector("#staticBackdropProfile .row");
+
+    modalTitle.textContent = `Cambiar foto de perfil`;
+
+    // Limpiar contenido anterior
+    modalBody.innerHTML = "";
+
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement)
+
+    images.forEach((element) => {
+        const col = document.createElement("div");
+        col.className = "col mb-3";
+
+        const card = document.createElement("div");
+        card.className = "card h-100 cursor-pointer overflow-hidden";
+
+        const image = document.createElement("img");
+        image.src = element;
+        image.className = "img-fluid w-100 h-100 object-fit-cover";
+
+        card.appendChild(image);
+        col.appendChild(card);
+
+        card.addEventListener("click", () => {
+            changeProfileImage(element);
+            modal.hide()
+        });
+
+        modalBody.appendChild(col);
+    });
+
+    modal.show();
+};
+
+function changeProfileImage(newImageUrl) {
+    const profileImage = document.getElementById("profileImage");
+    if (profileImage) {
+        profileImage.src = newImageUrl;
+    }
 }
