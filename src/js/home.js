@@ -7,12 +7,14 @@ const select = document.getElementById("floatingSelect");
 const menu = document.getElementById("multiSelectMenu");
 const button = document.getElementById("multiSelectButton");
 const toast = document.getElementById("toastSuccess")
+const searchInput = document.getElementById("searchInput")
 
 window.onload = () => {
     
     const productsContainer = document.getElementById("productsContainer");
     mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
     updateFilterCategories(JSON.parse(localStorage.getItem("categories")));
+    searchInput.oninput = handleFilters
 };
 
 const updateFilterCategories = (categories) => {
@@ -123,7 +125,6 @@ const mapProducts = (products, productsContainer) => {
         const stockNumber = document.createElement("span");
         
         const {lowThreshold, mediumThreshold, highThreshold} = JSON.parse(localStorage.getItem("configuration")).stock
-        console.log(lowThreshold, mediumThreshold, highThreshold);
         
         const stockLevel =
         product.stock <= lowThreshold ? "text-bg-danger" :
@@ -360,6 +361,5 @@ const handleFilters = () => {
         return matchesSearch && matchesCategory;
     });
 
-    console.log(filteredProducts)
     mapProducts(filteredProducts, productsContainer);
 };

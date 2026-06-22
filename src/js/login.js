@@ -20,8 +20,6 @@ const login = () => {
 	const userMatch = userArray.find(
 		(u) => u.username === userInput.value && u.password === passwordInput.value,
 	);
-	console.log(userMatch);
-	
 	userMatch ? userMatch.isAllowed ? loginSuccess(userMatch) : loginFailed("Usuario Inhabilitado") : loginFailed("Credenciales Incorrectas")
 };
 
