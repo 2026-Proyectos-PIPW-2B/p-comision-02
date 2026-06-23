@@ -450,7 +450,7 @@ function confirmPurchase() {
             type: "error",
             title: "realizarla compra",
             icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
-            message: `La compra no alcanza el monto minimo: ${JSON.parse(localStorage.getItem("configuration")).minimumPurchaseAmount}`,
+            message: `La compra no alcanza el monto minimo: $ ${JSON.parse(localStorage.getItem("configuration")).minimumPurchaseAmount}`,
             time: 5000
         })
         modal.hide()
