@@ -106,19 +106,21 @@ const mapOrders = (page) => {
         const productsInfo = document.createElement("span");
         productsInfo.textContent = `${order.products.length} producto${order.products.length !== 1 ? "s" : ""}`;
 
+        const tdViewButton = document.createElement("td");
         const viewButton = document.createElement("button");
-        viewButton.className = "btn btn-sm btn-outline-primary ms-2";
-        viewButton.textContent = "Ver productos";
+        viewButton.className = "btn text-primary p-0";
+        viewButton.innerHTML = `<i class="bi bi-eye"></i>`;
+        tdViewButton.appendChild(viewButton)
 
         viewButton.onclick = () => {
             showProductsModal(order.products);
         };
 
         tdProducts.appendChild(productsInfo);
-        tdProducts.appendChild(viewButton);
 
         // Monto total
         const tdTotal = document.createElement("td");
+        tdTotal.className = `text-end` 
         tdTotal.textContent = `$ ${Number(order.total).toLocaleString()}`;
 
         // Fecha
@@ -129,6 +131,7 @@ const mapOrders = (page) => {
         tr.appendChild(tdProducts);
         tr.appendChild(tdTotal);
         tr.appendChild(tdDate);
+        tr.appendChild(tdViewButton)
 
         tbody.appendChild(tr);
     });
