@@ -1,7 +1,7 @@
 export const productsMock = [
     {
         id: 1,
-        name: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
+        name: "Cable galvanizado reforzado para cercos rurales",
         category: "Ferretería",
         stock: 125,
         price: 18500,
@@ -57,7 +57,7 @@ export const productsMock = [
     },
     {
         id: 8,
-        name: "Ladrillo Común de Campo para Muros y Cerramientos",
+        name: "Ladrillo Común de Campo para Muros",
         category: "Construcción",
         stock: 1200,
         price: 950,
@@ -75,6 +75,7 @@ export const usersMock = [
 	{
 		name: "Ignacio",
 		lastname: "Alonso",
+        profileImage: "/src/img/blank-profile-picture-973460_960_720.png",
 		username: "ignacio.admin",
 		password: "Admin1234*",
 		isAdmin: true,
@@ -84,6 +85,7 @@ export const usersMock = [
 		name: "Juan",
 		lastname: "Pérez",
 		username: "juan.perez",
+        profileImage: "/src/img/blank-profile-picture-973460_960_720.png",
 		password: "User1234*",
 		isAdmin: false,
 		isAllowed: true,
@@ -92,6 +94,7 @@ export const usersMock = [
 		name: "Pedro",
 		lastname: "Martin",
 		username: "pedro.martin",
+        profileImage: "/src/img/blank-profile-picture-973460_960_720.png",
 		password: "User1234*",
 		isAdmin: false,
 		isAllowed: false,
@@ -110,7 +113,7 @@ export const ordersMock = [
         products: [
             {
                 id: 1,
-                product: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
+                product: "Cable galvanizado reforzado para cercos rurales",
                 category: "Ferretería",
                 price: 18500,
                 quantity: 1,
@@ -134,7 +137,7 @@ export const ordersMock = [
             },
             {
                 id: 8,
-                product: "Ladrillo Común de Campo para Muros y Cerramientos",
+                product: "Ladrillo Común de Campo para Muros",
                 category: "Construcción",
                 price: 950,
                 quantity: 1,
@@ -214,7 +217,7 @@ export const ordersMock = [
         products: [
             {
                 id: 1,
-                product: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
+                product: "Cable galvanizado reforzado para cercos rurales",
                 category: "Ferretería",
                 price: 18500,
                 quantity: 1,
@@ -290,7 +293,7 @@ export const ordersMock = [
             },
             {
                 id: 8,
-                product: "Ladrillo Común de Campo para Muros y Cerramientos",
+                product: "Ladrillo Común de Campo para Muros",
                 category: "Construcción",
                 price: 950,
                 quantity: 12,
@@ -330,7 +333,7 @@ export const ordersMock = [
         products: [
             {
                 id: 1,
-                product: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
+                product: "Cable galvanizado reforzado para cercos rurales",
                 category: "Ferretería",
                 price: 18500,
                 quantity: 1,
@@ -362,7 +365,7 @@ export const ordersMock = [
         products: [
             {
                 id: 1,
-                product: "Cable galvanizado reforzado para cercos rurales de alta resistencia",
+                product: "Cable galvanizado reforzado para cercos rurales",
                 category: "Ferretería",
                 price: 18500,
                 quantity: 1,
