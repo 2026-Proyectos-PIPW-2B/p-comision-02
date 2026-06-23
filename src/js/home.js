@@ -304,7 +304,7 @@ const quantityHandler = (product, price) => {
 
 const confirmAddToCart = (product) => {
     const quantity = document.getElementById("quantityInput").value
-    product.quantity = Number(quantity)
+    quantity !== "0" ? product.quantity = Number(quantity) : product.quantity = 1
 
     const userSession = JSON.parse(localStorage.getItem("userSession"))
     const cart = userSession.cart  || []
