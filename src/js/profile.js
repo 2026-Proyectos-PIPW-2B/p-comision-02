@@ -25,7 +25,7 @@ window.addEventListener("load", () => {
         (order) => order.username === userSession.username,
     );
     currentPage = 1;
-    itemsPerPage = 10;
+    itemsPerPage = JSON.parse(localStorage.getItem("configuration")).pagination.profile
     nextPageBtn = document.getElementById("nextPage");
     previousPageBtn = document.getElementById("previousPage");
 

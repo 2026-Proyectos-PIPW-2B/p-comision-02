@@ -4,8 +4,14 @@ import { productsMock } from "./mocks.js"
 import { showCartCount } from "./utils.js"
 
 const globalOnload = () => {
+    // any role check
+    if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
+        window.location.href = "/src/pages/not-found.html";
+    }
+
+    // admin role check
     if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
-        window.location.href = "../../pages/not-found.html";
+        window.location.href = "/src/pages/not-found.html";
     }
 
     // products seed
