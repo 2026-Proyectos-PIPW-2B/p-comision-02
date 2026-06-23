@@ -17,7 +17,7 @@ const globalOnload = () => {
     // products seed
     if(!localStorage.getItem("products") || JSON.parse(localStorage.getItem("products")).length === 0 || (!localStorage.getItem("productsId"))) {
         localStorage.setItem("products", JSON.stringify(productsMock))
-        localStorage.setItem("productsId", "9")
+        localStorage.setItem("productsId", productsMock.length+1)
     } 
     // categories seed
     if(!localStorage.getItem("categories") || JSON.parse(localStorage.getItem("categories")).length === 0) {
