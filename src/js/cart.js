@@ -262,88 +262,131 @@ const quantityHandler = (product, price) => {
     quantityInput.className = "form-control text-center";
     quantityInput.style.width = "80px";
     quantityInput.max = product.stock;
+    quantityInput.min = 1;
     quantityInput.value = product.quantity;
-    quantityInput.id = "quantityInput"
+    quantityInput.id = `quantityInput-${product.id}`;
 
     const increaseButton = document.createElement("button");
     increaseButton.className = "btn btn-outline-success btn-sm";
     increaseButton.textContent = "+";
 
-    const updatePrice = () => {
-        let quantity = Number(quantityInput.value);
+    const updatePrice = (quantity) => {
+        price.textContent = `$ ${(product.price * quantity).toLocaleString()}`;
+    };
+    const updateCartAndTotal = (quantity) => {
+        const userSession = JSON.parse(localStorage.getItem("userSession"));
+        const cart = userSession.cart || [];
+        const newCart = cart.map((p) =>
+            p.id === product.id
+                ? { ...p, quantity }
+                : p
+        );
 
-        if (quantity > product.stock) {
-            quantity = product.stock;
+        localStorage.setItem(
+            "userSession",
+            JSON.stringify({ ...userSession, cart: newCart })
+        );
+
+        const total = newCart.reduce(
+            (acc, product) =>
+                acc + Number(product.price) * Number(product.quantity),
+            0
+        );
+
+        document.getElementById("totalCart").innerHTML = `
+            <span>Total</span>
+            <span>$ ${total.toLocaleString()}</span>
+        `;
+    };
+
+    const getQuantity = () => {
+        const quantity = Number(quantityInput.value);
+
+        if (
+            quantityInput.value === "" ||
+            Number.isNaN(quantity)
+        ) {
+            return 1;
         }
 
-        quantityInput.value = quantity;
-        price.textContent = `$ ${product.price * (quantity || 1)}`;
+        return quantity;
     };
 
     decreaseButton.onclick = () => {
-        if (Number(quantityInput.value) > 1) {
-            quantityInput.value = Number(quantityInput.value) - 1;
-            updatePrice();
-            const userSession = JSON.parse(localStorage.getItem("userSession"))
-            const cart = userSession.cart  || []
-            const newCart = cart.map((p) => {
-                if (p.id === product.id) {
-                    return {
-                        ...p,
-                        quantity: p.quantity -=1
-                    };
-                }
+        const quantity = getQuantity();
 
-                return p;
-            });
-            
-            localStorage.setItem("userSession", JSON.stringify({...userSession, newCart}))
-            const totalLabel = document.getElementById('totalCart')
-            const total = newCart.reduce(
-                (acc, product) =>
-                    acc + Number(product.price) * Number(product.quantity),
-                0
-            );
-            totalLabel.innerHTML = `
-                <span>Total</span>
-                <span>$ ${total.toLocaleString()}</span>
-            `;
-        } else trashProductModal(product)
+        if (quantity <= 1) {
+            quantityInput.value = 1;
+            trashProductModal(product);
+            return;
+        }
+
+        const newQuantity = quantity - 1;
+
+        quantityInput.value = newQuantity;
+        updatePrice(newQuantity);
+        updateCartAndTotal(newQuantity);
     };
 
     increaseButton.onclick = () => {
-        if (Number(quantityInput.value) < product.stock) {
-            quantityInput.value = Number(quantityInput.value) + 1;
-            updatePrice();
+        const quantity = getQuantity();
 
-            const userSession = JSON.parse(localStorage.getItem("userSession"))
-            const cart = userSession.cart  || []
-            const newCart = cart.map((p) => {
-                if (p.id === product.id) {
-                    return {
-                        ...p,
-                        quantity: p.quantity + 1
-                    };
-                }
-
-                return p;
-            });
-            
-            localStorage.setItem("userSession", JSON.stringify({...userSession, cart: newCart}))
-            const totalLabel = document.getElementById('totalCart')
-            const total = newCart.reduce(
-                (acc, product) =>
-                    acc + Number(product.price) * Number(product.quantity),
-                0
-            );
-            totalLabel.innerHTML = `
-                <span>Total</span>
-                <span>$ ${total.toLocaleString()}</span>
-            `;
+        if (quantity >= product.stock) {
+            quantityInput.value = product.stock;
+            return;
         }
+
+        const newQuantity = quantity + 1;
+
+        quantityInput.value = newQuantity;
+        updatePrice(newQuantity);
+        updateCartAndTotal(newQuantity);
     };
 
-    quantityInput.addEventListener("input", updatePrice);
+    quantityInput.addEventListener("input", () => {
+        let quantity = quantityInput.value;
+
+        if (quantity === "") {
+            return;
+        }
+
+        quantity = Number(quantity);
+
+        if (Number.isNaN(quantity)) {
+            quantityInput.value = 1;
+            updatePrice(1);
+            updateCartAndTotal(1);
+            return;
+        }
+
+        if (quantity === 0) {
+            quantityInput.value = 1;
+            updatePrice(1);
+            trashProductModal(product);
+            return;
+        }
+
+        if (quantity < 1) {
+            quantity = 1;
+            quantityInput.value = quantity;
+        }
+
+        if (quantity > product.stock) {
+            quantity = product.stock;
+            quantityInput.value = quantity;
+        }
+
+        updatePrice(quantity);
+        updateCartAndTotal(quantity);
+    });
+
+    quantityInput.addEventListener("blur", () => {
+        if (quantityInput.value === "") {
+            quantityInput.value = 1;
+            updatePrice(1);
+            updateCartAndTotal(1);
+        }
+    });
 
     quantityContainer.appendChild(decreaseButton);
     quantityContainer.appendChild(quantityInput);
