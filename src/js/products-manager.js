@@ -250,6 +250,7 @@ function listProducts(page) {
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
         colPrice.textContent = element.price
+        colPrice.classList.add("text-end")
         colStock.textContent = element.stock
         colCategory.textContent = element.category
         colActions.classList.add("d-flex", "justify-content-center", "gap-2")

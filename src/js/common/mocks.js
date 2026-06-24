@@ -124,7 +124,7 @@ export const productsMock = [
 export const categoriesMock = [
     {
         name: "Ferretería",
-        description: "Herramientas, fijaciones, cables y accesorios para trabajos generales.",
+        description: "Herramientas, fijaciones, cables y accesorios.",
         color: "#DE1240"
     },
     {
