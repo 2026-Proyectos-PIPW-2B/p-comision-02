@@ -101,3 +101,16 @@ export function updatePagination(array, listFunction, itemsPerPage, currentPage)
     prevButton.classList.toggle("disabled", currentPage === 1);
     nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0);
 }
+
+export const adminNavbar = (admin) => {
+    const navbarPanel = document.querySelector(".navbar-brand")
+    console.log(navbarPanel);
+    const switchButton = document.createElement("button")
+    switchButton.className = `btn text-bg-dark`
+    switchButton.textContent = admin ? `Cambiar a cliente` : `Cambiar a admin`
+    switchButton.onclick = () => {
+        window.location.href = admin ?  "/src/pages/home.html" : "/src/pages/admin/products-manager.html"
+    } 
+    navbarPanel.appendChild(switchButton)
+
+}

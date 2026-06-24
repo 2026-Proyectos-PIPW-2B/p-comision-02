@@ -1,17 +1,23 @@
 import { configurationMock, ordersMock, usersMock } from "./mocks.js"
 import { categoriesMock } from "./mocks.js"
 import { productsMock } from "./mocks.js"
-import { showCartCount } from "./utils.js"
+import { adminNavbar, showCartCount } from "./utils.js"
 
 const globalOnload = () => {
     // any role check
     if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
         window.location.href = "/src/pages/not-found.html";
+        return
     }
 
     // admin role check
     if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
         window.location.href = "/src/pages/not-found.html";
+        return
+    }
+
+    if(JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
+        window.location.href.includes("admin") ? adminNavbar(true) : adminNavbar()
     }
 
     // products seed
