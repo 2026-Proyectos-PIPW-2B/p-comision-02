@@ -4,6 +4,9 @@ export const categoriesApi = {
         categories.push(category);
         localStorage.setItem("categories", JSON.stringify(categories));
     },
+    setAllCategories: (categories) => {
+        localStorage.setItem("categories", JSON.stringify(categories));
+    },
     getAllCategories: () => {
         return JSON.parse(localStorage.getItem("categories")) || [];
     },

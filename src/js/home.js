@@ -1,22 +1,39 @@
+import { showNotification, showCartCount, updatePagination } from "./common/utils.js";
 import { categoriesApi } from "./api/categoriesApi.js";
 import { productsApi } from "./api/productsApi.js";
-import { showNotification, showCartCount } from "./common/utils.js";
+import { configurationApi } from "./api/configurationApi.js";
 
-const modalElement = document.getElementById("cartModal");
-const cartModal = new bootstrap.Modal(modalElement);
-const cartModalBody = document.getElementById("cartModal-body");
-const select = document.getElementById("floatingSelect");
-const menu = document.getElementById("multiSelectMenu");
-const button = document.getElementById("multiSelectButton");
-const toast = document.getElementById("toastSuccess")
-const searchInput = document.getElementById("searchInput")
+let products;
+let productsContainer;
+let modalElement;
+let cartModal;
+let cartModalBody;
+let select;
+let menu;
+let button;
+let toast;
+let searchInput;
+let currentPage
+let itemsPerPage
 
 window.onload = () => {
-    
-    const productsContainer = document.getElementById("productsContainer");
-    mapProducts(productsApi.getAllProducts(), productsContainer);
+    products = productsApi.getAllProducts();
+    modalElement = document.getElementById("cartModal");
+    cartModal = new bootstrap.Modal(modalElement);
+    cartModalBody = document.getElementById("cartModal-body");
+    select = document.getElementById("floatingSelect");
+    menu = document.getElementById("multiSelectMenu");
+    button = document.getElementById("multiSelectButton");
+    toast = document.getElementById("toastSuccess")
+    searchInput = document.getElementById("searchInput")
+    currentPage = 1
+    itemsPerPage = 5
+    productsContainer = document.getElementById("productsContainer");
+
+    resetFilters()
     updateFilterCategories(categoriesApi.getAllCategories());
     searchInput.oninput = handleFilters
+    mapProducts(currentPage, products);
 };
 
 const updateFilterCategories = (categories) => {
@@ -87,13 +104,16 @@ const updateButtonText = () => {
     }
 };
 
-
-
-
-const mapProducts = (products, productsContainer) => {
+const mapProducts = (page, arrayProducts) => {
     productsContainer.innerHTML = ""
-    if(!products) return 
-    products.forEach((product) => {
+    if(!arrayProducts) return
+
+    currentPage = page || currentPage;
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedProducts = arrayProducts.slice(startIndex, endIndex)
+
+    paginatedProducts.forEach((product) => {
         const col = document.createElement("div");
         col.className = "col";
 
@@ -164,6 +184,7 @@ const mapProducts = (products, productsContainer) => {
 
         productsContainer.appendChild(col);
     });
+    updatePagination(arrayProducts, mapProducts, itemsPerPage, currentPage)
 };
 
 const addToCartModal = (product) => {
@@ -340,9 +361,14 @@ const confirmAddToCart = (product) => {
     showCartCount()
 }
 
-const handleFilters = () => {
-    const products = productsApi.getAllProducts();
+const resetFilters = () => {
+    const floatingSelect = document.getElementById("floatingSelect");
+    const searchInput = document.getElementById("searchInput");
+    searchInput.value = "";
+    floatingSelect.value = "";
+}
 
+const handleFilters = () => {
     const floatingSelect = document.getElementById("floatingSelect");
     const searchInput = document.getElementById("searchInput");
 
@@ -363,5 +389,5 @@ const handleFilters = () => {
         return matchesSearch && matchesCategory;
     });
 
-    mapProducts(filteredProducts, productsContainer);
+    mapProducts(currentPage, filteredProducts);
 };

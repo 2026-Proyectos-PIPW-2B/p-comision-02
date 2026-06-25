@@ -90,14 +90,34 @@ export function updatePagination(array, listFunction, itemsPerPage, currentPage)
 
         a.addEventListener("click", (e) => {
             e.preventDefault();
-            listFunction(i);
+            listFunction(i, array);
         });
 
         li.appendChild(a);
 
         nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode);
     }
-
+    paginatedButtonsHandler(array, listFunction, itemsPerPage, currentPage);
     prevButton.classList.toggle("disabled", currentPage === 1);
     nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0);
+}
+
+const paginatedButtonsHandler = (array, listFunction, itemsPerPage, currentPage) => {
+    const nextPageBtn = document.getElementById("nextPage")
+    const previousPageBtn = document.getElementById("previousPage")
+    previousPageBtn.onclick = (e) => {
+        e.preventDefault();
+        if (currentPage > 1) {
+            currentPage--
+            listFunction(currentPage, array);
+        }
+    }
+    nextPageBtn.onclick = (e) => {
+        e.preventDefault();
+        const totalPages = Math.ceil(array.length / itemsPerPage)
+        if (currentPage < totalPages) {
+            currentPage++
+            listFunction(currentPage, array);
+        }
+    }
 }

@@ -20,8 +20,6 @@ let tbodyProducts
 let updateCancelButtons
 let currentPage
 let itemsPerPage
-let nextPageBtn
-let previousPageBtn
 
 let modalElement
 let visualizerModal
@@ -42,8 +40,6 @@ window.onload = function() {
     updateCancelButtons = document.getElementById("updateCancelButtons")
     currentPage = 1
     itemsPerPage = configurationApi.getConfiguration().pagination.admin
-    nextPageBtn = document.getElementById("nextPage")
-    previousPageBtn = document.getElementById("previousPage")
     modalElement = document.getElementById("visualizerModal")
     visualizerModal = new bootstrap.Modal(modalElement)
 
@@ -71,24 +67,8 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
-    previousPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(products.length / itemsPerPage)
-        if (currentPage > 1) {
-            currentPage--
-            listProducts()
-        }
-    })
-    nextPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(products.length / itemsPerPage)
-        if (currentPage < totalPages) {
-            currentPage++
-            listProducts()
-        }
-    })
     showSubmitButton()
-    listProducts()
+    listProducts(currentPage, products)
     addCategoriesToSelect()
 }
 
@@ -168,7 +148,7 @@ function submitProduct() {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "El producto se creó correctamente."
     })
-    listProducts()   
+    listProducts(currentPage, products)   
 }
 
 function updateProduct() {
@@ -197,7 +177,7 @@ function updateProduct() {
     clearForm()
     showSubmitButton()
     inputBlur()
-    listProducts()   
+    listProducts(currentPage, products)   
 }
 
 function deleteProduct(product) {
@@ -209,17 +189,17 @@ function deleteProduct(product) {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "El producto se eliminó correctamente."
     })
-    listProducts()
+    listProducts(currentPage, products)
 }
 
-function listProducts(page) {
+function listProducts(page, array) {
     tbodyProducts.innerHTML = ""
 
     currentPage = page || currentPage;
 
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
-    const paginatedProducts = products.slice(startIndex, endIndex)
+    const paginatedProducts = array.slice(startIndex, endIndex)
 
     paginatedProducts.forEach(element => {
         const row = document.createElement("tr")
@@ -265,7 +245,7 @@ function listProducts(page) {
         tbodyProducts.appendChild(row)
     })
 
-    updatePagination(products, listProducts, itemsPerPage, currentPage)
+    updatePagination(array, listProducts, itemsPerPage, currentPage)
 }
 
 function validateForm() {

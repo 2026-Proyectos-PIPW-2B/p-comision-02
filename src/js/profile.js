@@ -1,6 +1,7 @@
 import { updatePagination } from "./common/utils.js";
 import { usersApi } from "./api/usersApi.js";
 import { configurationApi } from "./api/configurationApi.js";
+import { ordersApi } from "./api/ordersApi.js";
 
 let user;
 let userOrders;
@@ -21,10 +22,7 @@ window.addEventListener("load", () => {
     namelastname.textContent = `${userSession.name} ${userSession.lastname}`;
     username.textContent = userSession.username;
 
-    const orders = JSON.parse(localStorage.getItem("orders")) || [];
-    userOrders = orders.filter(
-        (order) => order.username === userSession.username,
-    );
+    userOrders = ordersApi.getOrdersByUser(userSession.username);
     currentPage = 1;
     itemsPerPage = configurationApi.getConfiguration().pagination.profile
     nextPageBtn = document.getElementById("nextPage");

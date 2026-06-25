@@ -5,6 +5,7 @@ import { showCartCount } from "./utils.js"
 import { productsApi } from "../api/productsApi.js"
 import { categoriesApi } from "../api/categoriesApi.js"
 import { usersApi } from "../api/usersApi.js"
+import { ordersApi } from "../api/ordersApi.js"
 import { configurationApi } from "../api/configurationApi.js"
 
 const globalOnload = () => {
@@ -28,8 +29,9 @@ const globalOnload = () => {
         usersApi.setAllUsers(usersMock)
 
     // orders seed
-    if(!localStorage.getItem("orders") || JSON.parse(localStorage.getItem("orders")).length === 0 || (!localStorage.getItem("ordersId"))) {
-        localStorage.setItem("orders", JSON.stringify(ordersMock))
+    const orders = ordersApi.getAllOrders();
+    if(!orders || orders.length === 0 || (!localStorage.getItem("ordersId"))) {
+        ordersApi.setAllOrders(ordersMock)
         localStorage.setItem("ordersId", "11")
     }
 
