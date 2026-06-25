@@ -146,27 +146,10 @@ const showDetailedCard = ({ id, username, products, total, date }) => {
     sidebarBody.innerHTML = "";
 
     const title = document.createElement("h5");
-    title.textContent = "Detalle de pedido";
-
-    const orderId = document.createElement("p");
-    orderId.innerHTML = `<strong>ID:</strong> ${id}`;
-
-    const user = document.createElement("p");
-    user.innerHTML = `<strong>Usuario:</strong> ${username}`;
-
-    const orderDate = document.createElement("p");
-    orderDate.innerHTML = `<strong>Fecha:</strong> ${date}`;
-
-    const orderTotal = document.createElement("p");
-    orderTotal.innerHTML = `<strong>Total:</strong> $${Number(total).toLocaleString()}`;
-    orderTotal.className = "fw-bold";
-
-    const productsTitle = document.createElement("h6");
-    productsTitle.className = "mt-4";
-    productsTitle.textContent = "Productos";
+    title.textContent = `Detalle de pedido: #${id}`;
 
     const productsList = document.createElement("div");
-    productsList.className = "d-flex flex-column gap-3";
+    productsList.className = "d-flex flex-column gap-3 mt-3";
 
     products.forEach((product) => {
         const productCard = document.createElement("div");
@@ -214,10 +197,5 @@ const showDetailedCard = ({ id, username, products, total, date }) => {
     });
 
     sidebarBody.appendChild(title);
-    sidebarBody.appendChild(orderId);
-    sidebarBody.appendChild(user);
-    sidebarBody.appendChild(orderDate);
-    sidebarBody.appendChild(orderTotal);
-    sidebarBody.appendChild(productsTitle);
     sidebarBody.appendChild(productsList);
 };
