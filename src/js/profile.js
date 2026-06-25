@@ -7,8 +7,6 @@ let user;
 let userOrders;
 let currentPage;
 let itemsPerPage;
-let nextPageBtn;
-let previousPageBtn;
 
 window.addEventListener("load", () => {
     const logoutButton = document.getElementById("logoutButton");
@@ -25,8 +23,6 @@ window.addEventListener("load", () => {
     userOrders = ordersApi.getOrdersByUser(userSession.username);
     currentPage = 1;
     itemsPerPage = configurationApi.getConfiguration().pagination.profile
-    nextPageBtn = document.getElementById("nextPage");
-    previousPageBtn = document.getElementById("previousPage");
 
     user = usersApi.getUserByUsername(userSession.username);
     changeProfileImage(user?.profileImage);
@@ -41,26 +37,9 @@ window.addEventListener("load", () => {
             "/src/img/profile-1197063289.png"
         ];
         showProfileModal(profileImages);
-    });
+    })
 
-    previousPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(userOrders.length / itemsPerPage);
-        if (currentPage > 1) {
-            currentPage--;
-            mapOrders();
-        }
-    });
-    nextPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(userOrders.length / itemsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            mapOrders();
-        }
-    });
-
-    mapOrders();
+    mapOrders(currentPage, userOrders);
 });
 
 const logout = () => {
@@ -68,13 +47,13 @@ const logout = () => {
     window.location.href = `/src/pages/login.html`;
 };
 
-const mapOrders = (page) => {
+const mapOrders = (page, array) => {
     const tbody = document.getElementById("tbodyCategories");
     tbody.innerHTML = "";
     currentPage = page || currentPage;
     const userSession = JSON.parse(localStorage.getItem("userSession"));
 
-    if (!userOrders.length) {
+    if (!array.length) {
         const tr = document.createElement("tr");
 
         const td = document.createElement("td");
@@ -90,7 +69,7 @@ const mapOrders = (page) => {
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedOrders = userOrders.slice(startIndex, endIndex);
+    const paginatedOrders = array.slice(startIndex, endIndex);
 
     paginatedOrders.forEach((order) => {
         const tr = document.createElement("tr");
@@ -134,7 +113,7 @@ const mapOrders = (page) => {
 
         tbody.appendChild(tr);
     });
-    updatePagination(userOrders, mapOrders, itemsPerPage, currentPage);
+    updatePagination(array, mapOrders, itemsPerPage, currentPage);
 };
 
 const showProductsModal = (products) => {

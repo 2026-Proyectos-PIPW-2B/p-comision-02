@@ -16,7 +16,7 @@ let searchInput;
 let currentPage
 let itemsPerPage
 // const sortPrice = document.getElementById("sortPrice")
-let priceSortingStatus
+let priceSortingStatus = 0
 
 window.onload = () => {
     products = productsApi.getAllProducts();
@@ -109,6 +109,8 @@ const updateButtonText = () => {
 const mapProducts = (page, arrayProducts) => {
     productsContainer.innerHTML = ""
     if(!arrayProducts) return
+
+    console.log(arrayProducts);
 
     currentPage = page || currentPage;
     const startIndex = (currentPage - 1) * itemsPerPage
@@ -390,11 +392,6 @@ const handleFilters = () => {
 
         return matchesSearch && matchesCategory;
     });
-
-    mapProducts(currentPage, filteredProducts);
-};
-
-const handlePriceSort = () => {
     const sortingProducts = [...productsApi.getAllProducts()];
 
     switch (priceSortingStatus) {
@@ -418,5 +415,10 @@ const handlePriceSort = () => {
             ? productsApi.getAllProducts()
             : sortingProducts;
 
-    mapProducts(currentPage, productsToRender);
+
+    mapProducts(1, filteredProducts);
+};
+
+const handlePriceSort = () => {
+    
 };

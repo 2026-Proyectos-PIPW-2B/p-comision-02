@@ -3,6 +3,8 @@ import { configurationApi } from "./api/configurationApi.js";
 window.onload = () => {
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
+	const loginButton = document.getElementById("loginButton");
+	loginButton.onclick = login;
 	userInput.value = ""
 
 	const divErrorMessage = document.getElementById("divErrorMessage")
