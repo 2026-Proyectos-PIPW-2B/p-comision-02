@@ -1,7 +1,7 @@
 import { configurationMock, ordersMock, usersMock } from "./mocks.js"
 import { categoriesMock } from "./mocks.js"
 import { productsMock } from "./mocks.js"
-import { showCartCount } from "./utils.js"
+import { adminNavbar, showCartCount } from "./utils.js"
 import { productsApi } from "../api/productsApi.js"
 import { categoriesApi } from "../api/categoriesApi.js"
 import { usersApi } from "../api/usersApi.js"
@@ -9,8 +9,20 @@ import { ordersApi } from "../api/ordersApi.js"
 import { configurationApi } from "../api/configurationApi.js"
 
 const globalOnload = () => {
+    // any role check
+    if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
+        window.location.href = "/src/pages/not-found.html";
+        return
+    }
+
+    // admin role check
     if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
-        window.location.href = "../../pages/not-found.html";
+        window.location.href = "/src/pages/not-found.html";
+        return
+    }
+
+    if(JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
+        window.location.href.includes("admin") ? adminNavbar(true) : adminNavbar()
     }
 
     // products seed

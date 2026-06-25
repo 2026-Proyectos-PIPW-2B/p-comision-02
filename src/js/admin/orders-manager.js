@@ -13,7 +13,7 @@ window.addEventListener("load", () => {
     orders = JSON.parse(localStorage.getItem("orders")) || [];
     
     currentPage = 1;
-    itemsPerPage = 10;
+    itemsPerPage = JSON.parse(localStorage.getItem("configuration")).pagination.admin
     nextPageBtn = document.getElementById("nextPage");
     previousPageBtn = document.getElementById("previousPage");
 

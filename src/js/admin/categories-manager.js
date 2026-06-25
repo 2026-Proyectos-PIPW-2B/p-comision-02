@@ -200,6 +200,7 @@ function listCategories(page, array) {
 
         colName.scope = "row"
         colNameWrapper.classList.add("cell-name")
+        colNameWrapper.classList.add("d-flex")
         colNameSpan.classList.add("cell-color")
         colNameSpan.style.background = element.color
 
@@ -208,7 +209,6 @@ function listCategories(page, array) {
         colDescription.textContent = element.description || "-"
         
         colCantProducts.textContent = products.filter(p => p.category === element.name).length
-        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)

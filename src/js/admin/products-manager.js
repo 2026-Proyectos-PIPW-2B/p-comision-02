@@ -42,6 +42,7 @@ window.onload = function() {
     itemsPerPage = configurationApi.getConfiguration().pagination.admin
     modalElement = document.getElementById("visualizerModal")
     visualizerModal = new bootstrap.Modal(modalElement)
+    const priceTh = document.getElementById("priceTh")
 
     inputName.oninput = validateForm
     inputPrice.oninput = validateForm
@@ -67,6 +68,10 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+
+    priceTh.addEventListener("click", () => {
+        handlePriceSort()
+    })
     showSubmitButton()
     listProducts(currentPage, products)
     addCategoriesToSelect()
@@ -231,6 +236,7 @@ function listProducts(page, array) {
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
         colPrice.textContent = element.price
+        colPrice.classList.add("text-end")
         colStock.textContent = element.stock
         colCategory.textContent = element.category
         colActions.classList.add("d-flex", "justify-content-center", "gap-2")

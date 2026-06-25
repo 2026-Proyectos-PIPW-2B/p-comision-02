@@ -229,6 +229,7 @@ function listUsers(page, array) {
 
         colName.scope = "row"
         colUsername.textContent = element.username
+        colUsername.classList.add("text-start")
         colName.textContent = element.name
         colLastname.textContent = element.lastname
         colAdmin.textContent = element.isAdmin ? "Sí" : "No"

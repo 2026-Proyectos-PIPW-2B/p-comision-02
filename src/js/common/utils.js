@@ -121,3 +121,14 @@ const paginatedButtonsHandler = (array, listFunction, itemsPerPage, currentPage)
         }
     }
 }
+
+export const adminNavbar = (admin) => {
+    const navbarPanel = document.querySelector(".navbar-brand")
+    const switchButton = document.createElement("button")
+    switchButton.className = `btn text-bg-dark ms-2`
+    switchButton.textContent = admin ? `Cambiar a cliente` : `Cambiar a admin`
+    switchButton.onclick = () => {
+        window.location.href = admin ?  "/src/pages/home.html" : "/src/pages/admin/products-manager.html"
+    } 
+    navbarPanel.appendChild(switchButton)
+}

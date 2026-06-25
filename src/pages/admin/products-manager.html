@@ -18,7 +18,7 @@
                     aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <a class="navbar-brand fs-4" href="#"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Panel Administrador</a>
+                <div class="navbar-brand fs-4"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Panel Administrador</div>
                 <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
                     aria-labelledby="offcanvasDarkNavbarLabel">
                     <div class="offcanvas-header">
@@ -82,10 +82,21 @@
                             <div class="mb-3">
                                 <select class="form-select" name="imagen" id="selectImage" required>
                                     <option value="" disabled selected>Seleccione una imagen</option>
+                                    <option value="/src/img/products/acrilico.jpg">Acrílico</option>
                                     <option value="/src/img/products/cable_galvanizado.jpg">Cable galvanizado</option>
+                                    <option value="/src/img/products/casco.jpg">Casco</option>
                                     <option value="/src/img/products/cemento.jpg">Cemento</option>
                                     <option value="/src/img/products/cetol.jpg">Cetol</option>
-                                    <option value="/src/img/products/ladrilo.jpg">Ladrillo</option>
+                                    <option value="/src/img/products/chaleco.jpg">Chaleco</option>
+                                    <option value="/src/img/products/cinta.jpg">Cinta</option>
+                                    <option value="/src/img/products/codo.jpg">Codo</option>
+                                    <option value="/src/img/products/espuma.jpg">Espuma</option>
+                                    <option value="/src/img/products/fastix.jpg">Fastix</option>
+                                    <option value="/src/img/products/guante.jpg">Guante</option>
+                                    <option value="/src/img/products/ladrillo.jpg">Ladrillo</option>
+                                    <option value="/src/img/products/nylon.jpg">Nylon</option>
+                                    <option value="/src/img/products/rodillo.jpg">Rodillo</option>
+                                    <option value="/src/img/products/T-junc.jpg">T-Junc</option>
                                 </select>
                                 <div class="invalid-feedback" id="imageError"></div>
                             </div>
@@ -98,12 +109,12 @@
                     </div>
                 </div>
                 <div class="col-lg-8 p-3 rounded shadow bg-white">
-                    <table class="table table-hover">
+                    <table class="table table-hover text-center">
                         <thead>
                             <tr class="">
-                                <th scope="col">Nombre</th>
-                                <th scope="col">Precio</th>
-                                <th scope="col">Stock</th>
+                                <th scope="col" class="text-start">Nombre</th>
+                                <th scope="col" id="priceTh" class="text-end">Precio</th>
+                                <th scope="col" id="stockTh">Stock</th>
                                 <th scope="col">Categoría</th>
                                 <th scope="col">Acciones</th>
                             </tr>
