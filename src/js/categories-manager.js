@@ -227,7 +227,6 @@ function listCategories(page) {
         colName.scope = "row"
         colNameWrapper.classList.add("cell-name")
         colNameWrapper.classList.add("d-flex")
-        colNameWrapper.classList.add("justify-content-center")
         colNameSpan.classList.add("cell-color")
         colNameSpan.style.background = element.color
 

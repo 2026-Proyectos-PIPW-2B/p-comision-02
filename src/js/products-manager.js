@@ -45,6 +45,7 @@ window.onload = function() {
     previousPageBtn = document.getElementById("previousPage")
     modalElement = document.getElementById("visualizerModal")
     visualizerModal = new bootstrap.Modal(modalElement)
+    const priceTh = document.getElementById("priceTh")
 
     inputName.oninput = validateForm
     inputPrice.oninput = validateForm
@@ -85,6 +86,10 @@ window.onload = function() {
             currentPage++
             listProducts()
         }
+    })
+
+    priceTh.addEventListener("click", () => {
+        handlePriceSort()
     })
     showSubmitButton()
     listProducts()
@@ -211,7 +216,7 @@ function deleteProduct(product) {
     listProducts()
 }
 
-function listProducts(page) {
+function listProducts(page,) {
     tbodyProducts.innerHTML = ""
 
     currentPage = page || currentPage;
@@ -219,6 +224,9 @@ function listProducts(page) {
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
     const paginatedProducts = products.slice(startIndex, endIndex)
+
+    console.log(paginatedProducts);
+    
 
     paginatedProducts.forEach(element => {
         const row = document.createElement("tr")

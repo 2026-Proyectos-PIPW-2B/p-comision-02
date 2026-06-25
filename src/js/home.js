@@ -10,10 +10,13 @@ const menu = document.getElementById("multiSelectMenu");
 const button = document.getElementById("multiSelectButton");
 const toast = document.getElementById("toastSuccess")
 const searchInput = document.getElementById("searchInput")
+// const sortPrice = document.getElementById("sortPrice")
+let priceSortingStatus
 
 window.onload = () => {
     
     const productsContainer = document.getElementById("productsContainer");
+    // sortPrice.addEventListener("click", () => {handlePriceSort()})
     mapProducts(productsApi.getAllProducts(), productsContainer);
     updateFilterCategories(categoriesApi.getAllCategories());
     searchInput.oninput = handleFilters
@@ -364,4 +367,31 @@ const handleFilters = () => {
     });
 
     mapProducts(filteredProducts, productsContainer);
+};
+
+const handlePriceSort = () => {
+    const sortingProducts = [...productsApi.getAllProducts()];
+
+    switch (priceSortingStatus) {
+        case 0:
+            sortingProducts.sort((a, b) => a.price - b.price);
+            priceSortingStatus = 1;
+            break;
+
+        case 1:
+            sortingProducts.sort((a, b) => b.price - a.price);
+            priceSortingStatus = 2;
+            break;
+
+        case 2:
+            priceSortingStatus = 0;
+            break;
+    }
+
+    const productsToRender =
+        priceSortingStatus === 0
+            ? productsApi.getAllProducts()
+            : sortingProducts;
+
+    mapProducts(productsToRender, productsContainer);
 };
