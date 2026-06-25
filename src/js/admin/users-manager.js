@@ -1,6 +1,7 @@
-import { createActionsButtons, showNotification, trashModal, updatePagination } from "./common/utils.js"
-import { showError, showSuccess, resetStates } from "./common/validations.js"
-import { usersApi } from "./api/usersApi.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { usersApi } from "../api/usersApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let users
 let inputName
@@ -19,8 +20,6 @@ let userToUpdate
 let btnShowPassword
 let currentPage
 let itemsPerPage
-let nextPageBtn
-let previousPageBtn
 
 window.onload = function() {
     users = usersApi.getAllUsers()
@@ -39,9 +38,7 @@ window.onload = function() {
     userToUpdate = null
     btnShowPassword = document.getElementById("btnShowPassword")
     currentPage = 1
-    itemsPerPage = 10
-    nextPageBtn = document.getElementById("nextPage")
-    previousPageBtn = document.getElementById("previousPage")
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
 
     inputName.oninput = validateForm
     inputLastname.oninput = validateForm
@@ -74,24 +71,8 @@ window.onload = function() {
         showSubmitButton()
         disabledSwitchWrapperVisibility()
     }
-    previousPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(users.length / itemsPerPage)
-        if (currentPage > 1) {
-            currentPage--
-            listUsers()
-        }
-    })
-    nextPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(users.length / itemsPerPage)
-        if (currentPage < totalPages) {
-            currentPage++
-            listUsers()
-        }
-    })
     showSubmitButton()
-    listUsers()
+    listUsers(currentPage, users)
 }
 
 function showSubmitButton() {
@@ -162,7 +143,7 @@ function submitUser() {
     }
     usersApi.createUser(user)
     users = usersApi.getAllUsers()
-    listUsers()
+    listUsers(currentPage, users)
     clearForm()
 }
 
@@ -185,7 +166,7 @@ function updateUser() {
     usersApi.updateUser(updatedUser)
     users = usersApi.getAllUsers()
     userToUpdate = null
-    listUsers()
+    listUsers(currentPage, users)
     clearForm()
     showSubmitButton()
     inputBlur()
@@ -211,17 +192,17 @@ function deleteUser(user) {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "Usuario eliminado correctamente"
     })
-    listUsers()
+    listUsers(currentPage, users)
 }
 
-function listUsers(page) {
+function listUsers(page, array) {
     tbodyUsers.innerHTML = ""
 
     currentPage = page || currentPage;
 
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
-    const paginatedUsers = users.slice(startIndex, endIndex)
+    const paginatedUsers = array.slice(startIndex, endIndex)
 
     paginatedUsers.forEach(element => {
         const row = document.createElement("tr")
@@ -264,7 +245,7 @@ function listUsers(page) {
         tbodyUsers.appendChild(row)
     })
 
-    updatePagination(users, listUsers, itemsPerPage, currentPage)
+    updatePagination(array, listUsers, itemsPerPage, currentPage)
 }
 
 function validateForm() {

@@ -4,6 +4,9 @@ export const usersApi = {
         users.push(user);
         localStorage.setItem("users", JSON.stringify(users));
     },
+    setAllUsers: (users) => {
+        localStorage.setItem("users", JSON.stringify(users));
+    },
     getAllUsers: () => {
         return JSON.parse(localStorage.getItem("users")) || [];
     },

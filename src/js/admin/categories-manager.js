@@ -1,7 +1,8 @@
-import { createActionsButtons, showNotification, updatePagination } from "./common/utils.js"
-import { showError, showSuccess, resetStates } from "./common/validations.js"
-import { categoriesApi } from "./api/categoriesApi.js"
-import { productsApi } from "./api/productsApi.js"
+import { createActionsButtons, showNotification, updatePagination } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { categoriesApi } from "../api/categoriesApi.js"
+import { productsApi } from "../api/productsApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let categories
 let products
@@ -15,8 +16,6 @@ let categoryToUpdate
 let updateCancelButtons
 let currentPage
 let itemsPerPage
-let nextPageBtn
-let previousPageBtn
 
 window.onload = function() {
     categories = categoriesApi.getAllCategories()
@@ -29,9 +28,7 @@ window.onload = function() {
     tbodyCategories = document.getElementById("tbodyCategories")
     updateCancelButtons = document.getElementById("updateCancelButtons")
     currentPage = 1
-    itemsPerPage = 10
-    nextPageBtn = document.getElementById("nextPage")
-    previousPageBtn = document.getElementById("previousPage")
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
 
     inputName.oninput = validateForm
     inputDescription.oninput = validateForm
@@ -54,31 +51,8 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
-    document.getElementById("previousPage").addEventListener("click", (e) => {
-        e.preventDefault()
-        if (currentPage > 1) {
-            currentPage--
-            listCategories()
-        }
-    })
-    previousPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(categories.length / itemsPerPage)
-        if (currentPage > 1) {
-            currentPage--
-            listCategories()
-        }
-    })
-    nextPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(categories.length / itemsPerPage)
-        if (currentPage < totalPages) {
-            currentPage++
-            listCategories()
-        }
-    })
     showSubmitButton()
-    listCategories()
+    listCategories(currentPage, categories)
 }
 
 function showSubmitButton() {
@@ -124,7 +98,7 @@ function submitCategory() {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "La categoría se creó correctamente."
     })
-    listCategories()
+    listCategories(currentPage, categories)
     clearForm()
 }
 
@@ -145,7 +119,7 @@ function updateCategory() {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "La categoría se actualizó correctamente."
     })
-    listCategories()
+    listCategories(currentPage, categories)
     clearForm()
     showSubmitButton()
     inputBlur()
@@ -170,7 +144,7 @@ function deleteCategory(category) {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "La categoría se eliminó correctamente."
     })
-    listCategories()
+    listCategories(currentPage, categories)
 }
 
 function getRandomColor() {
@@ -196,14 +170,14 @@ function clearForm() {
     resetStates()
 }
 
-function listCategories(page) {
+function listCategories(page, array) {
     tbodyCategories.innerHTML = ""
     
     currentPage = page || currentPage;
 
     const startIndex = (currentPage - 1) * itemsPerPage
     const endIndex = startIndex + itemsPerPage
-    const paginatedCategories = categories.slice(startIndex, endIndex)
+    const paginatedCategories = array.slice(startIndex, endIndex)
 
     paginatedCategories.forEach(element => {
         const row = document.createElement("tr")
@@ -245,7 +219,7 @@ function listCategories(page) {
         tbodyCategories.appendChild(row)
     })
 
-    updatePagination(categories, listCategories, itemsPerPage, currentPage)
+    updatePagination(array, listCategories, itemsPerPage, currentPage)
 }
 
 function validateForm() {

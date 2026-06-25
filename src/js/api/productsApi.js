@@ -4,6 +4,9 @@ export const productsApi = {
         products.push(product);
         localStorage.setItem("products", JSON.stringify(products));
     },
+    setAllProducts: (products) => {
+        localStorage.setItem("products", JSON.stringify(products));
+    },
     getAllProducts: () => {
         return JSON.parse(localStorage.getItem("products")) || [];
     },

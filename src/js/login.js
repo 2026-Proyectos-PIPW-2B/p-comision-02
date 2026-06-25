@@ -1,3 +1,5 @@
+import { configurationApi } from "./api/configurationApi.js";
+
 window.onload = () => {
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
@@ -24,8 +26,9 @@ const login = () => {
 };
 
 const loginSuccess = (userMatch) => {
-	const userExpiringTime = JSON.parse(localStorage.getItem("configuration")).userSessionExpiring
-	const adminExpiringTime = JSON.parse(localStorage.getItem("configuration")).adminSessionExpiring
+	const configuration = configurationApi.getConfiguration();
+	const userExpiringTime = configuration.userSessionExpiring;
+	const adminExpiringTime = configuration.adminSessionExpiring;
 	const expiresAt = userMatch.isAdmin ? new Date(Date.now() + adminExpiringTime * 60 * 60 * 1000) : new Date(Date.now() + userExpiringTime * 60 * 60 * 1000)
 	localStorage.setItem(
 		"userSession",

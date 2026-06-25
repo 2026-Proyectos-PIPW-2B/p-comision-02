@@ -1,4 +1,6 @@
 import { showCartCount, showNotification } from "./common/utils.js";
+import { ordersApi } from "./api/ordersApi.js";
+import { configurationApi } from "./api/configurationApi.js";
 const cartContainer = document.getElementById("cartContainer");
 
 window.onload = () => {
@@ -436,8 +438,8 @@ const trashProductHandler = (product) => {
 function confirmPurchase() {
     const modalElement = document.getElementById("exampleModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
-    
     const cart = JSON.parse(localStorage.getItem("userSession")).cart
+    const configuration = configurationApi.getConfiguration();
     
     const total = cart.reduce(
         (acc, product) =>
@@ -445,12 +447,12 @@ function confirmPurchase() {
         0
     );
 
-    if(total < JSON.parse(localStorage.getItem("configuration")).minimumPurchaseAmount) {
+    if(total < configuration.minimumPurchaseAmount) {
         showNotification({
             type: "error",
             title: "realizarla compra",
             icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
-            message: `La compra no alcanza el monto minimo: ${JSON.parse(localStorage.getItem("configuration")).minimumPurchaseAmount}`,
+            message: `La compra no alcanza el monto minimo: ${configuration.minimumPurchaseAmount}`,
             time: 5000
         })
         modal.hide()
@@ -478,9 +480,7 @@ function confirmPurchase() {
     const { username: orderUser, ...orderWithoutUser } = order;
 
     // Pushear a LS orders
-    const orders = JSON.parse(localStorage.getItem("orders")) || []
-    orders.push(order)
-    localStorage.setItem("orders", JSON.stringify(orders))
+    ordersApi.createOrder(order)
     localStorage.setItem("ordersId", JSON.stringify(id++))
 
     // Pushear a LS userSession
