@@ -41,7 +41,7 @@ window.addEventListener("load", () => {
 
 
 const mapOrders = (page) => {
-    const tbody = document.getElementById("tbodyCategories");
+    const tbody = document.getElementById("tbodyOrders");
     tbody.innerHTML = "";
     currentPage = page || currentPage;
     const userSession = JSON.parse(localStorage.getItem("userSession"));

@@ -97,12 +97,12 @@ export function updatePagination(array, listFunction, itemsPerPage, currentPage)
 
         nextButton.parentNode.parentNode.insertBefore(li, nextButton.parentNode);
     }
-    paginatedButtonsHandler(array, listFunction, itemsPerPage, currentPage);
+    paginatedButtonsHandler(array, listFunction, totalPages, currentPage);
     prevButton.classList.toggle("disabled", currentPage === 1);
     nextButton.classList.toggle("disabled", currentPage === totalPages || totalPages === 0);
 }
 
-const paginatedButtonsHandler = (array, listFunction, itemsPerPage, currentPage) => {
+const paginatedButtonsHandler = (array, listFunction, totalPages, currentPage) => {
     const nextPageBtn = document.getElementById("nextPage")
     const previousPageBtn = document.getElementById("previousPage")
     previousPageBtn.onclick = (e) => {
@@ -114,7 +114,6 @@ const paginatedButtonsHandler = (array, listFunction, itemsPerPage, currentPage)
     }
     nextPageBtn.onclick = (e) => {
         e.preventDefault();
-        const totalPages = Math.ceil(array.length / itemsPerPage)
         if (currentPage < totalPages) {
             currentPage++
             listFunction(currentPage, array);
