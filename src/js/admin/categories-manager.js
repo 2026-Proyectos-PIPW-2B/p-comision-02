@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification, updatePagination } from "../common/utils.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination } from "../common/utils.js"
 import { showError, showSuccess, resetStates } from "../common/validations.js"
 import { categoriesApi } from "../api/categoriesApi.js"
 import { productsApi } from "../api/productsApi.js"
@@ -195,7 +195,7 @@ function listCategories(page, array) {
             inputFocus();
             showUpdatesButton();
         }, () => {
-            deleteCategory(element);
+            trashModal("categoría", () => {deleteCategory(element)});
         })
 
         colName.scope = "row"

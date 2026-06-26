@@ -174,7 +174,7 @@ const showDetailedCard = ({ id, username, products, total, date }) => {
 
         const productCategory = document.createElement("p");
         productCategory.className = "mb-1 text-secondary";
-        productCategory.textContent = `Categoría: ${product.category}`;
+        productCategory.textContent = `${product.category}`;
 
         const productQuantity = document.createElement("p");
         productQuantity.className = "mb-1";

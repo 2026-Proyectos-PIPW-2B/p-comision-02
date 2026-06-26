@@ -33,7 +33,7 @@ window.onload = () => {
     toast = document.getElementById("toastSuccess")
     searchInput = document.getElementById("searchInput")
     currentPage = 1
-    itemsPerPage = 5
+    itemsPerPage = configurationApi.getConfiguration().pagination.catalog
     productsContainer = document.getElementById("productsContainer");
     priceSortButton = document.getElementById("priceSortButton")
     priceSortIcon = document.getElementById("priceSortIcon")

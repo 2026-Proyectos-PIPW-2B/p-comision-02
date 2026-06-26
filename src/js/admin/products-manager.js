@@ -164,6 +164,7 @@ function updateProduct() {
     const productImage = selectImage.value
 
     const updatedProduct = {
+        id: productToUpdate.id,
         name: productName,
         price: productPrice,
         stock: productStock,
@@ -186,6 +187,8 @@ function updateProduct() {
 }
 
 function deleteProduct(product) {
+    console.log(product);
+    
     productsApi.deleteProduct(product.id)
     products = productsApi.getAllProducts()
     showNotification({
@@ -239,7 +242,6 @@ function listProducts(page, array) {
         colPrice.classList.add("text-end")
         colStock.textContent = element.stock
         colCategory.textContent = element.category
-        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)

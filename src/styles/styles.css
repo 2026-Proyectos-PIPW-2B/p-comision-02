@@ -96,3 +96,9 @@ th {
 .toast__notification--closing {
     animation: toast-slideOut 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
+
+@media (min-width: 992px) {
+    .sticky-sidebar {
+        top: 95px !important;
+    }
+}
