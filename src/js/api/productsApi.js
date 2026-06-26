@@ -10,21 +10,17 @@ export const productsApi = {
     getAllProducts: () => {
         return JSON.parse(localStorage.getItem("products")) || [];
     },
-    getProductByName: (name) => {
-        const products = JSON.parse(localStorage.getItem("products")) || [];
-        return products.find((product) => product.name === name);
-    },
     updateProduct: (updatedProduct) => {
         const products = JSON.parse(localStorage.getItem("products")) || [];
-        const productIndex = products.findIndex((product) => product.name === updatedProduct.name);
+        const productIndex = products.findIndex((product) => product.id === updatedProduct.id);
         if (productIndex !== -1) {
             products[productIndex] = updatedProduct;
             localStorage.setItem("products", JSON.stringify(products));
         }
     },
-    deleteProduct: (name) => {
+    deleteProduct: (id) => {
         const products = JSON.parse(localStorage.getItem("products")) || [];
-        const updatedProducts = products.filter((product) => product.name !== name);
+        const updatedProducts = products.filter((product) => product.id !== id);
         localStorage.setItem("products", JSON.stringify(updatedProducts));
     }
 }

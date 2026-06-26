@@ -52,62 +52,62 @@
         <!-- Formulario y tabla de productos -->
         <div class="d-flex align-items-center justify-content-center my-5">
             <div class="row align-items-start justify-content-center w-100 gap-5">
-                <div class="card col-lg-3  shadow sticky-top" style="top: 100px;">
-                    <div class="card-body">
-                        <form class="needs-validation" novalidate>
-                            <h5 class=" mb-3">
-                                Crear Producto
-                            </h5>
-                            <div class="form-floating mb-3">
-                                <input type="text" id="inputName" class="form-control" placeholder="Nombre" required/>
-                                <label class="form-label" for="inputName">Nombre</label>
-                                <div class="invalid-feedback" id="nameError"></div>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="number" id="inputPrice" class="form-control" placeholder="Precio" required/>
-                                <label class="form-label" for="inputPrice">Precio</label>
-                                <div class="invalid-feedback" id="priceError"></div>
-                            </div>
-                            <div class="form-floating mb-3">
-                                <input type="number" id="inputStock" class="form-control" placeholder="Stock" required/>
-                                <label class="form-label" for="inputStock">Stock</label>
-                                <div class="invalid-feedback" id="stockError"></div>
-                            </div>
-                            <div class="mb-3">
-                                <select class="form-select" name="categories" id="selectCategories" required>
-                                    <option value="" disabled selected>Seleccione una categoría</option>
-                                </select>
-                                <div class="invalid-feedback" id="categoryError"></div>
-                            </div>
-                            <div class="mb-3">
-                                <select class="form-select" name="imagen" id="selectImage" required>
-                                    <option value="" disabled selected>Seleccione una imagen</option>
-                                    <option value="/src/img/products/acrilico.jpg">Acrílico</option>
-                                    <option value="/src/img/products/cable_galvanizado.jpg">Cable galvanizado</option>
-                                    <option value="/src/img/products/casco.jpg">Casco</option>
-                                    <option value="/src/img/products/cemento.jpg">Cemento</option>
-                                    <option value="/src/img/products/cetol.jpg">Cetol</option>
-                                    <option value="/src/img/products/chaleco.jpg">Chaleco</option>
-                                    <option value="/src/img/products/cinta.jpg">Cinta</option>
-                                    <option value="/src/img/products/codo.jpg">Codo</option>
-                                    <option value="/src/img/products/espuma.jpg">Espuma</option>
-                                    <option value="/src/img/products/fastix.jpg">Fastix</option>
-                                    <option value="/src/img/products/guante.jpg">Guante</option>
-                                    <option value="/src/img/products/ladrillo.jpg">Ladrillo</option>
-                                    <option value="/src/img/products/nylon.jpg">Nylon</option>
-                                    <option value="/src/img/products/rodillo.jpg">Rodillo</option>
-                                    <option value="/src/img/products/T-junc.jpg">T-Junc</option>
-                                </select>
-                                <div class="invalid-feedback" id="imageError"></div>
-                            </div>
-                            <button class="btn btn-success" id="submitProductButton">Crear</button>
-                            <div class="d-flex justify-content-end gap-2 mt-3 d-none" id="updateCancelButtons">
-                                <button class="btn btn-success" id="updateProductButton">Actualizar</button>
-                                <button class="btn btn-danger" id="cancelProductButton">Cancelar</button>
-                            </div>
-                        </form>
+                    <div class="col-lg-3 card shadow sticky-lg-top sticky-sidebar">
+                        <div class="card-body">
+                            <form class="needs-validation" novalidate>
+                                <h5 class=" mb-3">
+                                    Crear Producto
+                                </h5>
+                                <div class="form-floating mb-3">
+                                    <input type="text" id="inputName" class="form-control" placeholder="Nombre" required/>
+                                    <label class="form-label" for="inputName">Nombre</label>
+                                    <div class="invalid-feedback" id="nameError"></div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="number" id="inputPrice" class="form-control" placeholder="Precio" required/>
+                                    <label class="form-label" for="inputPrice">Precio</label>
+                                    <div class="invalid-feedback" id="priceError"></div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input type="number" id="inputStock" class="form-control" placeholder="Stock" required/>
+                                    <label class="form-label" for="inputStock">Stock</label>
+                                    <div class="invalid-feedback" id="stockError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <select class="form-select" name="categories" id="selectCategories" required>
+                                        <option value="" disabled selected>Seleccione una categoría</option>
+                                    </select>
+                                    <div class="invalid-feedback" id="categoryError"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <select class="form-select" name="imagen" id="selectImage" required>
+                                        <option value="" disabled selected>Seleccione una imagen</option>
+                                        <option value="/src/img/products/acrilico.jpg">Acrílico</option>
+                                        <option value="/src/img/products/cable_galvanizado.jpg">Cable galvanizado</option>
+                                        <option value="/src/img/products/casco.jpg">Casco</option>
+                                        <option value="/src/img/products/cemento.jpg">Cemento</option>
+                                        <option value="/src/img/products/cetol.jpg">Cetol</option>
+                                        <option value="/src/img/products/chaleco.jpg">Chaleco</option>
+                                        <option value="/src/img/products/cinta.jpg">Cinta</option>
+                                        <option value="/src/img/products/codo-90.jpg">Codo</option>
+                                        <option value="/src/img/products/espuma.jpg">Espuma</option>
+                                        <option value="/src/img/products/fastix.jpg">Fastix</option>
+                                        <option value="/src/img/products/guante.jpg">Guante</option>
+                                        <option value="/src/img/products/ladrillo.jpg">Ladrillo</option>
+                                        <option value="/src/img/products/nylon.jpg">Nylon</option>
+                                        <option value="/src/img/products/rodillo.jpg">Rodillo</option>
+                                        <option value="/src/img/products/T-junc.jpg">T-Junc</option>
+                                    </select>
+                                    <div class="invalid-feedback" id="imageError"></div>
+                                </div>
+                                <button class="btn btn-success" id="submitProductButton">Crear</button>
+                                <div class="d-flex justify-content-end gap-2 mt-3 d-none" id="updateCancelButtons">
+                                    <button class="btn btn-success" id="updateProductButton">Actualizar</button>
+                                    <button class="btn btn-danger" id="cancelProductButton">Cancelar</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
-                </div>
                 <div class="col-lg-8 p-3 rounded shadow bg-white">
                     <table class="table table-hover text-center">
                         <thead>

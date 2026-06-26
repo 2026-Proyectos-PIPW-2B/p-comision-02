@@ -35,6 +35,9 @@ export function createActionsButtons(parent, editHandler, deleteHandler) {
     const editBtn = document.createElement("button");
     const deleteBtn = document.createElement("button");
 
+    const wrapper =  document.createElement("div");
+    wrapper.classList.add("d-flex", "justify-content-center", "gap-2")
+
     editBtn.classList.add("btn", "btn-sm", "btn-outline-primary");
     deleteBtn.classList.add("btn", "btn-sm", "btn-outline-danger");
 
@@ -44,8 +47,10 @@ export function createActionsButtons(parent, editHandler, deleteHandler) {
     editBtn.onclick = editHandler;
     deleteBtn.onclick = deleteHandler;
 
-    parent.appendChild(editBtn);
-    parent.appendChild(deleteBtn);
+    wrapper.appendChild(editBtn)
+    wrapper.appendChild(deleteBtn)
+
+    parent.appendChild(wrapper);
 }
 
 export const trashModal = (type, trashHandler) => {
@@ -85,12 +90,13 @@ export function updatePagination(array, listFunction, itemsPerPage, currentPage)
 
         const a = document.createElement("a");
         a.classList.add("page-link");
-        a.href = "#";
+        a.href = "";
         a.textContent = i;
 
         a.addEventListener("click", (e) => {
             e.preventDefault();
             listFunction(i, array);
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         });
 
         li.appendChild(a);
@@ -110,6 +116,7 @@ const paginatedButtonsHandler = (array, listFunction, totalPages, currentPage) =
         if (currentPage > 1) {
             currentPage--
             listFunction(currentPage, array);
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }
     nextPageBtn.onclick = (e) => {
@@ -117,6 +124,7 @@ const paginatedButtonsHandler = (array, listFunction, totalPages, currentPage) =
         if (currentPage < totalPages) {
             currentPage++
             listFunction(currentPage, array);
+            window.scrollTo({ top: 0, behavior: 'smooth' })
         }
     }
 }

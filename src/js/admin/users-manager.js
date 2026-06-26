@@ -234,7 +234,6 @@ function listUsers(page, array) {
         colLastname.textContent = element.lastname
         colAdmin.textContent = element.isAdmin ? "Sí" : "No"
         colAllowed.textContent = element.isAllowed ? "Sí" : "No"
-        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         row.appendChild(colUsername)
         row.appendChild(colName)

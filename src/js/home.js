@@ -15,8 +15,12 @@ let toast;
 let searchInput;
 let currentPage
 let itemsPerPage
-// const sortPrice = document.getElementById("sortPrice")
+let priceSortButton
+let nameSortButton
 let priceSortingStatus = 0
+let nameSortingStatus = 0
+let priceSortIcon
+let nameSortIcon
 
 window.onload = () => {
     products = productsApi.getAllProducts();
@@ -29,8 +33,24 @@ window.onload = () => {
     toast = document.getElementById("toastSuccess")
     searchInput = document.getElementById("searchInput")
     currentPage = 1
-    itemsPerPage = 5
+    itemsPerPage = configurationApi.getConfiguration().pagination.catalog
     productsContainer = document.getElementById("productsContainer");
+    priceSortButton = document.getElementById("priceSortButton")
+    priceSortIcon = document.getElementById("priceSortIcon")
+    nameSortIcon = document.getElementById("nameSortIcon")
+    priceSortButton.onclick = () => {
+        nameSortingStatus = 0
+        if(priceSortingStatus !==2) priceSortingStatus++ 
+        else priceSortingStatus = 0
+        handleFilters()
+    }
+    nameSortButton = document.getElementById("nameSortButton")
+    nameSortButton.onclick = () => {
+        priceSortingStatus = 0
+        if(nameSortingStatus !==2) nameSortingStatus++ 
+        else nameSortingStatus = 0
+        handleFilters()
+    }
 
     resetFilters()
     updateFilterCategories(categoriesApi.getAllCategories());
@@ -392,33 +412,41 @@ const handleFilters = () => {
 
         return matchesSearch && matchesCategory;
     });
-    const sortingProducts = [...productsApi.getAllProducts()];
 
-    switch (priceSortingStatus) {
-        case 0:
-            sortingProducts.sort((a, b) => a.price - b.price);
-            priceSortingStatus = 1;
-            break;
+        switch (priceSortingStatus) {
+            case 0:
+                priceSortIcon.className = "fas fa-sort";
+                break
+            case 1:
+                filteredProducts.sort((a, b) => a.price - b.price);
+                priceSortIcon.className = "fas fa-arrow-up";
+                break;
+            case 2:
+                filteredProducts.sort((a, b) => b.price - a.price);
+                priceSortIcon.className = "fas fa-arrow-down";
+                break;
+            default:
+                break
+        }
 
-        case 1:
-            sortingProducts.sort((a, b) => b.price - a.price);
-            priceSortingStatus = 2;
-            break;
-
-        case 2:
-            priceSortingStatus = 0;
-            break;
-    }
-
-    const productsToRender =
-        priceSortingStatus === 0
-            ? productsApi.getAllProducts()
-            : sortingProducts;
-
-
+        switch (nameSortingStatus) {
+            case 0:
+                nameSortIcon.className = "fas fa-sort";
+                break;
+            case 1:
+                filteredProducts.sort((a, b) =>
+                    a.name.localeCompare(b.name)
+                );
+                nameSortIcon.className = "fas fa-arrow-up";
+                break;
+            case 2:
+                filteredProducts.sort((a, b) =>
+                    b.name.localeCompare(a.name)
+                );
+                nameSortIcon.className = "fas fa-arrow-down";
+                break;
+            default:
+                break;
+        }
     mapProducts(1, filteredProducts);
-};
-
-const handlePriceSort = () => {
-    
 };

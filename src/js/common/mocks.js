@@ -99,7 +99,7 @@ export const productsMock = [
         id: 13,
         name: "Codo PVC Sanitario 90° de 110 mm",
         category: "Plomería",
-        stock: 67,
+        stock: 19,
         price: 2900,
         image: "/src/img/products/codo-90.jpg",
     },
@@ -107,7 +107,7 @@ export const productsMock = [
         id: 14,
         name: "T de Derivación PVC Presión 25 mm",
         category: "Plomería",
-        stock: 54,
+        stock: 22,
         price: 3400,
         image: "/src/img/products/T-junc.jpg",
     },
@@ -146,6 +146,31 @@ export const categoriesMock = [
         name: "Plomería",
         description: "Cañerías, conexiones, selladores y accesorios sanitarios.",
         color: "#1E88E5"
+    },
+    {
+    name: "Electricidad",
+    description: "Cables, llaves térmicas, iluminación y componentes eléctricos.",
+    color: "#F9A825"
+    },
+    {
+        name: "Jardinería",
+        description: "Herramientas, mangueras, fertilizantes y accesorios para exteriores.",
+        color: "#43A047"
+    },
+    {
+        name: "Carpintería",
+        description: "Maderas, herrajes, adhesivos y herramientas para trabajos en madera.",
+        color: "#8D6E63"
+    },
+    {
+        name: "Tornillería",
+        description: "Tornillos, tuercas, arandelas y elementos de fijación especializados.",
+        color: "#546E7A"
+    },
+    {
+        name: "Abrasivos",
+        description: "Lijas, discos de corte, cepillos y productos para desbaste y pulido.",
+        color: "#EF6C00"
     }
 ];
 
@@ -495,7 +520,7 @@ export const configurationMock = {
     },
     minimumPurchaseAmount: 20000,
     stock: {
-        lowThreshold: 10,
+        lowThreshold: 25,
         mediumThreshold: 50,
         highThreshold: 100,
     },
