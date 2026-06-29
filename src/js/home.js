@@ -1,4 +1,4 @@
-import { showNotification, showCartCount, updatePagination } from "./common/utils.js";
+import { showNotification, showCartCount, updatePagination, priceSortFilter, nameSortFilter } from "./common/utils.js";
 import { categoriesApi } from "./api/categoriesApi.js";
 import { productsApi } from "./api/productsApi.js";
 import { configurationApi } from "./api/configurationApi.js";
@@ -36,8 +36,6 @@ window.onload = () => {
     itemsPerPage = configurationApi.getConfiguration().pagination.catalog
     productsContainer = document.getElementById("productsContainer");
     priceSortButton = document.getElementById("priceSortButton")
-    priceSortIcon = document.getElementById("priceSortIcon")
-    nameSortIcon = document.getElementById("nameSortIcon")
     priceSortButton.onclick = () => {
         nameSortingStatus = 0
         if(priceSortingStatus !==2) priceSortingStatus++ 
@@ -402,7 +400,7 @@ const handleFilters = () => {
         option => option.value
     );
 
-    const filteredProducts = products.filter(product => {
+    let filteredProducts = products.filter(product => {
         const matchesSearch =
             product.name.toLowerCase().includes(searchTerm);
 
@@ -413,40 +411,7 @@ const handleFilters = () => {
         return matchesSearch && matchesCategory;
     });
 
-        switch (priceSortingStatus) {
-            case 0:
-                priceSortIcon.className = "fas fa-sort";
-                break
-            case 1:
-                filteredProducts.sort((a, b) => a.price - b.price);
-                priceSortIcon.className = "fas fa-arrow-up";
-                break;
-            case 2:
-                filteredProducts.sort((a, b) => b.price - a.price);
-                priceSortIcon.className = "fas fa-arrow-down";
-                break;
-            default:
-                break
-        }
-
-        switch (nameSortingStatus) {
-            case 0:
-                nameSortIcon.className = "fas fa-sort";
-                break;
-            case 1:
-                filteredProducts.sort((a, b) =>
-                    a.name.localeCompare(b.name)
-                );
-                nameSortIcon.className = "fas fa-arrow-up";
-                break;
-            case 2:
-                filteredProducts.sort((a, b) =>
-                    b.name.localeCompare(a.name)
-                );
-                nameSortIcon.className = "fas fa-arrow-down";
-                break;
-            default:
-                break;
-        }
+    filteredProducts = priceSortFilter(filteredProducts, priceSortingStatus)
+    filteredProducts = nameSortFilter(filteredProducts, nameSortingStatus)
     mapProducts(1, filteredProducts);
 };

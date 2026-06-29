@@ -139,3 +139,50 @@ export const adminNavbar = (admin) => {
     } 
     navbarPanel.appendChild(switchButton)
 }
+
+export const priceSortFilter = (array, sortOrder) => {
+    const priceSortIcon = document.getElementById("priceSortIcon");
+    const filteredArray = [...array];
+    switch (sortOrder) {
+        case 0:
+            priceSortIcon.className = "fas fa-sort";
+            break
+        case 1:
+            filteredArray.sort((a, b) => a.price - b.price);
+            priceSortIcon.className = "fas fa-arrow-up";
+            break;
+        case 2:
+            filteredArray.sort((a, b) => b.price - a.price);
+            priceSortIcon.className = "fas fa-arrow-down";
+            break;
+        default:
+            break
+    }
+    return filteredArray;
+}
+
+export const nameSortFilter = (array, sortOrder) => {
+    const nameSortIcon = document.getElementById("nameSortIcon");
+    const filteredArray = [...array];
+    switch (sortOrder) {
+        case 0:
+            nameSortIcon.className = "fas fa-sort";
+            break;
+        case 1:
+            filteredArray.sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+            nameSortIcon.className = "fas fa-arrow-up";
+            break;
+        case 2:
+            filteredArray.sort((a, b) =>
+                b.name.localeCompare(a.name)
+            );
+            nameSortIcon.className = "fas fa-arrow-down";
+            break;
+        default:
+            break;
+    }
+    return filteredArray;
+
+}

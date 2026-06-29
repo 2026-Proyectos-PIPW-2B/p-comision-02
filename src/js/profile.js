@@ -7,6 +7,8 @@ let user;
 let userOrders;
 let currentPage;
 let itemsPerPage;
+let priceSortingStatus;
+let dateSortingStatus;
 
 window.addEventListener("load", () => {
     const logoutButton = document.getElementById("logoutButton");
@@ -39,6 +41,22 @@ window.addEventListener("load", () => {
         showProfileModal(profileImages);
     })
 
+    priceSortingStatus = 0
+    const totalAmountHeader = document.getElementById("totalAmountHeader");
+    totalAmountHeader.onclick = () => {
+        dateSortingStatus = 0
+        priceSortingStatus = (priceSortingStatus + 1) % 3;
+        handleFilters();
+    };
+
+    dateSortingStatus = 0
+    const dateSortHeader = document.getElementById("dateSortHeader");
+    dateSortHeader.onclick = () => {
+        priceSortingStatus = 0
+        dateSortingStatus = (dateSortingStatus + 1) % 3;
+        handleFilters();
+    };
+
     mapOrders(currentPage, userOrders);
 });
 
@@ -48,10 +66,9 @@ const logout = () => {
 };
 
 const mapOrders = (page, array) => {
-    const tbody = document.getElementById("tbodyCategories");
+    const tbody = document.getElementById("tbodyOrders");
     tbody.innerHTML = "";
     currentPage = page || currentPage;
-    const userSession = JSON.parse(localStorage.getItem("userSession"));
 
     if (!array.length) {
         const tr = document.createElement("tr");
@@ -115,6 +132,70 @@ const mapOrders = (page, array) => {
     });
     updatePagination(array, mapOrders, itemsPerPage, currentPage);
 };
+
+const handleFilters = () => {
+    let filteredOrders = [...userOrders]
+
+    filteredOrders = priceSortFilter(filteredOrders, priceSortingStatus)
+    filteredOrders = dateSortFilter(filteredOrders, dateSortingStatus)
+    mapOrders(1, filteredOrders);
+};
+
+const priceSortFilter = (array, sortOrder) => {
+    const priceSortIcon = document.getElementById("priceSortIcon");
+    const filteredArray = [...array];
+    switch (sortOrder) {
+        case 0:
+            priceSortIcon.className = "fas fa-sort";
+            break
+        case 1:
+            filteredArray.sort((a, b) => a.total - b.total);
+            priceSortIcon.className = "fas fa-arrow-up";
+            break;
+        case 2:
+            filteredArray.sort((a, b) => b.total - a.total);
+            priceSortIcon.className = "fas fa-arrow-down";
+            break;
+        default:
+            break
+    }
+    return filteredArray;
+}
+
+const parsearFecha = (fechaString) => {
+    if (!fechaString) return 0;
+
+    const [fecha, hora] = fechaString.split(", ");
+    
+    const [dia, mes, anio] = fecha.split("/");
+    
+    const [horas, minutos, segundos] = hora.split(":");
+
+    return new Date(anio, mes - 1, dia, horas, minutos, segundos).getTime();
+};
+
+const dateSortFilter = (array, sortOrder) => {
+    const dateSortIcon = document.getElementById("dateSortIcon"); 
+    const filteredArray = [...array];
+
+    switch (sortOrder) {
+        case 0:
+            dateSortIcon.className = "fas fa-sort";
+            break;
+        case 1:
+            filteredArray.sort((a, b) => parsearFecha(a.date) - parsearFecha(b.date));
+            dateSortIcon.className = "fas fa-arrow-up";
+            break;
+        case 2:
+            filteredArray.sort((a, b) => parsearFecha(b.date) - parsearFecha(a.date));
+            dateSortIcon.className = "fas fa-arrow-down";
+            break;
+        default:
+            break;
+    }
+    
+    return filteredArray;
+}
 
 const showProductsModal = (products) => {
     const modalTitle = document.getElementById("staticBackdropLabel");
