@@ -12,6 +12,9 @@ window.onload = () => {
 	if (params.get("reason") === "session_expired") {
 		divErrorMessage.textContent = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
 	}
+	if (params.get("reason") === "init_complete") {
+		divErrorMessage.innerHTML = "Inicialización exitosa. <br> Ingrese con las credenciales: administrador administrador."
+	}
 };
 
 const login = () => {

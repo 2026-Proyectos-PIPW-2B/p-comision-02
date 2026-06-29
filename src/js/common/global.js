@@ -8,9 +8,9 @@ import { usersApi } from "../api/usersApi.js"
 import { ordersApi } from "../api/ordersApi.js"
 import { configurationApi } from "../api/configurationApi.js"
 
-const globalOnload = () => {
+export const globalOnload = (index) => {
     // any role check
-    if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
+    if(!window.location.href.includes("login") && !window.location.href.includes("index")  && !JSON.parse(localStorage.getItem("userSession"))) {
         window.location.href = "/src/pages/not-found.html";
         return
     }
@@ -21,35 +21,38 @@ const globalOnload = () => {
         return
     }
 
-    if(JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
+    // admin navbar
+    if(JSON.parse(localStorage.getItem("userSession"))?.isAdmin && !window.location.href.includes("login") && !window.location.href.includes("index")) {
         window.location.href.includes("admin") ? adminNavbar(true) : adminNavbar()
     }
 
     // products seed
     const products = productsApi.getAllProducts();
-    if(!products || products.length === 0 || (!localStorage.getItem("productsId"))) {
+    if(index || !products || (!localStorage.getItem("productsId"))) {
         productsApi.setAllProducts(productsMock)
         localStorage.setItem("productsId", "9")
     } 
+
     // categories seed
     const categories = categoriesApi.getAllCategories();
-    if(!categories || categories.length === 0)
+    if(index || !categories)
         categoriesApi.setAllCategories(categoriesMock)
+
     // Admin seed y user seed
     const users = usersApi.getAllUsers();
-    if(!users || users.length === 0)
+    if(index || !users || users.length === 0)
         usersApi.setAllUsers(usersMock)
 
     // orders seed
     const orders = ordersApi.getAllOrders();
-    if(!orders || orders.length === 0 || (!localStorage.getItem("ordersId"))) {
+    if(index || !orders || (!localStorage.getItem("ordersId"))) {
         ordersApi.setAllOrders(ordersMock)
         localStorage.setItem("ordersId", "11")
     }
 
     // configuration seed
     const configuration = configurationApi.getConfiguration();
-    if(!configuration) {
+    if(index || !configuration) {
         configurationApi.setConfiguration(configurationMock)
     }
 
@@ -65,7 +68,7 @@ const globalOnload = () => {
     }
 
     // Cart counter icon
-    if(!window.location.href.includes("admin") && !window.location.href.includes("login")) {
+    if(!window.location.href.includes("admin") && !window.location.href.includes("login") && !window.location.href.includes("index")) {
         showCartCount()
     }
     }
