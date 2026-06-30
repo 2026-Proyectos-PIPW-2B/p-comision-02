@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification, trashModal, updatePagination } from "../common/utils.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination, nameSortFilter } from "../common/utils.js"
 import { showError, showSuccess, resetStates } from "../common/validations.js"
 import { categoriesApi } from "../api/categoriesApi.js"
 import { productsApi } from "../api/productsApi.js"
@@ -16,6 +16,7 @@ let categoryToUpdate
 let updateCancelButtons
 let currentPage
 let itemsPerPage
+let nameSortingStatus
 
 window.onload = function() {
     categories = categoriesApi.getAllCategories()
@@ -51,8 +52,22 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+
+    const nameBtn = document.getElementById("nameSortButton")
+    nameSortingStatus = 0
+    nameBtn.onclick = () => {
+        nameSortingStatus = (nameSortingStatus + 1) % 3
+        handleSort(categories)
+    }
+
     showSubmitButton()
     listCategories(currentPage, categories)
+}
+
+const handleSort = (array) => {
+    let categoriesFiltered = [...array]
+    categoriesFiltered = nameSortFilter(categoriesFiltered, nameSortingStatus)
+    listCategories(1, categoriesFiltered)
 }
 
 function showSubmitButton() {

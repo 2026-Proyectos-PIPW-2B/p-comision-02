@@ -1,4 +1,4 @@
-import { createActionsButtons, showNotification, trashModal, updatePagination } from "../common/utils.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination, priceSortFilter, nameSortFilter } from "../common/utils.js"
 import { showError, showSuccess, resetStates } from "../common/validations.js"
 import { productsApi } from "../api/productsApi.js"
 import { categoriesApi } from "../api/categoriesApi.js"
@@ -20,6 +20,8 @@ let tbodyProducts
 let updateCancelButtons
 let currentPage
 let itemsPerPage
+let priceSortingStatus
+let nameSortingStatus
 
 let modalElement
 let visualizerModal
@@ -42,7 +44,6 @@ window.onload = function() {
     itemsPerPage = configurationApi.getConfiguration().pagination.admin
     modalElement = document.getElementById("visualizerModal")
     visualizerModal = new bootstrap.Modal(modalElement)
-    const priceTh = document.getElementById("priceTh")
 
     inputName.oninput = validateForm
     inputPrice.oninput = validateForm
@@ -68,13 +69,30 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
-
-    priceTh.addEventListener("click", () => {
-        handlePriceSort()
-    })
+    const priceBtn = document.getElementById("priceSortButton")
+    priceSortingStatus = 0
+    priceBtn.onclick = () => {
+        nameSortingStatus = 0
+        priceSortingStatus = (priceSortingStatus + 1) % 3
+        handleSort(products)
+    }
+    const nameBtn = document.getElementById("nameSortButton")
+    nameSortingStatus = 0
+    nameBtn.onclick = () => {
+        priceSortingStatus = 0
+        nameSortingStatus = (nameSortingStatus + 1) % 3
+        handleSort(products)
+    }
     showSubmitButton()
     listProducts(currentPage, products)
     addCategoriesToSelect()
+}
+
+const handleSort = (array) => {
+    let productsFiltered = [...array]
+    productsFiltered = priceSortFilter(productsFiltered, priceSortingStatus)
+    productsFiltered = nameSortFilter(productsFiltered, nameSortingStatus)
+    listProducts(1, productsFiltered)
 }
 
 function addCategoriesToSelect() {

@@ -4,8 +4,7 @@ import { usersApi } from "../api/usersApi.js";
 let orders
 let currentPage;
 let itemsPerPage;
-let nextPageBtn;
-let previousPageBtn;
+let userSelect
 
 window.addEventListener("load", () => {
     const logoutButton = document.getElementById("logoutButton");
@@ -14,39 +13,88 @@ window.addEventListener("load", () => {
     
     currentPage = 1;
     itemsPerPage = JSON.parse(localStorage.getItem("configuration")).pagination.admin
-    nextPageBtn = document.getElementById("nextPage");
-    previousPageBtn = document.getElementById("previousPage");
+    
+    userSelect = document.getElementById("userSelect");
+    userSelect.onchange = () => {
+        handleFilters()
+    }
 
-    previousPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(orders.length / itemsPerPage);
-        if (currentPage > 1) {
-            currentPage--;
-            mapOrders();
-        }
-    });
-    nextPageBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        const totalPages = Math.ceil(orders.length / itemsPerPage);
-        if (currentPage < totalPages) {
-            currentPage++;
-            mapOrders();
-        }
-    });
+    const dateStart = document.getElementById("dateStart")
+    const dateEnd = document.getElementById("dateEnd")
+    dateStart.onchange = () => {
+        handleFilters()
+    }
 
-    mapOrders();
+    dateEnd.onchange = () => {
+        handleFilters()
+    }
+
+    mapUsersToSelect();
+    mapOrders(currentPage, orders);
     showEmptyCard()
 
 });
 
+const handleFilters = () => {
+    let FilteredOrders = [...orders];
+    const selectedUsername = userSelect.value;
+    FilteredOrders = selectedUsername ? FilteredOrders.filter(order => order.username === selectedUsername) : FilteredOrders;
+    FilteredOrders = dateFilter(FilteredOrders);
+    mapOrders(1, FilteredOrders);
+}
 
-const mapOrders = (page) => {
+const dateFilter = (ordersArray) => {
+    const FilteredOrders = [...ordersArray]
+    const dateStart = document.getElementById("dateStart").value
+    const dateEnd = document.getElementById("dateEnd").value
+
+    if (!dateStart && !dateEnd) {
+        return ordersArray;
+    }
+
+    let startObj = -Infinity;
+    if (dateStart) {
+        startObj = new Date(dateStart + "T00:00:00").getTime();
+    }
+
+    let endObj = Infinity;
+    if (dateEnd) {
+        endObj = new Date(dateEnd + "T23:59:59").getTime();
+    }
+
+    return FilteredOrders.filter((o) => {
+        const orderDateObj = parseDate(o.date).getTime()
+        return orderDateObj >= startObj && orderDateObj <= endObj
+    })
+}
+
+const parseDate = (dateString) => {
+    const [date, hour] = dateString.split(", ");
+    const [day, month, year] = date.split("/");
+    return new Date(year, month - 1, day)
+}
+
+const mapUsersToSelect = () => {
+    const users = usersApi.getAllUsers()
+    userSelect.innerHTML = ""
+    const defaultOption = document.createElement("option")
+    defaultOption.value = ""
+    defaultOption.textContent = "Todos los usuarios"
+    userSelect.appendChild(defaultOption)
+    users.forEach((user) => {
+        const option = document.createElement("option")
+        option.value = user.username
+        option.textContent = user.username
+        userSelect.appendChild(option)
+    })
+}
+
+const mapOrders = (page, array) => {
     const tbody = document.getElementById("tbodyOrders");
     tbody.innerHTML = "";
     currentPage = page || currentPage;
-    const userSession = JSON.parse(localStorage.getItem("userSession"));
 
-    if (!orders.length) {
+    if (!array.length) {
         const tr = document.createElement("tr");
 
         const td = document.createElement("td");
@@ -62,7 +110,7 @@ const mapOrders = (page) => {
 
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
-    const paginatedOrders = orders.slice(startIndex, endIndex);
+    const paginatedOrders = array.slice(startIndex, endIndex);
 
     paginatedOrders.forEach((order) => {
         const tr = document.createElement("tr");
@@ -109,7 +157,7 @@ const mapOrders = (page) => {
 
         tbody.appendChild(tr);
     });
-    updatePagination(orders, mapOrders, itemsPerPage, currentPage);
+    updatePagination(array, mapOrders, itemsPerPage, currentPage);
 };
 
 const showEmptyCard = () => {
