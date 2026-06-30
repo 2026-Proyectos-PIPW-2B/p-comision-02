@@ -20,7 +20,7 @@ export const categoriesApi = {
         if (categoryIndex !== -1) {
             categories[categoryIndex] = updatedCategory;
             localStorage.setItem("categories", JSON.stringify(categories));
-        }
+        } else return true
     },
     deleteCategory: (name) => {
         const categories = JSON.parse(localStorage.getItem("categories")) || [];

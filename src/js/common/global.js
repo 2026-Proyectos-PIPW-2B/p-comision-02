@@ -27,27 +27,27 @@ export const globalOnload = (index) => {
     }
 
     // products seed
-    const products = productsApi.getAllProducts();
+    const products = localStorage.getItem("products")
     if(index || !products || (!localStorage.getItem("productsId"))) {
         productsApi.setAllProducts(productsMock)
         localStorage.setItem("productsId", "9")
     } 
 
     // categories seed
-    const categories = categoriesApi.getAllCategories();
+    const categories = localStorage.getItem("categories")
     if(index || !categories)
         categoriesApi.setAllCategories(categoriesMock)
 
     // Admin seed y user seed
-    const users = usersApi.getAllUsers();
+    const users = localStorage.getItem("users")
     if(index || !users || users.length === 0)
         usersApi.setAllUsers(usersMock)
 
     // orders seed
-    const orders = ordersApi.getAllOrders();
+    const orders = localStorage.getItem("orders")
     if(index || !orders || (!localStorage.getItem("ordersId"))) {
         ordersApi.setAllOrders(ordersMock)
-        localStorage.setItem("ordersId", "11")
+        localStorage.setItem("ordersId", "16")
     }
 
     // configuration seed

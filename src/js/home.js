@@ -133,11 +133,38 @@ const updateButtonText = () => {
     }
 };
 
-const mapProducts = (page, arrayProducts) => {
+const mapProducts = (page, arrayProducts = []) => {
     productsContainer.innerHTML = ""
-    if(!arrayProducts) return
 
-    console.log(arrayProducts);
+    if(arrayProducts.length === 0 ) {
+        const noProductsCard = document.createElement("div");
+        noProductsCard.className = "card shadow border my-4 mx-auto no-products-card";
+
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body d-flex align-items-center gap-3 py-4";
+
+        const icon = document.createElement("i");
+        icon.className = "bi bi-search fs-1 text-secondary";
+
+        const content = document.createElement("div");
+
+        const title = document.createElement("h5");
+        title.className = "mb-1";
+        title.textContent = "No se encontraron productos";
+
+        const text = document.createElement("p");
+        text.className = "text-secondary mb-0";
+        text.textContent = "Probá modificando los filtros o el término de búsqueda.";
+
+        content.appendChild(title);
+        content.appendChild(text);
+
+        cardBody.appendChild(icon);
+        cardBody.appendChild(content);
+
+        noProductsCard.appendChild(cardBody);
+        productsContainer.appendChild(noProductsCard);
+    }
 
     currentPage = page || currentPage;
     const startIndex = (currentPage - 1) * itemsPerPage

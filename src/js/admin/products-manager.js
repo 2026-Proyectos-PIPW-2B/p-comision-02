@@ -189,7 +189,16 @@ function updateProduct() {
         category: productCategory,
         image: productImage
     }
-    productsApi.updateProduct(updatedProduct)
+    const missing = productsApi.updateProduct(updatedProduct)
+    if(missing) {
+        showNotification({
+            type: "error",
+            title: "actualizar",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: "No pudo actualizarse el producto"
+        })
+        return
+    }
     products = productsApi.getAllProducts()
     productToUpdate = null
     showNotification({
