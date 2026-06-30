@@ -20,6 +20,7 @@ let userToUpdate
 let btnShowPassword
 let currentPage
 let itemsPerPage
+let usernameSortingStatus
 
 window.onload = function() {
     users = usersApi.getAllUsers()
@@ -71,8 +72,41 @@ window.onload = function() {
         showSubmitButton()
         disabledSwitchWrapperVisibility()
     }
+
+    const usernameBtn = document.getElementById("usernameSortButton")
+    usernameSortingStatus = 0
+    usernameBtn.onclick = () => {
+        usernameSortingStatus = (usernameSortingStatus + 1) % 3
+        handleUsernameSort(users)
+    }
+
     showSubmitButton()
     listUsers(currentPage, users)
+}
+
+const handleUsernameSort = (array) => {
+    let usernameSortIcon = document.getElementById("usernameSortIcon")
+    let usersFiltered = [...array]
+    switch (usernameSortingStatus) {
+        case 0:
+            usernameSortIcon.className = "fas fa-sort";
+            break;
+        case 1:
+            usersFiltered.sort((a, b) =>
+                a.username.localeCompare(b.username)
+            );
+            usernameSortIcon.className = "fas fa-arrow-up";
+            break;
+        case 2:
+            usersFiltered.sort((a, b) =>
+                b.username.localeCompare(a.username)
+            );
+            usernameSortIcon.className = "fas fa-arrow-down";
+            break;
+        default:
+            break;
+    }
+    listUsers(1, usersFiltered)
 }
 
 function showSubmitButton() {
