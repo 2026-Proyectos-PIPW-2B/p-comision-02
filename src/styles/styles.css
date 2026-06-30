@@ -102,3 +102,14 @@ th {
         top: 95px !important;
     }
 }
+
+.no-products-card {
+    width: 100%;
+    max-width: 800px;
+}
+
+@media (min-width: 992px) {
+    .no-products-card {
+        width: 50%;
+    }
+}

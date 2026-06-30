@@ -47,7 +47,7 @@ export const globalOnload = (index) => {
     const orders = ordersApi.getAllOrders();
     if(index || !orders || (!localStorage.getItem("ordersId"))) {
         ordersApi.setAllOrders(ordersMock)
-        localStorage.setItem("ordersId", "11")
+        localStorage.setItem("ordersId", "16")
     }
 
     // configuration seed
