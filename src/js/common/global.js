@@ -27,7 +27,7 @@ export const globalOnload = (index) => {
     }
 
     // products seed
-    const products = productsApi.getAllProducts();
+    const products = localStorage.getItem("products")
     if(index || !products || (!localStorage.getItem("productsId"))) {
         productsApi.setAllProducts(productsMock)
         localStorage.setItem("productsId", "9")
