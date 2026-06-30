@@ -16,7 +16,7 @@ export const productsApi = {
         if (productIndex !== -1) {
             products[productIndex] = updatedProduct;
             localStorage.setItem("products", JSON.stringify(products));
-        }
+        } else return true
     },
     deleteProduct: (id) => {
         const products = JSON.parse(localStorage.getItem("products")) || [];

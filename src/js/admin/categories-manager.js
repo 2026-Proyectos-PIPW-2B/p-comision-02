@@ -110,7 +110,16 @@ function updateCategory() {
         name: categoryName,
         description: categoryDescription
     }
-    categoriesApi.updateCategory(updatedCategory)
+    const missing = categoriesApi.updateCategory(updatedCategory)
+    if(missing) {
+        showNotification({
+            type: "error",
+            title: "actualizar",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: "No pudo actualizarse la categoriía"
+        })
+        return
+    }
     categories = categoriesApi.getAllCategories()
     categoryToUpdate = null
     showNotification({
