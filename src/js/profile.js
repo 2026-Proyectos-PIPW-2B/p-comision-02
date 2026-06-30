@@ -56,6 +56,17 @@ window.addEventListener("load", () => {
         dateSortingStatus = (dateSortingStatus + 1) % 3;
         handleFilters();
     };
+    const dateStart = document.getElementById("dateStart")
+    const dateEnd = document.getElementById("dateEnd")
+    dateStart.onchange = () => {
+        const FilteredArray = dateFilter(userOrders)
+        mapOrders(currentPage, FilteredArray)
+    }
+
+    dateEnd.onchange = () => {
+        const FilteredArray = dateFilter(userOrders)
+        mapOrders(currentPage, FilteredArray)
+    }
 
     mapOrders(currentPage, userOrders);
 });
@@ -195,6 +206,37 @@ const dateSortFilter = (array, sortOrder) => {
     }
     
     return filteredArray;
+}
+
+const dateFilter = (orders) => {
+    const FilteredOrders = [...orders]
+    const dateStart = document.getElementById("dateStart").value
+    const dateEnd = document.getElementById("dateEnd").value
+
+    if (!dateStart && !dateEnd) {
+        return orders;
+    }
+
+    let startObj = -Infinity;
+    if (dateStart) {
+        startObj = new Date(dateStart + "T00:00:00").getTime();
+    }
+
+    let endObj = Infinity;
+    if (dateEnd) {
+        endObj = new Date(dateEnd + "T23:59:59").getTime();
+    }
+
+    return FilteredOrders.filter((o) => {
+        const orderDateObj = parseDate(o.date).getTime()
+        return orderDateObj >= startObj && orderDateObj <= endObj
+    })
+}
+
+const parseDate = (dateString) => {
+    const [date, hour] = dateString.split(", ");
+    const [day, month, year] = date.split("/");
+    return new Date(year, month - 1, day)
 }
 
 const showProductsModal = (products) => {
