@@ -251,11 +251,11 @@ export const usersMock = [
 
 export const ordersMock = [
     // =========================
-    // juan.perez
+    // usuario
     // =========================
     {
         id: 1,
-        username: "juan.perez",
+        username: "usuario",
         total: 18500,
         date: "10/6/2026, 09:15:22",
         products: [
@@ -271,7 +271,7 @@ export const ordersMock = [
     },
     {
         id: 2,
-        username: "juan.perez",
+        username: "usuario",
         total: 10450,
         date: "11/6/2026, 14:32:10",
         products: [
@@ -295,7 +295,7 @@ export const ordersMock = [
     },
     {
         id: 3,
-        username: "juan.perez",
+        username: "usuario",
         total: 32950,
         date: "12/6/2026, 18:45:55",
         products: [
@@ -319,7 +319,7 @@ export const ordersMock = [
     },
     {
         id: 4,
-        username: "juan.perez",
+        username: "usuario",
         total: 66900,
         date: "14/6/2026, 11:20:33",
         products: [
@@ -359,7 +359,7 @@ export const ordersMock = [
     },
     {
         id: 5,
-        username: "juan.perez",
+        username: "usuario",
         total: 119700,
         date: "16/6/2026, 16:05:47",
         products: [
@@ -407,11 +407,11 @@ export const ordersMock = [
     },
 
     // =========================
-    // ignacio.admin
+    // administrador
     // =========================
     {
         id: 6,
-        username: "ignacio.admin",
+        username: "administrador",
         total: 48900,
         date: "10/6/2026, 12:10:15",
         products: [
@@ -427,7 +427,7 @@ export const ordersMock = [
     },
     {
         id: 7,
-        username: "ignacio.admin",
+        username: "administrador",
         total: 35100,
         date: "11/6/2026, 17:42:28",
         products: [
@@ -451,7 +451,7 @@ export const ordersMock = [
     },
     {
         id: 8,
-        username: "ignacio.admin",
+        username: "administrador",
         total: 85800,
         date: "13/6/2026, 08:55:02",
         products: [
@@ -475,7 +475,7 @@ export const ordersMock = [
     },
     {
         id: 9,
-        username: "ignacio.admin",
+        username: "administrador",
         total: 78950,
         date: "15/6/2026, 15:23:51",
         products: [
@@ -507,7 +507,7 @@ export const ordersMock = [
     },
     {
         id: 10,
-        username: "ignacio.admin",
+        username: "administrador",
         total: 129250,
         date: "18/6/2026, 19:17:25",
         products: [

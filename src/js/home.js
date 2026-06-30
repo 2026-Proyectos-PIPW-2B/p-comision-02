@@ -21,6 +21,7 @@ let priceSortingStatus = 0
 let nameSortingStatus = 0
 let priceSortIcon
 let nameSortIcon
+let deleteFilters
 
 window.onload = () => {
     products = productsApi.getAllProducts();
@@ -32,6 +33,7 @@ window.onload = () => {
     button = document.getElementById("multiSelectButton");
     toast = document.getElementById("toastSuccess")
     searchInput = document.getElementById("searchInput")
+    deleteFilters = document.getElementById("deleteFilters")
     currentPage = 1
     itemsPerPage = configurationApi.getConfiguration().pagination.catalog
     productsContainer = document.getElementById("productsContainer");
@@ -47,6 +49,13 @@ window.onload = () => {
         priceSortingStatus = 0
         if(nameSortingStatus !==2) nameSortingStatus++ 
         else nameSortingStatus = 0
+        handleFilters()
+    }
+
+    deleteFilters.onclick = () => {
+        resetFilters()
+        priceSortingStatus = 0
+        nameSortingStatus = 0
         handleFilters()
     }
 
