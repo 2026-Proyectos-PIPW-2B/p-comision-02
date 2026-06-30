@@ -6,4 +6,8 @@ window.addEventListener('load', () => {
         globalOnload(true)
         window.location.href = "/src/pages/login.html?reason=init_complete";
     })
+    const goLogin = document.getElementById("goLogin")
+    goLogin.addEventListener("click", () => {
+        window.location.href = "/src/pages/login.html"
+    })
 })
