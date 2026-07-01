@@ -6,9 +6,13 @@ import { usersApi } from "../api/usersApi.js"
 import { ordersApi } from "../api/ordersApi.js"
 import { configurationApi } from "../api/configurationApi.js"
 
-const userSession = JSON.parse(localStorage.getItem("userSession")) || null
 
 export const globalOnload = (index) => {
+    const userSession = JSON.parse(localStorage.getItem("userSession")) || null
+    console.log(userSession);
+    console.log(!userSession);
+    console.log(!window.location.href.includes("login"));
+    
     // any role check
     if(!window.location.href.includes("login") && !userSession) {
         window.location.href = "/p-comision-02/src/pages/not-found.html";
