@@ -135,7 +135,7 @@ export const adminNavbar = (admin) => {
     switchButton.className = `btn text-bg-dark ms-2`
     switchButton.textContent = admin ? `Cambiar a cliente` : `Cambiar a admin`
     switchButton.onclick = () => {
-        window.location.href = admin ?  "/src/pages/home.html" : "/src/pages/admin/products-manager.html"
+        window.location.href = admin ?  "/p-comision-02/src/pages/home.html" : "/p-comision-02/src/pages/admin/products-manager.html"
     } 
     navbarPanel.appendChild(switchButton)
 }

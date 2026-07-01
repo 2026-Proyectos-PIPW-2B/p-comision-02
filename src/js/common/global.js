@@ -10,14 +10,14 @@ import { configurationApi } from "../api/configurationApi.js"
 
 export const globalOnload = (index) => {
     // any role check
-    if(!window.location.href.includes("login") && !window.location.href.includes("index")  && !JSON.parse(localStorage.getItem("userSession"))) {
-        window.location.href = "/src/pages/not-found.html";
+    if(window.location.href.includes("pages") && !JSON.parse(localStorage.getItem("userSession"))) {
+        window.location.href = "/p-comision-02/src/pages/not-found.html";
         return
     }
 
     // admin role check
     if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
-        window.location.href = "/src/pages/not-found.html";
+        window.location.href = "/p-comision-02/src/pages/not-found.html";
         return
     }
 
@@ -63,7 +63,7 @@ export const globalOnload = (index) => {
 
         if (Date.now() > expirationDate.getTime()) {
             localStorage.removeItem("userSession");
-            window.location.href = "/src/pages/login.html?reason=session_expired";
+            window.location.href = "/p-comision-02/src/pages/login.html?reason=session_expired";
         }
     }
 

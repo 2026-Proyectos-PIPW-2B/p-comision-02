@@ -168,7 +168,7 @@ function submitUser() {
     const user = {
         name: userName,
         lastname: userLastname,
-        profileImage: "/src/img/blank-profile-picture-973460_960_720.png",
+        profileImage: "/p-comision-02/src/img/blank-profile-picture-973460_960_720.png",
         username: userUsername,
         password: userPassword,
         isAdmin: isAdmin,

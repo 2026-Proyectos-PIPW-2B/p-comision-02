@@ -33,10 +33,10 @@ window.addEventListener("load", () => {
     );
     editProfileImageButton.addEventListener("click", () => {
         const profileImages = [
-            "/src/img/blank-profile-picture-973460_960_720.png",
-            "/src/img/cat-profile-img.jpg",
-            "/src/img/minion-profile-img.jpg",
-            "/src/img/profile-1197063289.png"
+            "/p-comision-02/src/img/blank-profile-picture-973460_960_720.png",
+            "/p-comision-02/src/img/cat-profile-img.jpg",
+            "/p-comision-02/src/img/minion-profile-img.jpg",
+            "/p-comision-02/src/img/profile-1197063289.png"
         ];
         showProfileModal(profileImages);
     })
@@ -73,7 +73,7 @@ window.addEventListener("load", () => {
 
 const logout = () => {
     localStorage.removeItem("userSession");
-    window.location.href = `/src/pages/login.html`;
+    window.location.href = `/p-comision-02/src/pages/login.html`;
 };
 
 const mapOrders = (page, array) => {
