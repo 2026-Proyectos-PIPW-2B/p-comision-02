@@ -10,10 +10,10 @@ import { configurationApi } from "../api/configurationApi.js"
 
 export const globalOnload = (index) => {
     // any role check
-    if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
-        window.location.href = "/p-comision-02/src/pages/not-found.html";
-        return
-    }
+    // if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
+    //     window.location.href = "/p-comision-02/src/pages/not-found.html";
+    //     return
+    // }
 
     // admin role check
     if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
