@@ -1,8 +1,12 @@
-import { showCartCount } from "./common/utils.js";
+import { showCartCount, showNotification } from "./common/utils.js";
+import { ordersApi } from "./api/ordersApi.js";
+import { configurationApi } from "./api/configurationApi.js";
+const cartContainer = document.getElementById("cartContainer");
 
 window.onload = () => {
-    let cart = JSON.parse(localStorage.getItem('cart')) || []
-    const cartContainer = document.getElementById("cartContainer");
+    let cart = JSON.parse(localStorage.getItem("userSession")).cart || []
+    const confirmPurchaseButton = document.getElementById("confirmPurchaseButton")
+    confirmPurchaseButton.addEventListener("click", confirmPurchase)
 
     if (!cart.length) {
         mapEmptyCart(cartContainer);
@@ -260,85 +264,131 @@ const quantityHandler = (product, price) => {
     quantityInput.className = "form-control text-center";
     quantityInput.style.width = "80px";
     quantityInput.max = product.stock;
+    quantityInput.min = 1;
     quantityInput.value = product.quantity;
-    quantityInput.id = "quantityInput"
+    quantityInput.id = `quantityInput-${product.id}`;
 
     const increaseButton = document.createElement("button");
     increaseButton.className = "btn btn-outline-success btn-sm";
     increaseButton.textContent = "+";
 
-    const updatePrice = () => {
-        let quantity = Number(quantityInput.value);
+    const updatePrice = (quantity) => {
+        price.textContent = `$ ${(product.price * quantity).toLocaleString()}`;
+    };
+    const updateCartAndTotal = (quantity) => {
+        const userSession = JSON.parse(localStorage.getItem("userSession"));
+        const cart = userSession.cart || [];
+        const newCart = cart.map((p) =>
+            p.id === product.id
+                ? { ...p, quantity }
+                : p
+        );
 
-        if (quantity > product.stock) {
-            quantity = product.stock;
+        localStorage.setItem(
+            "userSession",
+            JSON.stringify({ ...userSession, cart: newCart })
+        );
+
+        const total = newCart.reduce(
+            (acc, product) =>
+                acc + Number(product.price) * Number(product.quantity),
+            0
+        );
+
+        document.getElementById("totalCart").innerHTML = `
+            <span>Total</span>
+            <span>$ ${total.toLocaleString()}</span>
+        `;
+    };
+
+    const getQuantity = () => {
+        const quantity = Number(quantityInput.value);
+
+        if (
+            quantityInput.value === "" ||
+            Number.isNaN(quantity)
+        ) {
+            return 1;
         }
 
-        quantityInput.value = quantity;
-        price.textContent = `$ ${product.price * (quantity || 1)}`;
+        return quantity;
     };
 
     decreaseButton.onclick = () => {
-        if (Number(quantityInput.value) > 1) {
-            quantityInput.value = Number(quantityInput.value) - 1;
-            updatePrice();
+        const quantity = getQuantity();
 
-            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
-                if (p.id === product.id) {
-                    return {
-                        ...p,
-                        quantity: p.quantity -=1
-                    };
-                }
+        if (quantity <= 1) {
+            quantityInput.value = 1;
+            trashProductModal(product);
+            return;
+        }
 
-                return p;
-            });
-            
-            localStorage.setItem("cart", JSON.stringify(newCart));
-            const totalLabel = document.getElementById('totalCart')
-            const total = newCart.reduce(
-                (acc, product) =>
-                    acc + Number(product.price) * Number(product.quantity),
-                0
-            );
-            totalLabel.innerHTML = `
-                <span>Total</span>
-                <span>$ ${total.toLocaleString()}</span>
-            `;
-        } else trashProductModal(product)
+        const newQuantity = quantity - 1;
+
+        quantityInput.value = newQuantity;
+        updatePrice(newQuantity);
+        updateCartAndTotal(newQuantity);
     };
 
     increaseButton.onclick = () => {
-        if (Number(quantityInput.value) < product.stock) {
-            quantityInput.value = Number(quantityInput.value) + 1;
-            updatePrice();
+        const quantity = getQuantity();
 
-            const newCart = JSON.parse(localStorage.getItem("cart")).map((p) => {
-                if (p.id === product.id) {
-                    return {
-                        ...p,
-                        quantity: p.quantity + 1
-                    };
-                }
-
-                return p;
-            });
-            
-            localStorage.setItem("cart", JSON.stringify(newCart));
-            const totalLabel = document.getElementById('totalCart')
-            const total = newCart.reduce(
-                (acc, product) =>
-                    acc + Number(product.price) * Number(product.quantity),
-                0
-            );
-            totalLabel.innerHTML = `
-                <span>Total</span>
-                <span>$ ${total.toLocaleString()}</span>
-            `;
+        if (quantity >= product.stock) {
+            quantityInput.value = product.stock;
+            return;
         }
+
+        const newQuantity = quantity + 1;
+
+        quantityInput.value = newQuantity;
+        updatePrice(newQuantity);
+        updateCartAndTotal(newQuantity);
     };
 
-    quantityInput.addEventListener("input", updatePrice);
+    quantityInput.addEventListener("input", () => {
+        let quantity = quantityInput.value;
+
+        if (quantity === "") {
+            return;
+        }
+
+        quantity = Number(quantity);
+
+        if (Number.isNaN(quantity)) {
+            quantityInput.value = 1;
+            updatePrice(1);
+            updateCartAndTotal(1);
+            return;
+        }
+
+        if (quantity === 0) {
+            quantityInput.value = 1;
+            updatePrice(1);
+            trashProductModal(product);
+            return;
+        }
+
+        if (quantity < 1) {
+            quantity = 1;
+            quantityInput.value = quantity;
+        }
+
+        if (quantity > product.stock) {
+            quantity = product.stock;
+            quantityInput.value = quantity;
+        }
+
+        updatePrice(quantity);
+        updateCartAndTotal(quantity);
+    });
+
+    quantityInput.addEventListener("blur", () => {
+        if (quantityInput.value === "") {
+            quantityInput.value = 1;
+            updatePrice(1);
+            updateCartAndTotal(1);
+        }
+    });
 
     quantityContainer.appendChild(decreaseButton);
     quantityContainer.appendChild(quantityInput);
@@ -369,9 +419,10 @@ const trashProductHandler = (product) => {
     const modalElement = document.getElementById("trashProductModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
-    const cart = JSON.parse(localStorage.getItem("cart"))
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    const cart = userSession.cart
     const newCart = cart.filter(p => p.id !== product.id);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    localStorage.setItem("userSession", JSON.stringify({...userSession, cart:newCart}));
 
 
     if (!newCart.length) {
@@ -385,9 +436,62 @@ const trashProductHandler = (product) => {
 
 
 function confirmPurchase() {
-    
     const modalElement = document.getElementById("exampleModal");
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    const cart = JSON.parse(localStorage.getItem("userSession")).cart
+    const configuration = configurationApi.getConfiguration();
+    
+    const total = cart.reduce(
+        (acc, product) =>
+            acc + Number(product.price) * Number(product.quantity),
+        0
+    );
 
+    if(total < configuration.minimumPurchaseAmount) {
+        showNotification({
+            type: "error",
+            title: "realizarla compra",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: `La compra no alcanza el monto minimo: ${configuration.minimumPurchaseAmount}`,
+            time: 5000
+        })
+        modal.hide()
+        return
+    } 
+
+    // Create order
+    const products = cart.map((p) => {
+        return {
+            id: p.id,
+            product: p.name,
+            category: p.category,
+            price: p.price,
+            quantity: p.quantity,
+            image: p.image,
+        }
+    })
+    const date = new Date().toLocaleString();
+    let id = JSON.parse(localStorage.getItem("ordersId"))
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    let username = userSession.username
+
+    // Order creada
+    const order = {id:id++, username, products, date, total, }
+    const { username: orderUser, ...orderWithoutUser } = order;
+
+    // Pushear a LS orders
+    ordersApi.createOrder(order)
+    localStorage.setItem("ordersId", JSON.stringify(id++))
+
+    // Pushear a LS userSession
+    localStorage.setItem("userSession", JSON.stringify({...userSession, cart: []}))
+    mapEmptyCart(cartContainer);
     modal.hide();
+    showNotification({
+        type: "success",
+        title: "Compra realizada",
+        icon: `<i class="bi bi-check-lg text-success"></i>`,
+        message: "Su compra se registró correctamente"
+    })
+
 }

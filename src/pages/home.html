@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Catálogo</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" />
@@ -23,7 +23,7 @@
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand fs-4" href="#"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Corralon PIPW</a>
+            <div class="navbar-brand fs-4"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Corralon PIPW</div>
             <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
                 aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
@@ -34,58 +34,97 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="">Catalogo</a>
+                            <a class="nav-link active" aria-current="page" href=""><i class="bi bi-bag d-inline d-lg-none me-2"></i>Catalogo</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="./cart.html">Carrito <span class="badge bg-secondary" id="cartItemCount">0</span></a>
+                            <a class="nav-link " href="./cart.html"><i class="bi bi-cart d-inline d-lg-none me-2"></i>Carrito <span class="badge bg-secondary" id="cartItemCount">0</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="#">Perfil</a>
+                            <a class="nav-link " href="./profile.html"><i class="bi bi-person-circle d-inline d-lg-none me-2"></i>Perfil</a>
                         </li>
                 </div>
             </div>
         </div>
     </nav>
-    <br><br><br><br><br>
 
-    <div class="d-flex justify-content-center">
+    <div class="row g-4 mx-5 justify-content-center mt-5 pt-5">
+        
+        <div class="col-10 col-md-6 col-lg-3">
+            <div class="position-relative shadow-sm rounded p-0 mt-0">
+                <input
+                    type="search"
+                    class="form-control ps-5"
+                    placeholder="Buscar producto"
+                    id="searchInput"
+                />
 
-<div class="position-relative w-25 shadow-sm rounded">
-    <input
-        type="search"
-        class="form-control ps-5"
-        placeholder="Buscar producto"
-        id="searchInput"
-        oninput="handleFilters()"
-    />
-
-    <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
-</div>
-
-        <div class="form-floating w-25 ms-5 shadow-sm rounded bg-light border">
-            <select class="form-select bg-light" id="floatingSelect" multiple hidden onchange=handleFilters()>
-                <option value="Ferretería">old fe</option>
-                <option value="Construcción">old c</option>
-                <option value="Pinturería">olc p</option>
-            </select>
-
-            <div class="dropdown bg-light rounded">
-                <button id="multiSelectButton"
-                    class="btn dropdown-toggle w-100 d-flex align-items-center justify-content-between border-0"
-                    type="button" data-bs-toggle="dropdown"
-                    style="background-color: white;">
-                </button>
-
-                <ul id="multiSelectMenu" class="dropdown-menu w-100 px-3"></ul>
+                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
             </div>
+        </div>
 
+        <div class="col-10 col-md-6 col-lg-3">
+            <div class="form-floating shadow-sm rounded bg-light border p-0 mt-0">
+                <select class="form-select bg-light" id="floatingSelect" multiple hidden>
+                </select>
+
+                <div class="dropdown bg-light rounded">
+                    <button
+                        id="multiSelectButton"
+                        class="btn dropdown-toggle w-100 d-flex align-items-center justify-content-between border-0"
+                        type="button"
+                        data-bs-toggle="dropdown"
+                        style="background-color: white;"
+                    >
+                    </button>
+
+                    <ul id="multiSelectMenu" class="dropdown-menu w-100 px-3"></ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-10 col-md-6 col-lg-3">
+            <button
+                id="nameSortButton"
+                class="btn shadow-sm rounded border text-start px-3 bg-white w-100"
+            >
+                <span>Nombre</span>
+                <i id="nameSortIcon" class="fas fa-sort"></i>
+            </button>
+        </div>
+
+        <div class="col-10 col-md-6 col-lg-3">
+            <button
+                id="priceSortButton"
+                class="btn shadow-sm rounded border text-start px-3 bg-white w-100"
+            >
+                <span>Precio</span>
+                <i id="priceSortIcon" class="fas fa-sort"></i>
+            </button>
         </div>
 
     </div>
 
-    <!-- Lista de productos -->
-    <div class="row row-cols-2 row-cols-lg-4 row-cols-xl-5 g-4 m-5" id="productsContainer">
+    <button class="btn btn-secondary align-self-center mt-3 px-5" id="deleteFilters">Borrar filtros</button>
 
+    <!-- Lista de productos -->
+    <div class="container-fluid d-flex flex-column flex-grow-1">
+        <div class="row row-cols-2 row-cols-lg-4 row-cols-xl-5 g-4 m-5" id="productsContainer">
+    
+        </div>
+        <nav aria-label="Page navigation example" class="align-self-center">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link" href="" aria-label="Previous" id="previousPage">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="" aria-label="Next" id="nextPage">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
     </div>
 
     <!-- Modal -->
@@ -105,6 +144,23 @@
             </div>
         </div>
     </div>
+
+        <footer class="text-center text-lg-start text-bg-dark">
+            <div class="container d-md-flex justify-content-center py-2">
+                <button type="button" class="btn btn-dark btn-lg btn-floating mx-2">
+                    <i class="bi bi-github fs-5"></i>
+                    <a href="https://github.com/ITAlonsoRabanal" class="text-reset text-decoration-none">github.com/ITAlonsoRabanal</a>
+                </button>
+                <button type="button" class="btn btn-dark btn-lg btn-floating mx-2">
+                    <i class="bi bi-github fs-5"></i>
+                    <a href="https://github.com/JooacoMendez" class="text-reset text-decoration-none">github.com/JooacoMendez</a>   
+                </button>
+            </div>
+            <div class="text-center text-white p-2" style="background-color: rgba(0, 0, 0, 0.2);">
+            UNS 2026
+            <p class="text-white mb-0" href="https://mdbootstrap.com/">Proyecto de Introducción a la Programación Web</p>
+            </div>
+        </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"

@@ -1,11 +1,24 @@
+import { configurationApi } from "./api/configurationApi.js";
+
 window.onload = () => {
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
-
+	const loginButton = document.getElementById("loginButton");
+	loginButton.onclick = login;
 	userInput.value = ""
+
+	const divErrorMessage = document.getElementById("divErrorMessage")
+	const params = new URLSearchParams(window.location.search);
+	if (params.get("reason") === "session_expired") {
+		divErrorMessage.textContent = "Tu sesión ha expirado. Por favor, inicia sesión nuevamente."
+	}
+	if (params.get("reason") === "init_complete") {
+		divErrorMessage.innerHTML = "Inicialización exitosa. <br> Ingrese con las credenciales: administrador administrador."
+	}
 };
 
 const login = () => {
+	
 	const userInput = document.getElementById("userInput");
 	const passwordInput = document.getElementById("passwordInput");
 
@@ -14,12 +27,14 @@ const login = () => {
 	const userMatch = userArray.find(
 		(u) => u.username === userInput.value && u.password === passwordInput.value,
 	);
-	console.log(userMatch);
-	
 	userMatch ? userMatch.isAllowed ? loginSuccess(userMatch) : loginFailed("Usuario Inhabilitado") : loginFailed("Credenciales Incorrectas")
 };
 
 const loginSuccess = (userMatch) => {
+	const configuration = configurationApi.getConfiguration();
+	const userExpiringTime = configuration.userSessionExpiring;
+	const adminExpiringTime = configuration.adminSessionExpiring;
+	const expiresAt = userMatch.isAdmin ? new Date(Date.now() + adminExpiringTime * 60 * 60 * 1000) : new Date(Date.now() + userExpiringTime * 60 * 60 * 1000)
 	localStorage.setItem(
 		"userSession",
 		JSON.stringify({
@@ -27,8 +42,9 @@ const loginSuccess = (userMatch) => {
 			lastname: userMatch.lastname || "Doe",
 			username: userMatch.username,
 			isAdmin: userMatch.isAdmin,
-			orders: userMatch.orders || [],
 			cart: [],
+			expiresAt,
+			expiresAtFormatted: expiresAt.toLocaleString()
 		}),
 	);
 

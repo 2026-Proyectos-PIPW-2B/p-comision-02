@@ -1,18 +1,68 @@
-import { showNotification, showCartCount } from "./common/utils.js";
+import { showNotification, showCartCount, updatePagination, priceSortFilter, nameSortFilter } from "./common/utils.js";
+import { categoriesApi } from "./api/categoriesApi.js";
+import { productsApi } from "./api/productsApi.js";
+import { configurationApi } from "./api/configurationApi.js";
 
-const modalElement = document.getElementById("cartModal");
-const cartModal = new bootstrap.Modal(modalElement);
-const cartModalBody = document.getElementById("cartModal-body");
-const select = document.getElementById("floatingSelect");
-const menu = document.getElementById("multiSelectMenu");
-const button = document.getElementById("multiSelectButton");
-const toast = document.getElementById("toastSuccess")
+let products;
+let productsContainer;
+let modalElement;
+let cartModal;
+let cartModalBody;
+let select;
+let menu;
+let button;
+let toast;
+let searchInput;
+let currentPage
+let itemsPerPage
+let priceSortButton
+let nameSortButton
+let priceSortingStatus = 0
+let nameSortingStatus = 0
+let priceSortIcon
+let nameSortIcon
+let deleteFilters
 
 window.onload = () => {
-    
-    const productsContainer = document.getElementById("productsContainer");
-    mapProducts(JSON.parse(localStorage.getItem("products")), productsContainer);
-    updateFilterCategories(JSON.parse(localStorage.getItem("categories")));
+    products = productsApi.getAllProducts();
+    modalElement = document.getElementById("cartModal");
+    cartModal = new bootstrap.Modal(modalElement);
+    cartModalBody = document.getElementById("cartModal-body");
+    select = document.getElementById("floatingSelect");
+    menu = document.getElementById("multiSelectMenu");
+    button = document.getElementById("multiSelectButton");
+    toast = document.getElementById("toastSuccess")
+    searchInput = document.getElementById("searchInput")
+    deleteFilters = document.getElementById("deleteFilters")
+    currentPage = 1
+    itemsPerPage = configurationApi.getConfiguration().pagination.catalog
+    productsContainer = document.getElementById("productsContainer");
+    priceSortButton = document.getElementById("priceSortButton")
+    priceSortButton.onclick = () => {
+        nameSortingStatus = 0
+        if(priceSortingStatus !==2) priceSortingStatus++ 
+        else priceSortingStatus = 0
+        handleFilters()
+    }
+    nameSortButton = document.getElementById("nameSortButton")
+    nameSortButton.onclick = () => {
+        priceSortingStatus = 0
+        if(nameSortingStatus !==2) nameSortingStatus++ 
+        else nameSortingStatus = 0
+        handleFilters()
+    }
+
+    deleteFilters.onclick = () => {
+        resetFilters()
+        priceSortingStatus = 0
+        nameSortingStatus = 0
+        handleFilters()
+    }
+
+    resetFilters()
+    updateFilterCategories(categoriesApi.getAllCategories());
+    searchInput.oninput = handleFilters
+    mapProducts(currentPage, products);
 };
 
 const updateFilterCategories = (categories) => {
@@ -83,13 +133,45 @@ const updateButtonText = () => {
     }
 };
 
-
-
-
-const mapProducts = (products, productsContainer) => {
+const mapProducts = (page, arrayProducts = []) => {
     productsContainer.innerHTML = ""
-    if(!products) return 
-    products.forEach((product) => {
+
+    if(arrayProducts.length === 0 ) {
+        const noProductsCard = document.createElement("div");
+        noProductsCard.className = "card shadow border my-4 mx-auto no-products-card";
+
+        const cardBody = document.createElement("div");
+        cardBody.className = "card-body d-flex align-items-center gap-3 py-4";
+
+        const icon = document.createElement("i");
+        icon.className = "bi bi-search fs-1 text-secondary";
+
+        const content = document.createElement("div");
+
+        const title = document.createElement("h5");
+        title.className = "mb-1";
+        title.textContent = "No se encontraron productos";
+
+        const text = document.createElement("p");
+        text.className = "text-secondary mb-0";
+        text.textContent = "Probá modificando los filtros o el término de búsqueda.";
+
+        content.appendChild(title);
+        content.appendChild(text);
+
+        cardBody.appendChild(icon);
+        cardBody.appendChild(content);
+
+        noProductsCard.appendChild(cardBody);
+        productsContainer.appendChild(noProductsCard);
+    }
+
+    currentPage = page || currentPage;
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedProducts = arrayProducts.slice(startIndex, endIndex)
+
+    paginatedProducts.forEach((product) => {
         const col = document.createElement("div");
         col.className = "col";
 
@@ -117,9 +199,23 @@ const mapProducts = (products, productsContainer) => {
         const infoContainer = document.createElement("div");
         infoContainer.className = "d-flex justify-content-between";
 
-        const stock = document.createElement("p");
-        stock.className = "card-text";
-        stock.textContent = `Stock: ${product.stock}`;
+        const stock = document.createElement("span");
+        stock.className = "card-text mb-3";
+        stock.textContent = `Stock: `;
+        const stockNumber = document.createElement("span");
+        
+        const {lowThreshold, mediumThreshold, highThreshold} = JSON.parse(localStorage.getItem("configuration")).stock
+        
+        const stockLevel =
+        product.stock <= lowThreshold ? "text-bg-danger" :
+        product.stock <= mediumThreshold ? "text-bg-warning" :
+        product.stock <= highThreshold ? "text-bg-success" :
+        "text-bg-dark";    
+
+        stockNumber.classList = `badge ${stockLevel} fs-6 px-2 py-1`
+        stockNumber.textContent = `${product.stock}`;
+        stock.appendChild(stockNumber)
+
 
         const price = document.createElement("p");
         price.className = "card-text";
@@ -146,6 +242,7 @@ const mapProducts = (products, productsContainer) => {
 
         productsContainer.appendChild(col);
     });
+    updatePagination(arrayProducts, mapProducts, itemsPerPage, currentPage)
 };
 
 const addToCartModal = (product) => {
@@ -176,9 +273,21 @@ const addToCartModal = (product) => {
     category.className = "card-text";
     category.textContent = `Categoria: ${product.category}`;
 
-    const stock = document.createElement("p");
+    const stock = document.createElement("span");
     stock.className = "card-text";
-    stock.textContent = `Stock: ${product.stock}`;
+    stock.textContent = `Stock: `;
+    const stockNumber = document.createElement("span");
+    
+    const {lowThreshold, mediumThreshold, highThreshold} = JSON.parse(localStorage.getItem("configuration")).stock
+    const stockLevel =
+    product.stock <= lowThreshold ? "text-bg-danger" :
+    product.stock <= mediumThreshold ? "text-bg-warning" :
+    product.stock <= highThreshold ? "text-bg-success" :
+    "text-bg-dark";    
+
+    stockNumber.classList = `badge ${stockLevel} fs-6 px-2 py-1`
+    stockNumber.textContent = `${product.stock}`;
+    stock.appendChild(stockNumber)
 
     const price = document.createElement("span");
     price.style.maxHeight = 'fit-content'
@@ -188,7 +297,7 @@ const addToCartModal = (product) => {
     const priceQuantityWrapper = document.createElement("div");
     priceQuantityWrapper.appendChild(quantityHandler(product, price));
     priceQuantityWrapper.appendChild(price);
-    priceQuantityWrapper.className = "d-flex justify-content-between align-items-center"
+    priceQuantityWrapper.className = "d-flex justify-content-between align-items-center mt-3"
 
     cardBody.appendChild(title);
     cardBody.appendChild(category);
@@ -274,9 +383,10 @@ const quantityHandler = (product, price) => {
 
 const confirmAddToCart = (product) => {
     const quantity = document.getElementById("quantityInput").value
-    product.quantity = Number(quantity)
+    quantity !== "0" ? product.quantity = Number(quantity) : product.quantity = 1
 
-    const cart = JSON.parse(localStorage.getItem("cart")) || []
+    const userSession = JSON.parse(localStorage.getItem("userSession"))
+    const cart = userSession.cart  || []
 
     const index = cart.findIndex((p) => 
         p.id === product.id
@@ -286,7 +396,7 @@ const confirmAddToCart = (product) => {
         cart[index].quantity += product.quantity
     } else cart.push(product)
 
-    localStorage.setItem("cart", JSON.stringify(cart))
+    localStorage.setItem("userSession", JSON.stringify({...userSession, cart}))
 
     const toastTrigger = document.getElementById('confirmAddToCart')
     const toastLiveExample = document.getElementById('liveToast')
@@ -309,9 +419,14 @@ const confirmAddToCart = (product) => {
     showCartCount()
 }
 
-const handleFilters = () => {
-    const products = JSON.parse(localStorage.getItem("products")) || [];
+const resetFilters = () => {
+    const floatingSelect = document.getElementById("floatingSelect");
+    const searchInput = document.getElementById("searchInput");
+    searchInput.value = "";
+    floatingSelect.value = "";
+}
 
+const handleFilters = () => {
     const floatingSelect = document.getElementById("floatingSelect");
     const searchInput = document.getElementById("searchInput");
 
@@ -321,7 +436,7 @@ const handleFilters = () => {
         option => option.value
     );
 
-    const filteredProducts = products.filter(product => {
+    let filteredProducts = products.filter(product => {
         const matchesSearch =
             product.name.toLowerCase().includes(searchTerm);
 
@@ -332,6 +447,7 @@ const handleFilters = () => {
         return matchesSearch && matchesCategory;
     });
 
-    console.log(filteredProducts)
-    mapProducts(filteredProducts, productsContainer);
+    filteredProducts = priceSortFilter(filteredProducts, priceSortingStatus)
+    filteredProducts = nameSortFilter(filteredProducts, nameSortingStatus)
+    mapProducts(1, filteredProducts);
 };

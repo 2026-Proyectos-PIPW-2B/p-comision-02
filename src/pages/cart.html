@@ -21,7 +21,7 @@
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <a class="navbar-brand fs-4" href="#"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Corralon PIPW</a>
+            <div class="navbar-brand fs-4"><i class="bi bi-bricks me-3 text-bg-dark fs-4"></i>Corralon PIPW</div>
             <div class="offcanvas offcanvas-start text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar"
                 aria-labelledby="offcanvasDarkNavbarLabel">
                 <div class="offcanvas-header">
@@ -32,22 +32,21 @@
                 <div class="offcanvas-body">
                     <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
                         <li class="nav-item">
-                            <a class="nav-link " href="./home.html">Catalogo</a>
+                            <a class="nav-link" href="./home.html"><i class="bi bi-bag d-inline d-lg-none me-2"></i>Catalogo</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="">Carrito <span class="badge bg-secondary" id="cartItemCount">0</span></a>
+                            <a class="nav-link active" aria-current="page" href="./cart.html"><i class="bi bi-cart d-inline d-lg-none me-2"></i>Carrito <span class="badge bg-secondary" id="cartItemCount">0</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link " href="#">Perfil</a>
+                            <a class="nav-link " href="./profile.html"><i class="bi bi-person-circle d-inline d-lg-none me-2"></i>Perfil</a>
                         </li>
                 </div>
             </div>
         </div>
     </nav>
-    <br><br>
 
     <!-- cart -->
-    <div class="container py-4 mt-5" id="cartContainer">
+    <div class="container py-4 mt-5 flex-grow-1 mt-5 pt-5" id="cartContainer">
 
     </div>
 
@@ -64,7 +63,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-success" onclick="confirmPurchase()">Confirmar</button>
+                    <button type="button" class="btn btn-success" id="confirmPurchaseButton">Confirmar</button>
                 </div>
             </div>
         </div>
@@ -89,6 +88,23 @@
             </div>
         </div>
     </div>
+
+        <footer class="text-center text-lg-start text-bg-dark">
+            <div class="container d-md-flex justify-content-center py-2">
+                <button type="button" class="btn btn-dark btn-lg btn-floating mx-2">
+                    <i class="bi bi-github fs-5"></i>
+                    <a href="https://github.com/ITAlonsoRabanal" class="text-reset text-decoration-none">github.com/ITAlonsoRabanal</a>
+                </button>
+                <button type="button" class="btn btn-dark btn-lg btn-floating mx-2">
+                    <i class="bi bi-github fs-5"></i>
+                    <a href="https://github.com/JooacoMendez" class="text-reset text-decoration-none">github.com/JooacoMendez</a>   
+                </button>
+            </div>
+            <div class="text-center text-white p-2" style="background-color: rgba(0, 0, 0, 0.2);">
+            UNS 2026
+            <p class="text-white mb-0" href="https://mdbootstrap.com/">Proyecto de Introducción a la Programación Web</p>
+            </div>
+        </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"

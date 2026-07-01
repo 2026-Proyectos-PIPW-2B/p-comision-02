@@ -1,5 +1,8 @@
-import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
-import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination, nameSortFilter } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { categoriesApi } from "../api/categoriesApi.js"
+import { productsApi } from "../api/productsApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let categories
 let products
@@ -11,10 +14,13 @@ let cancelBtn
 let tbodyCategories
 let categoryToUpdate
 let updateCancelButtons
+let currentPage
+let itemsPerPage
+let nameSortingStatus
 
 window.onload = function() {
-    categories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
-    products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
+    categories = categoriesApi.getAllCategories()
+    products = productsApi.getAllProducts()
     inputName = document.getElementById('inputName')
     inputDescription = document.getElementById('inputDescription')
     submitBtn = document.getElementById("submitCategoryButton")
@@ -22,6 +28,8 @@ window.onload = function() {
     cancelBtn = document.getElementById("cancelCategoryButton")
     tbodyCategories = document.getElementById("tbodyCategories")
     updateCancelButtons = document.getElementById("updateCancelButtons")
+    currentPage = 1
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
 
     inputName.oninput = validateForm
     inputDescription.oninput = validateForm
@@ -44,8 +52,22 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+
+    const nameBtn = document.getElementById("nameSortButton")
+    nameSortingStatus = 0
+    nameBtn.onclick = () => {
+        nameSortingStatus = (nameSortingStatus + 1) % 3
+        handleSort(categories)
+    }
+
     showSubmitButton()
-    listCategories()
+    listCategories(currentPage, categories)
+}
+
+const handleSort = (array) => {
+    let categoriesFiltered = [...array]
+    categoriesFiltered = nameSortFilter(categoriesFiltered, nameSortingStatus)
+    listCategories(1, categoriesFiltered)
 }
 
 function showSubmitButton() {
@@ -83,15 +105,15 @@ function submitCategory() {
         description: categoryDescription,
         color: categoryColor
     }
-    categories.push(category)
-    localStorage.setItem("categories", JSON.stringify(categories))
+    categoriesApi.createCategory(category)
+    categories = categoriesApi.getAllCategories()
     showNotification({
         type: "success",
         title: "Categoría creada",
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "La categoría se creó correctamente."
     })
-    listCategories()
+    listCategories(currentPage, categories)
     clearForm()
 }
 
@@ -99,12 +121,21 @@ function updateCategory() {
     const categoryName = inputName.value
     const categoryDescription = inputDescription.value
 
-    const categoryIndex = categories.findIndex(c => c.name === categoryToUpdate.name)
-    if (categoryIndex !== -1) {
-        categories[categoryIndex].name = categoryName
-        categories[categoryIndex].description = categoryDescription
-        localStorage.setItem("categories", JSON.stringify(categories))
+    const updatedCategory = {
+        name: categoryName,
+        description: categoryDescription
     }
+    const missing = categoriesApi.updateCategory(updatedCategory)
+    if(missing) {
+        showNotification({
+            type: "error",
+            title: "actualizar",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: "No pudo actualizarse la categoriía"
+        })
+        return
+    }
+    categories = categoriesApi.getAllCategories()
     categoryToUpdate = null
     showNotification({
         type: "success",
@@ -112,7 +143,7 @@ function updateCategory() {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "La categoría se actualizó correctamente."
     })
-    listCategories()
+    listCategories(currentPage, categories)
     clearForm()
     showSubmitButton()
     inputBlur()
@@ -123,21 +154,21 @@ function deleteCategory(category) {
     if (cantProducts > 0) {
         showNotification({
             type: "error",
-            title: "eliminar la categoría",
+            title: "eliminar",
             icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
             message: "No se puede eliminar la categoría porque tiene productos asociados."
         })
         return
     }
-    categories = categories.filter(c => c.name !== category.name)
-    localStorage.setItem("categories", JSON.stringify(categories))
+    categoriesApi.deleteCategory(category.name)
+    categories = categoriesApi.getAllCategories()
     showNotification({
         type: "success",
         title: "Categoría eliminada",
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "La categoría se eliminó correctamente."
     })
-    listCategories()
+    listCategories(currentPage, categories)
 }
 
 function getRandomColor() {
@@ -163,9 +194,16 @@ function clearForm() {
     resetStates()
 }
 
-function listCategories() {
+function listCategories(page, array) {
     tbodyCategories.innerHTML = ""
-    categories.forEach(element => {
+    
+    currentPage = page || currentPage;
+
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedCategories = array.slice(startIndex, endIndex)
+
+    paginatedCategories.forEach(element => {
         const row = document.createElement("tr")
         const colName = document.createElement("td")
         const colNameWrapper = document.createElement("div")
@@ -173,27 +211,28 @@ function listCategories() {
         const colDescription = document.createElement("td")
         const colCantProducts = document.createElement("td")
         const colActions = document.createElement("td")
+        
         createActionsButtons(colActions, () => {
-            categoryToUpdate = element
-            inputName.value = element.name
-            inputDescription.value = element.description
-
-            inputFocus()
-            showUpdatesButton()
-        }, () => trashModal("categoría", () => {deleteCategory(element)})
-        )
+            categoryToUpdate = element;
+            inputName.value = element.name;
+            inputDescription.value = element.description;
+            inputFocus();
+            showUpdatesButton();
+        }, () => {
+            trashModal("categoría", () => {deleteCategory(element)});
+        })
 
         colName.scope = "row"
         colNameWrapper.classList.add("cell-name")
+        colNameWrapper.classList.add("d-flex")
         colNameSpan.classList.add("cell-color")
         colNameSpan.style.background = element.color
 
-        
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
         colDescription.textContent = element.description || "-"
+        
         colCantProducts.textContent = products.filter(p => p.category === element.name).length
-        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)
@@ -203,6 +242,8 @@ function listCategories() {
 
         tbodyCategories.appendChild(row)
     })
+
+    updatePagination(array, listCategories, itemsPerPage, currentPage)
 }
 
 function validateForm() {
@@ -213,15 +254,15 @@ function validateForm() {
     const isDescriptionValid = validator.isLength(description, { min: 0, max: 200 })
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isDescriptionValid) {
-        mostrarError(inputDescription, "descriptionError", "La descripción no puede tener más de 200 caracteres.")
+        showError(inputDescription, "descriptionError", "La descripción no puede tener más de 200 caracteres.")
     } else {
-        mostrarExito(inputDescription, "descriptionError")
+        showSuccess(inputDescription, "descriptionError")
     }
 
     submitBtn.disabled = !(isNameValid && isDescriptionValid)

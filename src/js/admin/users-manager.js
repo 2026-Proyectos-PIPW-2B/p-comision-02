@@ -1,5 +1,7 @@
-import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
-import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { usersApi } from "../api/usersApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let users
 let inputName
@@ -16,9 +18,12 @@ let tbodyUsers
 let updateCancelButtons
 let userToUpdate
 let btnShowPassword
+let currentPage
+let itemsPerPage
+let usernameSortingStatus
 
 window.onload = function() {
-    users = localStorage.getItem('users') ? JSON.parse(localStorage.getItem('users')) : []
+    users = usersApi.getAllUsers()
     inputName = document.getElementById('inputName')
     inputLastname = document.getElementById('inputLastname')
     inputUsername = document.getElementById('inputUsername')
@@ -33,6 +38,8 @@ window.onload = function() {
     updateCancelButtons = document.getElementById("updateCancelButtons")
     userToUpdate = null
     btnShowPassword = document.getElementById("btnShowPassword")
+    currentPage = 1
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
 
     inputName.oninput = validateForm
     inputLastname.oninput = validateForm
@@ -65,8 +72,41 @@ window.onload = function() {
         showSubmitButton()
         disabledSwitchWrapperVisibility()
     }
+
+    const usernameBtn = document.getElementById("usernameSortButton")
+    usernameSortingStatus = 0
+    usernameBtn.onclick = () => {
+        usernameSortingStatus = (usernameSortingStatus + 1) % 3
+        handleUsernameSort(users)
+    }
+
     showSubmitButton()
-    listUsers()
+    listUsers(currentPage, users)
+}
+
+const handleUsernameSort = (array) => {
+    let usernameSortIcon = document.getElementById("usernameSortIcon")
+    let usersFiltered = [...array]
+    switch (usernameSortingStatus) {
+        case 0:
+            usernameSortIcon.className = "fas fa-sort";
+            break;
+        case 1:
+            usersFiltered.sort((a, b) =>
+                a.username.localeCompare(b.username)
+            );
+            usernameSortIcon.className = "fas fa-arrow-up";
+            break;
+        case 2:
+            usersFiltered.sort((a, b) =>
+                b.username.localeCompare(a.username)
+            );
+            usernameSortIcon.className = "fas fa-arrow-down";
+            break;
+        default:
+            break;
+    }
+    listUsers(1, usersFiltered)
 }
 
 function showSubmitButton() {
@@ -128,15 +168,16 @@ function submitUser() {
     const user = {
         name: userName,
         lastname: userLastname,
+        profileImage: "/src/img/blank-profile-picture-973460_960_720.png",
         username: userUsername,
         password: userPassword,
         isAdmin: isAdmin,
         isAllowed: true,
         orders: []
     }
-    users.push(user)
-    localStorage.setItem("users", JSON.stringify(users))
-    listUsers()
+    usersApi.createUser(user)
+    users = usersApi.getAllUsers()
+    listUsers(currentPage, users)
     clearForm()
 }
 
@@ -148,18 +189,18 @@ function updateUser() {
     const isAdmin = adminPermission.checked
     const isAllowed = allowedPermission.checked
 
-    const userIndex = users.findIndex(u => u.username === userToUpdate.username)
-    if (userIndex !== -1) {
-        users[userIndex].name = userName
-        users[userIndex].lastname = userLastname
-        users[userIndex].username = userUsername
-        users[userIndex].password = userPassword
-        users[userIndex].isAdmin = isAdmin
-        users[userIndex].isAllowed = isAllowed
-        localStorage.setItem("users", JSON.stringify(users))
+    const updatedUser = {
+        name: userName,
+        lastname: userLastname,
+        username: userUsername,
+        password: userPassword,
+        isAdmin: isAdmin,
+        isAllowed: isAllowed
     }
+    usersApi.updateUser(updatedUser)
+    users = usersApi.getAllUsers()
     userToUpdate = null
-    listUsers()
+    listUsers(currentPage, users)
     clearForm()
     showSubmitButton()
     inputBlur()
@@ -168,8 +209,8 @@ function updateUser() {
 function deleteUser(user) {
     const userSession = JSON.parse(localStorage.getItem("userSession"))
     if (user.username !== userSession.username) {
-        users = users.filter(u => u.username !== user.username)
-        localStorage.setItem("users", JSON.stringify(users))
+        usersApi.deleteUser(user.username)
+        users = usersApi.getAllUsers()
     } else {
         showNotification({
             type: "error",
@@ -185,12 +226,19 @@ function deleteUser(user) {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "Usuario eliminado correctamente"
     })
-    listUsers()
+    listUsers(currentPage, users)
 }
 
-function listUsers() {
+function listUsers(page, array) {
     tbodyUsers.innerHTML = ""
-    users.forEach(element => {
+
+    currentPage = page || currentPage;
+
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedUsers = array.slice(startIndex, endIndex)
+
+    paginatedUsers.forEach(element => {
         const row = document.createElement("tr")
         const colUsername = document.createElement("td")
         const colName = document.createElement("td")
@@ -215,11 +263,11 @@ function listUsers() {
 
         colName.scope = "row"
         colUsername.textContent = element.username
+        colUsername.classList.add("text-start")
         colName.textContent = element.name
         colLastname.textContent = element.lastname
         colAdmin.textContent = element.isAdmin ? "Sí" : "No"
         colAllowed.textContent = element.isAllowed ? "Sí" : "No"
-        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         row.appendChild(colUsername)
         row.appendChild(colName)
@@ -230,6 +278,8 @@ function listUsers() {
 
         tbodyUsers.appendChild(row)
     })
+
+    updatePagination(array, listUsers, itemsPerPage, currentPage)
 }
 
 function validateForm() {
@@ -244,27 +294,27 @@ function validateForm() {
     const isLastnameValid = !validator.isEmpty(lastname)
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isLastnameValid) {
-        mostrarError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
+        showError(inputLastname, "lastnameError", "El apellido no puede ser vacío.")
     } else {
-        mostrarExito(inputLastname, "lastnameError")
+        showSuccess(inputLastname, "lastnameError")
     }
 
     if (!isUsernameValid) {
-        mostrarError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
+        showError(inputUsername, "usernameError", "El nombre de usuario debe tener entre 4 y 20 caracteres y no puede estar repetido.")
     } else {
-        mostrarExito(inputUsername, "usernameError")
+        showSuccess(inputUsername, "usernameError")
     }
 
     if (!isPasswordValid) {
-        mostrarError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
+        showError(inputPassword, "passwordError", "La contraseña debe tener al menos 8 caracteres, incluyendo mayúsculas, minúsculas, números y símbolos.")
     } else {
-        mostrarExito(inputPassword, "passwordError")
+        showSuccess(inputPassword, "passwordError")
     }
 
     submitBtn.disabled = !(isUsernameValid && isPasswordValid && isNameValid && isLastnameValid)

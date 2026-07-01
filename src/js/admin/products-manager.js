@@ -1,5 +1,8 @@
-import { createActionsButtons, showNotification, trashModal } from "./common/utils.js"
-import { mostrarError, mostrarExito, resetStates } from "./common/validations.js"
+import { createActionsButtons, showNotification, trashModal, updatePagination, priceSortFilter, nameSortFilter } from "../common/utils.js"
+import { showError, showSuccess, resetStates } from "../common/validations.js"
+import { productsApi } from "../api/productsApi.js"
+import { categoriesApi } from "../api/categoriesApi.js"
+import { configurationApi } from "../api/configurationApi.js"
 
 let productsId
 let products
@@ -15,14 +18,18 @@ let cancelBtn
 let productToUpdate
 let tbodyProducts
 let updateCancelButtons
+let currentPage
+let itemsPerPage
+let priceSortingStatus
+let nameSortingStatus
 
 let modalElement
 let visualizerModal
 
 window.onload = function() {
     productsId = localStorage.getItem('productsId') ? parseInt(localStorage.getItem('productsId')) : 0
-    products = localStorage.getItem('products') ? JSON.parse(localStorage.getItem('products')) : []
-    listCategories = localStorage.getItem('categories') ? JSON.parse(localStorage.getItem('categories')) : []
+    products = productsApi.getAllProducts()
+    listCategories = categoriesApi.getAllCategories()
     inputName = document.getElementById('inputName')
     inputPrice = document.getElementById('inputPrice')
     inputStock = document.getElementById('inputStock')
@@ -33,7 +40,8 @@ window.onload = function() {
     cancelBtn = document.getElementById("cancelProductButton")
     tbodyProducts = document.getElementById("tbodyProducts")
     updateCancelButtons = document.getElementById("updateCancelButtons")
-
+    currentPage = 1
+    itemsPerPage = configurationApi.getConfiguration().pagination.admin
     modalElement = document.getElementById("visualizerModal")
     visualizerModal = new bootstrap.Modal(modalElement)
 
@@ -61,9 +69,30 @@ window.onload = function() {
         inputBlur()
         showSubmitButton()
     }
+    const priceBtn = document.getElementById("priceSortButton")
+    priceSortingStatus = 0
+    priceBtn.onclick = () => {
+        nameSortingStatus = 0
+        priceSortingStatus = (priceSortingStatus + 1) % 3
+        handleSort(products)
+    }
+    const nameBtn = document.getElementById("nameSortButton")
+    nameSortingStatus = 0
+    nameBtn.onclick = () => {
+        priceSortingStatus = 0
+        nameSortingStatus = (nameSortingStatus + 1) % 3
+        handleSort(products)
+    }
     showSubmitButton()
-    listProducts()
+    listProducts(currentPage, products)
     addCategoriesToSelect()
+}
+
+const handleSort = (array) => {
+    let productsFiltered = [...array]
+    productsFiltered = priceSortFilter(productsFiltered, priceSortingStatus)
+    productsFiltered = nameSortFilter(productsFiltered, nameSortingStatus)
+    listProducts(1, productsFiltered)
 }
 
 function addCategoriesToSelect() {
@@ -132,8 +161,8 @@ function submitProduct() {
     }
     productsId++
     localStorage.setItem("productsId", productsId)
-    products.push(product)
-    localStorage.setItem("products", JSON.stringify(products))
+    productsApi.createProduct(product)
+    products = productsApi.getAllProducts()
     clearForm()
     inputBlur()
     showNotification({
@@ -142,7 +171,7 @@ function submitProduct() {
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "El producto se creó correctamente."
     })
-    listProducts()   
+    listProducts(currentPage, products)   
 }
 
 function updateProduct() {
@@ -152,15 +181,25 @@ function updateProduct() {
     const productCategory = selectCategory.value
     const productImage = selectImage.value
 
-    const productIndex = products.findIndex(p => p.id === productToUpdate.id)
-    if (productIndex !== -1) {
-        products[productIndex].name = productName
-        products[productIndex].price = productPrice
-        products[productIndex].stock = productStock
-        products[productIndex].category = productCategory
-        products[productIndex].image = productImage
-        localStorage.setItem("products", JSON.stringify(products))
+    const updatedProduct = {
+        id: productToUpdate.id,
+        name: productName,
+        price: productPrice,
+        stock: productStock,
+        category: productCategory,
+        image: productImage
     }
+    const missing = productsApi.updateProduct(updatedProduct)
+    if(missing) {
+        showNotification({
+            type: "error",
+            title: "actualizar",
+            icon: `<i class="bi bi-exclamation-triangle text-danger"></i>`,
+            message: "No pudo actualizarse el producto"
+        })
+        return
+    }
+    products = productsApi.getAllProducts()
     productToUpdate = null
     showNotification({
         type: "success",
@@ -171,24 +210,33 @@ function updateProduct() {
     clearForm()
     showSubmitButton()
     inputBlur()
-    listProducts()   
+    listProducts(currentPage, products)   
 }
 
 function deleteProduct(product) {
-    products = products.filter(p => p.id !== product.id)
-    localStorage.setItem("products", JSON.stringify(products))
+    console.log(product);
+    
+    productsApi.deleteProduct(product.id)
+    products = productsApi.getAllProducts()
     showNotification({
         type: "success",
         title: "Producto eliminado",
         icon: `<i class="bi bi-check-lg text-success"></i>`,
         message: "El producto se eliminó correctamente."
     })
-    listProducts()
+    listProducts(currentPage, products)
 }
 
-function listProducts() {
+function listProducts(page, array) {
     tbodyProducts.innerHTML = ""
-    products.forEach(element => {
+
+    currentPage = page || currentPage;
+
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedProducts = array.slice(startIndex, endIndex)
+
+    paginatedProducts.forEach(element => {
         const row = document.createElement("tr")
         const colName = document.createElement("td")
         const colNameWrapper = document.createElement("div")
@@ -218,9 +266,9 @@ function listProducts() {
         colNameWrapper.appendChild(colNameSpan)
         colNameWrapper.innerHTML += element.name
         colPrice.textContent = element.price
+        colPrice.classList.add("text-end")
         colStock.textContent = element.stock
         colCategory.textContent = element.category
-        colActions.classList.add("d-flex", "justify-content-center", "gap-2")
 
         colName.appendChild(colNameWrapper)
         row.appendChild(colName)
@@ -231,6 +279,8 @@ function listProducts() {
 
         tbodyProducts.appendChild(row)
     })
+
+    updatePagination(array, listProducts, itemsPerPage, currentPage)
 }
 
 function validateForm() {
@@ -246,33 +296,33 @@ function validateForm() {
     const isImageValid = !validator.isEmpty(selectImage.value)
 
     if (!isNameValid) {
-        mostrarError(inputName, "nameError", "El nombre no puede ser vacío.")
+        showError(inputName, "nameError", "El nombre no puede ser vacío.")
     } else {
-        mostrarExito(inputName, "nameError")
+        showSuccess(inputName, "nameError")
     }
 
     if (!isPriceValid) {
-        mostrarError(inputPrice, "priceError", "El precio no puede ser menor a 0.")
+        showError(inputPrice, "priceError", "El precio no puede ser menor a 0.")
     } else {
-        mostrarExito(inputPrice, "priceError")
+        showSuccess(inputPrice, "priceError")
     }
 
     if (!isStockValid) {
-        mostrarError(inputStock, "stockError", "El stock no puede ser menor a 0.")
+        showError(inputStock, "stockError", "El stock no puede ser menor a 0.")
     } else {
-        mostrarExito(inputStock, "stockError")
+        showSuccess(inputStock, "stockError")
     }
 
     if (!isCategoryValid) {
-        mostrarError(selectCategory, "categoryError", "Debe seleccionar una categoría.")
+        showError(selectCategory, "categoryError", "Debe seleccionar una categoría.")
     } else {
-        mostrarExito(selectCategory, "categoryError")
+        showSuccess(selectCategory, "categoryError")
     }
 
     if (!isImageValid) {
-        mostrarError(selectImage, "imageError", "Debe seleccionar una imagen.")
+        showError(selectImage, "imageError", "Debe seleccionar una imagen.")
     } else {
-        mostrarExito(selectImage, "imageError")
+        showSuccess(selectImage, "imageError")
     }
 
     submitBtn.disabled = !(isNameValid && isPriceValid && isStockValid && isCategoryValid && isImageValid)
