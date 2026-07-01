@@ -13,6 +13,7 @@ const loadParameters = () => {
 	document.getElementById("sessionDurationUser").value = configuration.userSessionExpiring;
 	document.getElementById("sessionDurationAdmin").value = configuration.adminSessionExpiring;
 	document.getElementById("catalogPagination").value = configuration.pagination.catalog;
+	document.getElementById("cartPagination").value = configuration.pagination.cart;
 	document.getElementById("profilePagination").value = configuration.pagination.profile;
 	document.getElementById("adminPagination").value = configuration.pagination.admin;
 	document.getElementById("minimumPurchase").value = configuration.minimumPurchaseAmount;
@@ -33,6 +34,7 @@ const submitParameters = () => {
 			catalog: Number(document.getElementById("catalogPagination").value),
 			profile: Number(document.getElementById("profilePagination").value),
 			admin: Number(document.getElementById("adminPagination").value),
+			cart: Number(document.getElementById("cartPagination").value),
 		},
 
 		minimumPurchaseAmount: Number(

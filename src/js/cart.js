@@ -1,17 +1,23 @@
-import { showCartCount, showNotification } from "./common/utils.js";
+import { showCartCount, showNotification, updatePagination } from "./common/utils.js";
 import { ordersApi } from "./api/ordersApi.js";
 import { configurationApi } from "./api/configurationApi.js";
 const cartContainer = document.getElementById("cartContainer");
+
+let currentPage
+let itemsPerPage
 
 window.onload = () => {
     let cart = JSON.parse(localStorage.getItem("userSession")).cart || []
     const confirmPurchaseButton = document.getElementById("confirmPurchaseButton")
     confirmPurchaseButton.addEventListener("click", confirmPurchase)
 
+    currentPage = 1
+    itemsPerPage = configurationApi.getConfiguration().pagination.cart
+
     if (!cart.length) {
         mapEmptyCart(cartContainer);
     } else {
-        mapProductsCart(cart, cartContainer);
+        mapProductsCart(currentPage, cart, cartContainer);
     }
 };
 
@@ -109,7 +115,7 @@ const mapEmptyCart = (cartContainer) => {
     cartContainer.appendChild(row);
 };
 
-const mapProductsCart = (cart, cartContainer) => {
+const mapProductsCart = (page, cart) => {
     cartContainer.innerHTML = ""
     const total = cart.reduce(
         (acc, product) =>
@@ -123,7 +129,12 @@ const mapProductsCart = (cart, cartContainer) => {
     const leftCol = document.createElement("div");
     leftCol.className = "col-lg-8";
 
-    cart.forEach((product) => {
+    currentPage = page || currentPage;
+    const startIndex = (currentPage - 1) * itemsPerPage
+    const endIndex = startIndex + itemsPerPage
+    const paginatedCart = cart.slice(startIndex, endIndex)
+
+    paginatedCart.forEach((product) => {
         const subtotal =
             Number(product.price) * Number(product.quantity);
 
@@ -249,6 +260,8 @@ const mapProductsCart = (cart, cartContainer) => {
     summaryBody.appendChild(checkoutButton);
 
     cartContainer.appendChild(row);
+
+    updatePagination(cart, mapProductsCart, itemsPerPage, currentPage)
 };
 
 const quantityHandler = (product, price) => {
@@ -428,7 +441,7 @@ const trashProductHandler = (product) => {
     if (!newCart.length) {
         mapEmptyCart(cartContainer);
     } else {
-        mapProductsCart(newCart, cartContainer);
+        mapProductsCart(currentPage, newCart, cartContainer);
     }
     modal.hide()
     showCartCount()
