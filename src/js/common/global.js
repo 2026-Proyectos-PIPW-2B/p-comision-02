@@ -1,6 +1,4 @@
-import { configurationMock, ordersMock, usersMock } from "./mocks.js"
-import { categoriesMock } from "./mocks.js"
-import { productsMock } from "./mocks.js"
+import { configurationMock, ordersMock, usersMock, categoriesMock, productsMock} from "./mocks.js"
 import { adminNavbar, showCartCount } from "./utils.js"
 import { productsApi } from "../api/productsApi.js"
 import { categoriesApi } from "../api/categoriesApi.js"
@@ -15,11 +13,11 @@ export const globalOnload = (index) => {
     //     return
     // }
 
-    // admin role check
-    if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
-        window.location.href = "/p-comision-02/src/pages/not-found.html";
-        return
-    }
+    // // admin role check
+    // if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
+    //     window.location.href = "/p-comision-02/src/pages/not-found.html";
+    //     return
+    // }
 
     // admin navbar
     if(JSON.parse(localStorage.getItem("userSession"))?.isAdmin && !window.location.href.includes("login") && !window.location.href.includes("index")) {
@@ -71,7 +69,7 @@ export const globalOnload = (index) => {
     if(!window.location.href.includes("admin") && !window.location.href.includes("login") && !window.location.href.includes("index")) {
         showCartCount()
     }
-    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     globalOnload()
