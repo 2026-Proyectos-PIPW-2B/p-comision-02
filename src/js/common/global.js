@@ -6,18 +6,20 @@ import { usersApi } from "../api/usersApi.js"
 import { ordersApi } from "../api/ordersApi.js"
 import { configurationApi } from "../api/configurationApi.js"
 
+const userSession = JSON.parse(localStorage.getItem("userSession")) || null
+
 export const globalOnload = (index) => {
     // any role check
-    // if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
-    //     window.location.href = "/p-comision-02/src/pages/not-found.html";
-    //     return
-    // }
+    if(!window.location.href.includes("login") && !userSession) {
+        window.location.href = "/p-comision-02/src/pages/not-found.html";
+        return
+    }
 
     // // admin role check
-    // if(window.location.href.includes("admin") && !JSON.parse(localStorage.getItem("userSession"))?.isAdmin) {
-    //     window.location.href = "/p-comision-02/src/pages/not-found.html";
-    //     return
-    // }
+    if(window.location.href.includes("admin") && !userSession?.isAdmin) {
+        window.location.href = "/p-comision-02/src/pages/not-found.html";
+        return
+    }
 
     // admin navbar
     if(JSON.parse(localStorage.getItem("userSession"))?.isAdmin && !window.location.href.includes("login") && !window.location.href.includes("index")) {
