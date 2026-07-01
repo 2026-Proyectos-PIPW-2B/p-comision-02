@@ -85,7 +85,7 @@ const mapOrders = (page, array) => {
         const tr = document.createElement("tr");
 
         const td = document.createElement("td");
-        td.colSpan = 4;
+        td.colSpan = 5;
         td.className = "text-center";
         td.textContent = "No hay órdenes registradas";
 

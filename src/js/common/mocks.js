@@ -714,6 +714,7 @@ export const configurationMock = {
     pagination: {
         catalog: 10,
         profile: 8,
+        cart: 5,
         admin: 12,
     },
     minimumPurchaseAmount: 20000,
