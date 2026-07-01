@@ -10,7 +10,7 @@ import { configurationApi } from "../api/configurationApi.js"
 
 export const globalOnload = (index) => {
     // any role check
-    if(window.location.href.includes("pages") && !JSON.parse(localStorage.getItem("userSession"))) {
+    if(!window.location.href.includes("login") && !JSON.parse(localStorage.getItem("userSession"))) {
         window.location.href = "/p-comision-02/src/pages/not-found.html";
         return
     }
